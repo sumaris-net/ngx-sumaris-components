@@ -6,23 +6,16 @@ import {EntityClass} from "./entity.decorators";
 /**
  * A user account
  */
+// @dynamic
 @EntityClass({typename: 'AccountVO'})
 export class Account extends Person<Account> {
 
   static fromObject: (source: any, opts?: any) => Account
 
-  settings: UserSettings;
+  settings: UserSettings = null;
 
   constructor() {
     super(Account.TYPENAME);
-    this.settings = new UserSettings();
-  }
-
-  clone(): Account {
-    const target = new Account();
-    target.fromObject(this);
-    target.settings = this.settings && this.settings.clone() || undefined;
-    return target;
   }
 
   asObject(options?: EntityAsObjectOptions): any {
@@ -33,7 +26,7 @@ export class Account extends Person<Account> {
 
   fromObject(source: any) {
     super.fromObject(source);
-    source.settings && this.settings.fromObject(source.settings);
+    this.settings = source.settings && UserSettings.fromObject(source.settings);
   }
 
   /**

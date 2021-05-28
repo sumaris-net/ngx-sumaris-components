@@ -17,6 +17,7 @@ export const UserProfileLabels = {
   GUEST: 'GUEST'
 };
 
+// @dynamic
 @EntityClass({typename: 'PersonVO'})
 export class Person<
   T extends Person<any> = Person<any>

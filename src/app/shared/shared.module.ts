@@ -35,6 +35,8 @@ import {MarkdownModule} from "ngx-markdown";
 import {AppHelpModal} from "./help/help.modal";
 import {Environment, ENVIRONMENT} from "../../environments/environment.class";
 import {TranslateContextService} from "./services/translate-context.service";
+import {MatStepperIntl} from "@angular/material/stepper";
+import {MatStepperI18n} from "./material/stepper/material.stepper-i18n";
 
 
 export function scrollFactory(overlay: Overlay): () => CloseScrollStrategy {
@@ -117,17 +119,11 @@ export class SharedModule {
         HighlightPipe,
         NumberFormatPipe,
 
-        {provide: OverlayContainer, useClass: FullscreenOverlayContainer},
-        {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true, deps: [ProgressBarService]},
-        {
-          provide: MatPaginatorIntl,
-          useFactory: (translate) => {
-            const service = new MatPaginatorI18n();
-            service.injectTranslateService(translate);
-            return service;
-          },
-          deps: [TranslateService]
-        },
+        { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
+        { provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true, deps: [ProgressBarService] },
+        { provide: MatPaginatorIntl, useClass: MatPaginatorI18n, deps: [TranslateService] },
+        { provide: MatStepperIntl, useClass: MatStepperI18n, deps: [TranslateService] },
+
         // FIXME: try to force a custom overlay for autocomplete, because of there is a bug when using inside an ionic modal
         //{ provide: Overlay, useClass: Overlay},
         { provide: MAT_AUTOCOMPLETE_SCROLL_STRATEGY, useFactory: scrollFactory, deps: [Overlay] },

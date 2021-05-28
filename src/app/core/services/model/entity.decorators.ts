@@ -1,6 +1,5 @@
 import {environment} from "../../../../environments/environment";
 import {Entity, isInstanceOf} from "./entity.model";
-import {type} from "os";
 
 export function EntityClass(opts?: {
   typename?: string;

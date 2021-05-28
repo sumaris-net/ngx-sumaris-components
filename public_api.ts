@@ -4,16 +4,18 @@ export * from './src/environments/environment.class';
 // Shared
 export * from './src/app/shared/constants';
 export * from './src/app/shared/shared.module';
+export {SHARED_ROUTE_OPTIONS, SharedRoutingModule} from './src/app/shared/shared-routing.module';
 
 // Shared material
 export * from './src/app/shared/material/material.module';
 export {MatBooleanField} from './src/app/shared/material/boolean/material.boolean';
 export * from './src/app/shared/material/autocomplete/autocomplete.module';
-export * from './src/app/shared/material/autocomplete/material.autocomplete';
+export {MatAutocompleteField, MatAutocompleteFieldConfig, MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions} from './src/app/shared/material/autocomplete/material.autocomplete';
 export * from './src/app/shared/material/chips/chips.module';
 export * from './src/app/shared/material/chips/material.chips';
 export * from './src/app/shared/material/material.animations';
 export * from './src/app/shared/material/paginator/material.paginator-i18n';
+export * from './src/app/shared/material/stepper/material.stepper-i18n';
 
 // Shared components
 export * from './src/app/shared/inputs';
@@ -37,6 +39,7 @@ export * from './src/app/shared/pipes/date-diff-duration.pipe';
 export * from './src/app/shared/pipes/latlong-format.pipe';
 export * from './src/app/shared/pipes/highlight.pipe';
 export * from './src/app/shared/pipes/number-format.pipe';
+export * from './src/app/shared/pipes/properties.pipe';
 
 // Shared services
 export * from './src/app/shared/audio/audio';
@@ -85,6 +88,7 @@ export * from './src/app/core/services/pipes/person-to-string.pipe';
 export * from './src/app/core/services/pipes/account.pipes';
 
 // Core services
+export * from './src/app/vendor';
 export * from './src/app/core/services/platform.service';
 export * from './src/app/core/services/network.service';
 export * from './src/app/core/services/config.service';

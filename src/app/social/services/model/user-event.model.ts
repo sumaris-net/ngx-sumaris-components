@@ -9,6 +9,7 @@ export const UserEventTypes = {
   INBOX_MESSAGE: 'INBOX_MESSAGE'
 }
 
+// @dynamic
 @EntityClass({typename: 'UserEventVO'})
 export class UserEvent extends Entity<UserEvent> {
 

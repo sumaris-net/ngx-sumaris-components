@@ -7,6 +7,7 @@ import {fromDateISOString, toDateISOString} from "../../../shared/dates";
 import {isNotNil} from "../../../shared/functions";
 import {EntityClass} from "./entity.decorators";
 
+// @dynamic
 @EntityClass({typename: 'SoftwareVO'})
 export class Software<
   T extends Software<any> = Software<any>
@@ -48,6 +49,7 @@ export class Software<
   }
 }
 
+// @dynamic
 @EntityClass({typename: 'ConfigurationVO'})
 export class Configuration extends Software<Configuration> {
 

@@ -36,7 +36,7 @@ export const DefaultStatusList: StatusValue[] = [
   }
 ];
 
-
+//@dynamic
 export abstract class BaseReferential<
   T extends BaseReferential<any, ID, O>,
   ID = number,
@@ -96,11 +96,10 @@ export abstract class BaseReferential<
   }
 }
 
+// @dynamic
 @EntityClass({typename: 'ReferentialVO'})
 export class Referential extends BaseReferential<Referential> {
-
   static fromObject: (source: any, opts?: any) => Referential;
-
 }
 
 export class ReferentialUtils {
@@ -165,6 +164,7 @@ export const SAVE_AS_OBJECT_OPTIONS: ReferentialAsObjectOptions = {
   keepLocalId: false
 };
 
+// @dynamic
 @EntityClass({typename: 'ReferentialVO'})
 export class ReferentialRef<
   T extends ReferentialRef<any, ID> = ReferentialRef<any, any>,

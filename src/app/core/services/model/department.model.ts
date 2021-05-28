@@ -1,7 +1,7 @@
-import {EntityAsObjectOptions, EntityUtils} from "./entity.model";
 import {BaseReferential} from "./referential.model";
 import {EntityClass} from "./entity.decorators";
 
+// @dynamic
 @EntityClass({typename: 'DepartmentVO'})
 export class Department extends BaseReferential<Department> {
 

@@ -26,6 +26,7 @@ import {ENVIRONMENT} from "../../../environments/environment.class";
 import {EntityFilter, EntityFilterUtils} from "../../core/services/model/filter.model";
 import {EntityClass} from "../../core/services/model/entity.decorators";
 
+// @dynamic
 @EntityClass()
 export class UserEventFilter extends EntityFilter<UserEventFilter, UserEvent> {
 

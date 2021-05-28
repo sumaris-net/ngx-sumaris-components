@@ -4,7 +4,6 @@ import {NOT_MINIFY_OPTIONS, ReferentialRef} from "../../../core/services/model/r
 import {isNotNil, toNumber} from "../../../shared/functions";
 import {PmfmValue, PmfmValueUtils} from "./pmfm-value.model";
 import {MethodIds} from "./model.enum";
-import {DataEntity, DataEntityAsObjectOptions} from "../../../data/services/model/data-entity.model";
 import {EntityClass} from "../../../core/services/model/entity.decorators";
 
 
@@ -52,6 +51,7 @@ export function getPmfmName(pmfm: IPmfm, opts?: {
   return name;
 }
 
+// @dynamic
 @EntityClass({typename: "PmfmStrategyVO"})
 export class PmfmStrategy extends Entity<PmfmStrategy> {
 
@@ -173,6 +173,7 @@ export class PmfmStrategy extends Entity<PmfmStrategy> {
   }
 }
 
+// @dynamic
 @EntityClass({typename: 'DenormalizedPmfmStrategyVO'})
 export class DenormalizedPmfmStrategy
   extends Entity<DenormalizedPmfmStrategy>

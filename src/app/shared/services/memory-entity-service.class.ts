@@ -16,6 +16,7 @@ export interface InMemoryEntitiesServiceOptions<T, F> {
   onFilter?: (data: T[], filter: F) => T[] | Promise<T[]>;
 }
 
+// @dynamic
 @Directive()
 // tslint:disable-next-line:directive-class-suffix
 export class InMemoryEntitiesService<

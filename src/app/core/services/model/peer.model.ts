@@ -4,6 +4,7 @@ import {isNilOrBlank, isNotNil, noTrailingSlash} from "../../../shared/functions
 import {Cloneable, Entity, EntityAsObjectOptions} from "./entity.model";
 import {EntityClass} from "./entity.decorators";
 
+// @dynamic
 @EntityClass({typename: 'PeerVO'})
 export class Peer extends Entity<Peer> implements Cloneable<Peer> {
 

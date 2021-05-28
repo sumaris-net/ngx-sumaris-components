@@ -46,6 +46,7 @@ export declare interface ITreeItemEntity<
   children: T[];
 }
 
+//@dynamic
 export abstract class Entity<
   T extends Entity<T, ID, AO, FO>,
   ID = number,
@@ -97,9 +98,9 @@ export abstract class Entity<
 }
 export function isInstanceOf<T>(obj: any, constructor: new (...args: any[]) => T): obj is T {
   if (!obj) return false;
-  const result = obj.constructor.name === (constructor as any).CLASSNAME;
-  if (result) console.debug("isInstanceOf() => OK for " + obj.constructor.name, );
-  return result;
+  // DEBUG
+  //if (obj.constructor.name === (constructor as any).CLASSNAME) console.debug("isInstanceOf() => OK for " + obj.constructor.name, );
+  return obj.constructor.name === (constructor as any).CLASSNAME;
 }
 
 // @dynamic

@@ -1,6 +1,5 @@
 import {IModalDetailOptions} from "../../core/table/table.class";
 import {Observable} from "rxjs";
-import {DenormalizedPmfmStrategy} from "../../referential/services/model/pmfm-strategy.model";
 import {Entity} from "../../core/services/model/entity.model";
 import {UsageMode} from "../../core/services/model/settings.model";
 import {IPmfm} from "../../referential/services/model/pmfm.model";

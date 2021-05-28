@@ -4,7 +4,7 @@ import {APP_BASE_HREF} from "@angular/common";
 import {BrowserModule, HAMMER_GESTURE_CONFIG, HammerModule} from "@angular/platform-browser";
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule, SecurityContext} from "@angular/core";
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_ADAPTER_OPTIONS_FACTORY, MomentDateAdapter} from '@angular/material-moment-adapter';
+import {MomentDateAdapter} from '@angular/material-moment-adapter';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';

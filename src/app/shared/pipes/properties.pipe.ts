@@ -1,5 +1,5 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {getPropertyByPath, getPropertyByPathAsString, isNotNil} from "../functions";
+import {getPropertyByPath} from "../functions";
 
 @Pipe({
     name: 'propertyGet'

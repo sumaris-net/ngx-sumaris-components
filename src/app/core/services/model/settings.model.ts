@@ -4,6 +4,7 @@ import {Moment} from "moment";
 import {LatLongPattern} from "../../../shared/material/latlong/latlong.utils";
 import {PropertiesMap, Property} from "../../../shared/types";
 import {InjectionToken} from "@angular/core";
+import {EntityClass} from "./entity.decorators";
 
 export type UsageMode = 'DESK' | 'FIELD';
 
@@ -51,25 +52,28 @@ export interface HistoryPageReference {
 
 }
 
+// @dynamic
+@EntityClass({typename: 'UserSettingsVO'})
 export class UserSettings extends Entity<UserSettings> {
+
+  static fromObject: (source: any, opts?: any) => UserSettings;
+
   locale: string;
   latLongFormat: LatLongPattern;
   content: {};
   nonce: string;
 
-  clone(): UserSettings {
-    const target = new UserSettings();
-    target.fromObject(this);
-    return target;
+  constructor() {
+    super(UserSettings.TYPENAME);
   }
 
   asObject(options?: EntityAsObjectOptions): any {
-    const res: any = super.asObject(options);
-    res.content = this.content && JSON.stringify(res.content) || undefined;
-    return res;
+    const target = super.asObject(options);
+    target.content = this.content && JSON.stringify(target.content) || undefined;
+    return target;
   }
 
-  fromObject(source: any) {
+  fromObject(source: any, opts?: any) {
     super.fromObject(source);
     this.locale = source.locale;
     this.latLongFormat = source.latLongFormat as LatLongPattern;
