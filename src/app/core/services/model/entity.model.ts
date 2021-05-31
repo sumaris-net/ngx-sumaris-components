@@ -3,7 +3,6 @@ import {isEmptyArray, isNil, isNilOrBlank, isNotNil, joinPropertiesPath} from ".
 import {FilterFn} from "../../../shared/services/entity-service.class";
 import {ObjectMap, ObjectMapEntry, PropertiesArray, PropertiesMap} from "../../../shared/types";
 import {StoreObject} from "@apollo/client/core";
-import {DataEntity} from "../../../data/services/model/data-entity.model";
 import {fromDateISOString, toDateISOString} from "../../../shared/dates";
 
 
@@ -176,21 +175,6 @@ export abstract class EntityUtils {
     }
   }
 
-  static copyControlDate(source: DataEntity<any> | undefined, target: DataEntity<any>) {
-    if (!source) return;
-
-    // Update (id and updateDate)
-    target.controlDate = fromDateISOString(source.controlDate);
-  }
-
-  static copyQualificationDateAndFlag(source: DataEntity<any, any> | undefined, target: DataEntity<any, any>) {
-    if (!source) return;
-
-    // Update (id and updateDate)
-    target.qualificationDate = fromDateISOString(source.qualificationDate); // can be null
-    target.qualificationComments = source.qualificationComments; // can be null
-    target.qualityFlagId = source.qualityFlagId; // can be = 0 (default)
-  }
 
   static async fillLocalIds<T extends IEntity<T>>(items: T[], sequenceFactory: (firstEntity: T, incrementSize: number) => Promise<number>) {
     const newItems = (items || []).filter(item => isNil(item.id) || item.id === 0);

@@ -8,10 +8,10 @@ import {FormFieldDefinition} from "./shared/form/field.model";
 import {getColorContrast, getColorShade, getColorTint, hexToRgbArray, mixHex} from "./shared/graph/colors.utils";
 import {AccountService} from "./core/services/account.service";
 import {LocalSettingsService} from "./core/services/local-settings.service";
-import {ReferentialRefService} from "./referential/services/referential-ref.service";
 import {MatIconRegistry} from "@angular/material/icon";
 import {DomSanitizer} from "@angular/platform-browser";
 import {isNotNil, joinPropertiesPath} from "./shared/functions";
+import {Department} from "./core/services/model/department.model";
 
 @Component({
   selector: 'app-root',
@@ -27,7 +27,6 @@ export class AppComponent {
     @Inject(DOCUMENT) private _document: HTMLDocument,
     private platform: PlatformService,
     private accountService: AccountService,
-    private referentialRefService: ReferentialRefService,
     private configService: ConfigService,
     private settings: LocalSettingsService,
     private matIconRegistry: MatIconRegistry,
@@ -155,7 +154,10 @@ export class AppComponent {
       label: 'USER.DEPARTMENT.TITLE',
       type: 'entity',
       autocomplete: {
-        service: this.referentialRefService,
+        items: [
+          Department.fromObject({id: 1, label: 'E-IS', name: 'Environmental Information Systems'}),
+          Department.fromObject({id: 2, label: 'UNK', name: 'Other'})
+        ],
         filter: {entityName: 'Department'},
         displayWith: (value) => value && joinPropertiesPath(value, attributes),
         attributes: attributes,

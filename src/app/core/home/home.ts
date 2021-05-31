@@ -14,7 +14,7 @@ import {AccountService} from '../services/account.service';
 import {Account, accountToString} from '../services/model/account.model';
 import {Configuration} from '../services/model/config.model';
 import {Department} from '../services/model/department.model';
-import {APP_LOCALES, HistoryPageReference, LocaleConfig, LocalSettings} from '../services/model/settings.model';
+import {APP_LOCALES, LocaleConfig, LocalSettings} from '../services/model/settings.model';
 import {TranslateService} from '@ngx-translate/core';
 import {ConfigService} from '../services/config.service';
 import {PlatformService} from "../services/platform.service";
@@ -27,6 +27,7 @@ import {ShowToastOptions, Toasts} from "../../shared/toasts";
 import {fadeInAnimation, slideUpDownAnimation} from "../../shared/material/material.animations";
 import {isNotNil, isNotNilOrBlank} from "../../shared/functions";
 import {ENVIRONMENT} from "../../../environments/environment.class";
+import {HistoryPageReference} from "../services/model/history.model";
 
 export function getRandomImage(files: String[]) {
   const imgIndex = Math.floor(Math.random() * files.length);

@@ -17,7 +17,7 @@ import {Moment} from "moment";
 import {AddToPageHistoryOptions, LocalSettingsService} from "../services/local-settings.service";
 import {filter} from "rxjs/operators";
 import {Entity} from "../services/model/entity.model";
-import {HistoryPageReference, UsageMode} from "../services/model/settings.model";
+import {UsageMode} from "../services/model/settings.model";
 import {FormGroup} from "@angular/forms";
 import {AppTabEditor, AppTabEditorOptions} from "./tab-editor.class";
 import {AppFormUtils} from "./form.utils";
@@ -28,6 +28,7 @@ import {EntityServiceLoadOptions, IEntityService} from "../../shared/services/en
 import {isNil, isNilOrBlank, isNotNil, toBoolean} from "../../shared/functions";
 import {DateFormatPipe} from "../../shared/pipes/date-format.pipe";
 import {ENVIRONMENT} from "../../../environments/environment.class";
+import {HistoryPageReference} from "../services/model/history.model";
 
 export class AppEditorOptions extends AppTabEditorOptions {
   autoLoad?: boolean;

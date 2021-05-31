@@ -1,10 +1,10 @@
 import {isNil} from "../../../shared/functions";
 import {Entity, EntityAsObjectOptions} from "./entity.model";
-import {Moment} from "moment";
 import {LatLongPattern} from "../../../shared/material/latlong/latlong.utils";
 import {PropertiesMap, Property} from "../../../shared/types";
 import {InjectionToken} from "@angular/core";
 import {EntityClass} from "./entity.decorators";
+import {HistoryPageReference} from "./history.model";
 
 export type UsageMode = 'DESK' | 'FIELD';
 
@@ -35,22 +35,6 @@ export declare interface LocalSettings {
   pageHistoryMaxSize: number;
 }
 
-
-export interface HistoryPageReference {
-  title: string;
-  subtitle?: string;
-  path: string;
-  time?: Moment|string;
-  icon?: string;
-  matIcon?: string;
-
-  children?: HistoryPageReference[];
-
-  // Manage visibility and data access
-  offline?: boolean;
-  onlinePeer?: string;
-
-}
 
 // @dynamic
 @EntityClass({typename: 'UserSettingsVO'})

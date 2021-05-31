@@ -41,50 +41,6 @@ const routes: Routes = [
     loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule)
   },
 
-  // Referential
-  {
-    path: 'referential',
-    canActivate: [AuthGuardService],
-    loadChildren: () => import('./referential/referential-routing.module').then(m => m.ReferentialRoutingModule)
-  },
-
-  // Vessel
-  {
-    path: 'vessels',
-    canActivate: [AuthGuardService],
-    loadChildren: () => import('./vessel/vessel-routing.module').then(m => m.VesselRoutingModule)
-  },
-
-  // Trips
-  {
-    path: 'trips',
-    canActivate: [AuthGuardService],
-    data: {
-      profile: 'USER'
-    },
-    loadChildren: () => import('./trip/trip-routing.module').then(m => m.TripRoutingModule)
-  },
-
-  // Observations
-  {
-    path: 'observations',
-    canActivate: [AuthGuardService],
-    data: {
-      profile: 'USER'
-    },
-    loadChildren: () => import('./trip/landed-trip-routing.module').then(m => m.LandedTripRoutingModule)
-  },
-
-  // Extraction path
-  {
-    path: 'extraction',
-    canActivate: [AuthGuardService],
-    data: {
-      profile: 'GUEST'
-    },
-    loadChildren: () => import('./extraction/extraction.module').then(m => m.ExtractionModule)
-  },
-
   // Test module (disable in menu, by default - can be enable by the Pod configuration page)
   {
     path: 'testing',
@@ -98,11 +54,6 @@ const routes: Routes = [
       {
         path: 'shared',
         loadChildren: () => import('./shared/shared.testing.module').then(m => m.SharedTestingModule)
-      },
-      // Trip module
-      {
-        path: 'trip',
-        loadChildren: () => import('./trip/trip.testing.module').then(m => m.TripTestingModule)
       }
     ]
   },

@@ -1776,6 +1776,7 @@
     "TABLE_READ_ONLY": "Tableau en lecture seule",
     "SAVE_DATA_ERROR": "Erreur lors de la sauvegarde. <small><br/>Si le problème persiste, veuillez contacter votre administrateur.</small>",
     "LOAD_DATA_ERROR": "Erreur de chargement des données. <small><br/>Si le problème persiste, veuillez contacter votre administrateur.</small>",
+    "DELETE_DATA_ERROR": "Erreur de suppression des données. <small><br/>Si le problème persiste, veuillez contacter votre administrateur.</small>",
     "NETWORK_REQUIRED": "Connexion au réseau impossible.<br/><b>Vérifiez votre connexion réseau</b> avant de réessayer.",
     "THIS_ACTION IMPORT_NEED_ONLINE_NETWORK": "Pas de réseau. Impossible de synchoniser.",
     "IMPORT_REFERENTIAL_ERROR": "Echec de l'importation des listes des références. Impossible d'activer le mode hors-ligne.",

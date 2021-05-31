@@ -1,6 +1,6 @@
 {
-  "name": "sumaris-angular",
-  "description": "SUMARiS Angular",
+  "name": "@e-is/ngx-sumaris-components",
+  "description": "SUMARiS Angular components",
   "version": "0.0.1",
   "author": "contact@e-is.pro",
   "license": "AGPL-3.0",
@@ -146,11 +146,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sumaris-net/sumaris-angular.git"
+    "url": "https://github.com/sumaris-net/ngx-sumaris-components.git"
   },
-  "homepage": "https://github.com/sumaris-net/sumaris-angular",
+  "homepage": "https://github.com/sumaris-net/ngx-sumaris-components",
   "bugs": {
-    "url": "https://github.com/sumaris-net/sumaris-angular/issues"
+    "url": "https://github.com/sumaris-net/ngx-sumaris-components/issues"
   },
   "engines": {
     "node": ">= 12.19.1",

@@ -71,21 +71,27 @@ export * from './src/app/shared/material/testing/material.testing.page';
 export * from './src/app/core/core.module';
 
 // Core model
-export * from './src/app/core/services/model/entity.model';
-export * from './src/app/core/services/model/model.enum';
-export * from './src/app/core/services/model/referential.model';
 export * from './src/app/core/services/model/account.model';
-export * from './src/app/core/services/model/department.model';
-export * from './src/app/core/services/model/settings.model';
 export * from './src/app/core/services/model/config.model';
+export * from './src/app/core/services/model/department.model';
+export * from './src/app/core/services/model/entity.model';
+export * from './src/app/core/services/model/filter.model';
+export * from './src/app/core/services/model/history.model';
+export * from './src/app/core/services/model/model.enum';
+export * from './src/app/core/services/model/peer.model';
+export * from './src/app/core/services/model/person.model';
+export * from './src/app/core/services/model/referential.model';
+export * from './src/app/core/services/model/settings.model';
 
 // GraphQL
 export * from './src/app/core/graphql/graphql.module';
 export * from './src/app/core/graphql/graphql.service';
 
 // Core pipes
-export * from './src/app/core/services/pipes/person-to-string.pipe';
 export * from './src/app/core/services/pipes/account.pipes';
+export * from './src/app/core/services/pipes/department-to-string.pipe';
+export * from './src/app/core/services/pipes/person-to-string.pipe';
+export * from './src/app/core/services/pipes/usage-mode.pipes';
 
 // Core services
 export * from './src/app/vendor';
@@ -121,6 +127,19 @@ export * from './src/app/core/peer/select-peer.modal';
 
 // Social
 export * from './src/app/social/social.module';
+export * from './src/app/social/services/model/user-event.model';
 export * from './src/app/social/services/user-event.service';
 export * from './src/app/social/list/user-events.table';
+
+// Decorator
 export {EntityClass} from "./src/app/core/services/model/entity.decorators";
+
+// Admin
+export * from './src/app/admin/admin.module';
+export * from './src/app/admin/admin-routing.module';
+export * from './src/app/admin/config/configuration.page';
+export * from './src/app/admin/services/filter/person.filter';
+export * from './src/app/admin/services/validator/person.validator';
+export * from './src/app/admin/services/errors';
+export * from './src/app/admin/services/person.service';
+export * from './src/app/admin/users/list/users';

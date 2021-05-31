@@ -1,5 +1,5 @@
 import {Inject, Injectable, InjectionToken, Optional} from "@angular/core";
-import {FetchPolicy, gql} from "@apollo/client/core";
+import {gql} from "@apollo/client/core";
 import {Configuration} from "./model/config.model";
 import {Storage} from "@ionic/storage";
 import {BehaviorSubject, Observable, Subject, Subscription} from "rxjs";
@@ -9,19 +9,14 @@ import {FormFieldDefinition, FormFieldDefinitionMap} from "../../shared/form/fie
 import {isNotEmptyArray, isNotNil} from "../../shared/functions";
 import {FileService} from "../../shared/file/file.service";
 import {NetworkService} from "./network.service";
-import {PlatformService} from "./platform.service";
 import {CORE_CONFIG_OPTIONS} from "./config/core.config";
-import {SoftwareService} from "../../referential/services/software.service";
-import {LocationLevelIds, ParameterLabelGroups, PmfmIds, TaxonomicLevelIds} from "../../referential/services/model/model.enum";
 import {Platform, ToastController} from "@ionic/angular";
 import {ShowToastOptions, Toasts} from "../../shared/toasts";
 import {TranslateService} from "@ngx-translate/core";
 import {filter} from "rxjs/operators";
-import {EntityServiceLoadOptions} from "../../shared/services/entity-service.class";
+import {EntityServiceLoadOptions, IEntityService} from "../../shared/services/entity-service.class";
 import {ENVIRONMENT} from "../../../environments/environment.class";
-import {UserProfileLabels} from "./model/person.model";
-import {REFERENTIAL_CONFIG_OPTIONS} from "../../referential/services/config/referential.config";
-import {AccountService} from "./account.service";
+import {BaseGraphqlService} from "./base-graphql-service.class";
 
 
 const CONFIGURATION_STORAGE_KEY = "configuration";
@@ -92,7 +87,9 @@ export const APP_CONFIG_OPTIONS = new InjectionToken<FormFieldDefinitionMap>('de
   providedIn: 'root',
   deps: [APP_CONFIG_OPTIONS]
 })
-export class ConfigService extends SoftwareService<Configuration> {
+export class ConfigService
+  extends BaseGraphqlService<Configuration, any, number>
+  implements IEntityService<Configuration> {
 
   private _started = false;
   private _startPromise: Promise<any>;
@@ -244,9 +241,6 @@ export class ConfigService extends SoftwareService<Configuration> {
     const defaultConfig = this.$data.getValue();
     if (isNotNil(defaultConfig) && reloadedConfig.label === defaultConfig.label) {
 
-      // Override enumerations
-      this.updateModelEnumerations(reloadedConfig);
-
       // Emit update event when is default config
       this.$data.next(reloadedConfig);
     }
@@ -294,9 +288,6 @@ export class ConfigService extends SoftwareService<Configuration> {
   }
 
   listenChanges(id: number, options?: any): Observable<Configuration | undefined> {
-    // if (this.$data.getValue() && this.$data.getValue().id === id) {
-    //   return this.$data;
-    // }
     return new Subject(); // TODO
   }
 
@@ -332,9 +323,6 @@ export class ConfigService extends SoftwareService<Configuration> {
 
     // Reset name (if same as label)
     data.name = (data.name !== data.label) ? data.name : undefined;
-
-    // Override enumerations
-    this.updateModelEnumerations(data);
 
     // Check compatible version
     if (wasJustLoaded) {
@@ -452,49 +440,6 @@ export class ConfigService extends SoftwareService<Configuration> {
         if (this._debug) console.debug(`[config] Saving config into local storage [OK] in ${Date.now() - now}ms`);
       }
     }
-  }
-
-  private updateModelEnumerations(config: Configuration) {
-    if (!config.properties) {
-      console.warn("[config] No properties found in pod config! Skip model enumerations update");
-      return;
-    }
-    console.info("[config] Updating model enumerations...");
-
-    // User profiles
-    UserProfileLabels.ADMIN = config.getProperty(CORE_CONFIG_OPTIONS.PROFILE_ADMIN_LABEL);
-    UserProfileLabels.SUPERVISOR = config.getProperty(CORE_CONFIG_OPTIONS.PROFILE_SUPERVISOR_LABEL);
-    UserProfileLabels.USER = config.getProperty(CORE_CONFIG_OPTIONS.PROFILE_USER_LABEL);
-
-    // Location Levels
-    LocationLevelIds.COUNTRY = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.LOCATION_LEVEL_COUNTRY_ID);
-    LocationLevelIds.PORT = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.LOCATION_LEVEL_PORT_ID);
-    LocationLevelIds.AUCTION = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.LOCATION_LEVEL_AUCTION_ID);
-    LocationLevelIds.ICES_RECTANGLE = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.LOCATION_LEVEL_ICES_RECTANGLE_ID);
-    LocationLevelIds.ICES_DIVISION = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.LOCATION_LEVEL_ICES_DIVISION_ID);
-
-    // Taxonomic Levels
-    TaxonomicLevelIds.FAMILY = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.TAXONOMIC_LEVEL_FAMILY_ID);
-    TaxonomicLevelIds.GENUS = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.TAXONOMIC_LEVEL_GENUS_ID);
-    TaxonomicLevelIds.SPECIES = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.TAXONOMIC_LEVEL_SPECIES_ID);
-    TaxonomicLevelIds.SUBSPECIES = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.TAXONOMIC_LEVEL_SUBSPECIES_ID);
-
-    // Parameters
-    ParameterLabelGroups.AGE = config.getProperty(REFERENTIAL_CONFIG_OPTIONS.STRATEGY_PARAMETER_AGE_LABEL);
-    ParameterLabelGroups.SEX = config.getProperty(REFERENTIAL_CONFIG_OPTIONS.STRATEGY_PARAMETER_SEX_LABEL);
-    ParameterLabelGroups.WEIGHT = config.getPropertyAsStrings(REFERENTIAL_CONFIG_OPTIONS.STRATEGY_PARAMETER_WEIGHT_LABELS);
-    ParameterLabelGroups.LENGTH = config.getPropertyAsStrings(REFERENTIAL_CONFIG_OPTIONS.STRATEGY_PARAMETER_LENGTH_LABELS);
-    ParameterLabelGroups.MATURITY = config.getPropertyAsStrings(REFERENTIAL_CONFIG_OPTIONS.STRATEGY_PARAMETER_MATURITY_LABELS);
-
-    // PMFM
-    PmfmIds.MORSE_CODE = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.PMFM_MORSE_CODE_ID);
-    PmfmIds.STRATEGY_LABEL = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.PMFM_STRATEGY_LABEL_ID);
-    PmfmIds.AGE = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.PMFM_AGE_ID);
-    PmfmIds.SEX = +config.getProperty(REFERENTIAL_CONFIG_OPTIONS.PMFM_SEX_ID);
-
-    // Taxon group
-    // TODO: add all enumerations
-    //TaxonGroupIds.FAO =
   }
 
   protected async showToast(opts: ShowToastOptions) {

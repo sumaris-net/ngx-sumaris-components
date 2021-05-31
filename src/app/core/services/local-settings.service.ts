@@ -1,5 +1,5 @@
 import {EventEmitter, Inject, Injectable, InjectionToken, Optional} from "@angular/core";
-import {HistoryPageReference, LocalSettings, OfflineFeature, UsageMode} from "./model/settings.model";
+import {LocalSettings, OfflineFeature, UsageMode} from "./model/settings.model";
 import {Peer} from "./model/peer.model";
 import {TranslateService} from "@ngx-translate/core";
 import {Storage} from '@ionic/storage';
@@ -23,6 +23,7 @@ import {LatLongPattern} from "../../shared/material/latlong/latlong.utils";
 import {ENVIRONMENT} from "../../../environments/environment.class";
 import {environment} from "../../../environments/environment";
 import {fromDateISOString} from "../../shared/dates";
+import {HistoryPageReference} from "./model/history.model";
 
 const moment = momentImported;
 

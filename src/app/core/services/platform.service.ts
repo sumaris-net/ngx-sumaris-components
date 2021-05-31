@@ -50,7 +50,6 @@ export class PlatformService {
     private toastController: ToastController,
     private translate: TranslateService,
     private dateAdapter: MomentDateAdapter,
-    private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private keyboard: Keyboard,
     private entitiesStorage: EntitiesStorage,
@@ -62,6 +61,7 @@ export class PlatformService {
     private storage: Storage,
     private audioProvider: AudioProvider,
     @Inject(ENVIRONMENT) protected environment,
+    @Optional() private splashScreen: SplashScreen,
     @Optional() private browser: InAppBrowser
   ) {
 
@@ -139,7 +139,7 @@ export class PlatformService {
 
       // Wait 1 more seconds, before hiding the splash screen
       setTimeout(() => {
-        this.splashScreen.hide();
+        if (this.splashScreen) this.splashScreen.hide();
 
         // Play startup sound
         this.audioProvider.playStartupSound();

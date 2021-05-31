@@ -121,8 +121,8 @@ export class MatDateShort implements OnInit, ControlValueAccessor, InputElement 
     private dateAdapter: DateAdapter<Moment>,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private keyboard: Keyboard,
     private cd: ChangeDetectorRef,
+    @Optional() private keyboard: Keyboard,
     @Optional() private formGroupDir: FormGroupDirective,
   ) {
     // Workaround because ion-datetime has issue (do not returned a ISO date)
@@ -359,7 +359,7 @@ export class MatDateShort implements OnInit, ControlValueAccessor, InputElement 
 
   protected async waitKeyboardHide(waitKeyboardDelay: boolean) {
 
-    if (!this.keyboard.isVisible) return; // ok, already hidden
+    if (!this.keyboard.isVisible || !this.keyboard) return; // ok, already hidden
 
     // Force keyboard to be hide
     this.keyboard.hide();

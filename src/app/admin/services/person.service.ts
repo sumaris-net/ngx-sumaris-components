@@ -11,10 +11,10 @@ import {SortDirection} from "@angular/material/sort";
 import {JobUtils} from "../../shared/services/job.utils";
 import {LoadResult, SuggestService} from "../../shared/services/entity-service.class";
 import {ENVIRONMENT} from "../../../environments/environment.class";
-import {BaseEntityGraphqlMutations, BaseEntityService} from "../../referential/services/base-entity-service.class";
 import {PlatformService} from "../../core/services/platform.service";
 import {PersonFilter} from "./filter/person.filter";
 import {isInstanceOf} from "../../core/services/model/entity.model";
+import {BaseEntityGraphqlMutations, BaseEntityService} from "../../core/services/base-entity-service.class";
 
 
 export const PersonFragments = {

@@ -123,7 +123,7 @@ export abstract class BaseEntityService<
       query,
       variables: { id },
       fetchPolicy: opts && (opts.fetchPolicy as FetchPolicy) || undefined,
-      error: {code: ErrorCodes.LOAD_REFERENTIAL_ERROR, message: "REFERENTIAL.ERROR.LOAD_REFERENTIAL_ERROR"}
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "REFERENTIAL.ERROR.LOAD_DATA_ERROR"}
     })
       .pipe(
         map(({data}) => {
@@ -148,7 +148,7 @@ export abstract class BaseEntityService<
         id
       },
       fetchPolicy: opts && (opts.fetchPolicy as FetchPolicy) || undefined,
-      error: {code: ErrorCodes.LOAD_REFERENTIAL_ERROR, message: "REFERENTIAL.ERROR.LOAD_REFERENTIAL_ERROR"}
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "REFERENTIAL.ERROR.LOAD_DATA_ERROR"}
     });
 
     // Convert to entity
@@ -163,6 +163,7 @@ export abstract class BaseEntityService<
            sortDirection?: SortDirection,
            filter?: F,
            opts?: {
+             query?: any,
              fetchPolicy?: WatchQueryFetchPolicy;
              withTotal: boolean;
              toEntity?: boolean;
@@ -182,8 +183,11 @@ export abstract class BaseEntityService<
     let now = this._debug && Date.now();
     if (this._debug) console.debug(`[base-entity-service] Watching ${this._entityName}...`, variables);
 
-    const withTotal = (!opts || opts.withTotal !== false);
-    const query = withTotal ? this.queries.loadAllWithTotal : this.queries.loadAll;
+
+    const withTotal = (!opts || opts.withTotal !== false) && this.queries.loadAllWithTotal && true;
+    const query = (opts && opts.query) // use given query
+      // Or get loadAll or loadAllWithTotal query
+      || withTotal ? this.queries.loadAllWithTotal  : this.queries.loadAll;
     return this.mutableWatchQuery<LoadResult<any>>({
       queryName: withTotal ? 'LoadAllWithTotal' : 'LoadAll',
       query,
@@ -191,7 +195,7 @@ export abstract class BaseEntityService<
       totalFieldName: withTotal ? 'total' : undefined,
       insertFilterFn: filter && filter.asFilterFn(),
       variables,
-      error: {code: ErrorCodes.LOAD_REFERENTIAL_ERROR, message: "REFERENTIAL.ERROR.LOAD_REFERENTIAL_ERROR"},
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "REFERENTIAL.ERROR.LOAD_DATA_ERROR"},
       fetchPolicy: opts && opts.fetchPolicy || 'network-only'
     })
       .pipe(
@@ -240,13 +244,14 @@ export abstract class BaseEntityService<
     const now = Date.now();
     if (debug) console.debug(`[base-entity-service] Loading ${this._entityName}...`, variables);
 
+    const withTotal = (!opts || opts.withTotal !== false) && this.queries.loadAllWithTotal && true;
     const query = (opts && opts.query) // use given query
       // Or get loadAll or loadAllWithTotal query
-      || ((!opts || opts.withTotal !== false) ? this.queries.loadAllWithTotal : this.queries.loadAll);
+      || withTotal ? this.queries.loadAllWithTotal  : this.queries.loadAll;
     const {data, total} = await this.graphql.query<LoadResult<any>>({
       query,
       variables,
-      error: {code: ErrorCodes.LOAD_REFERENTIAL_ERROR, message: "ERROR.LOAD_ERROR"},
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "ERROR.LOAD_DATA_ERROR"},
       fetchPolicy: opts && opts.fetchPolicy || 'network-only'
     });
     const entities = (!opts || opts.toEntity !== false) ?
@@ -283,7 +288,7 @@ export abstract class BaseEntityService<
       variables: {
         data: json
       },
-      error: {code: ErrorCodes.SAVE_REFERENTIAL_ERROR, message: "REFERENTIAL.ERROR.SAVE_REFERENTIAL_ERROR"},
+      error: {code: ErrorCodes.SAVE_DATA_ERROR, message: "ERROR.SAVE_DATA_ERROR"},
       update: (proxy, {data}) => {
         if (data && data.data) {
           // Update entities (id and update date)
@@ -341,7 +346,7 @@ export abstract class BaseEntityService<
       variables: {
         data: json
       },
-      error: {code: ErrorCodes.SAVE_REFERENTIAL_ERROR, message: "REFERENTIAL.ERROR.SAVE_REFERENTIAL_ERROR"},
+      error: {code: ErrorCodes.SAVE_DATA_ERROR, message: "ERROR.SAVE_DATA_ERROR"},
       update: (proxy, {data}) => {
         // Update entity
         const savedEntity = data && data.data;
@@ -397,7 +402,7 @@ export abstract class BaseEntityService<
       variables: {
         ids
       },
-      error: {code: ErrorCodes.DELETE_REFERENTIAL_ERROR, message: "REFERENTIAL.ERROR.DELETE_REFERENTIAL_ERROR"},
+      error: {code: ErrorCodes.DELETE_DATA_ERROR, message: "ERROR.DELETE_DATA_ERROR"},
       update: (proxy, res) => {
         // Remove from cache
         if (this.queries.loadAll) {
@@ -446,7 +451,7 @@ export abstract class BaseEntityService<
       variables: {
         id
       },
-      error: {code: ErrorCodes.DELETE_REFERENTIAL_ERROR, message: "REFERENTIAL.ERROR.DELETE_REFERENTIAL_ERROR"},
+      error: {code: ErrorCodes.DELETE_DATA_ERROR, message: "ERROR.DELETE_DATA_ERROR"},
       update: (proxy, res) => {
         // Remove from cache
         this.removeFromMutableCachedQueryByIds(proxy, {
@@ -482,8 +487,8 @@ export abstract class BaseEntityService<
       query: opts && opts.query || this.subscriptions.listenChanges,
       variables,
       error: {
-        code: ErrorCodes.SUBSCRIBE_REFERENTIAL_ERROR,
-        message: 'REFERENTIAL.ERROR.SUBSCRIBE_REFERENTIAL_ERROR'
+        code: ErrorCodes.SUBSCRIBE_DATA_ERROR,
+        message: 'ERROR.SUBSCRIBE_DATA_ERROR'
       }
     })
       .pipe(

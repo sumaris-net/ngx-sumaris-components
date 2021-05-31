@@ -122,12 +122,12 @@ export class NetworkService {
     private modalCtrl: ModalController,
     private cryptoService: CryptoService,
     private storage: Storage,
-    private splashScreen: SplashScreen,
     private settings: LocalSettingsService,
     private network: Network,
     private cache: CacheService,
     private http: HttpClient,
     @Inject(ENVIRONMENT) protected environment,
+    @Optional() private splashScreen: SplashScreen,
     @Optional() private translate: TranslateService,
     @Optional() private toastController: ToastController
   ) {
@@ -185,7 +185,7 @@ export class NetworkService {
       .then(async (peer: Peer | undefined) => {
 
         // Make sure to hide the splashscreen, before open the modal
-        if (!peer) this.splashScreen.hide();
+        if (!peer && this.splashScreen) this.splashScreen.hide();
 
         // No peer in settings: ask user to choose
         while (!peer) {
