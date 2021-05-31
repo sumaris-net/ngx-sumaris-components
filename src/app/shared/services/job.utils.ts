@@ -8,6 +8,7 @@ export interface CallableWithProgressionOptions {
   [key: string]: any;
 }
 
+// @dynamic
 export class JobUtils {
 
   static defers<O extends CallableWithProgressionOptions>(runnableList: CallableWithProgressionFn<O>[], opts?: O): Observable<number>[] {

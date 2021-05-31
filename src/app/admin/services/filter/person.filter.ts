@@ -6,6 +6,7 @@ import {EntityAsObjectOptions, EntityUtils} from "../../../core/services/model/e
 import {StoreObject} from "@apollo/client/core";
 import {isNil, isNotEmptyArray} from "../../../shared/functions";
 
+// @dynamic
 @EntityClass({typename: 'PersonFilterVO'})
 export class PersonFilter extends EntityFilter<PersonFilter, Person> {
 
