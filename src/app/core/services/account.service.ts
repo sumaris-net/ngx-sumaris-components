@@ -462,8 +462,11 @@ export class AccountService extends BaseGraphqlService {
 
       // Generate the authBasic, if used
       if (!this.data.authBasic) {
-        if (!data || !data.username || !data.password) throw new Error("Missing username and password");
-        this.data.authBasic = this.cryptoService.encodeBase64(`${data.username}:${data.password}`);
+        // Skip if token already provided
+        if (!(this.data.authToken && this._tokenType === 'basic-and-token')) {
+          if (!data || !data.username || !data.password) throw new Error("Missing username and password");
+          this.data.authBasic = this.cryptoService.encodeBase64(`${data.username}:${data.password}`);
+        }
       }
       this.onAuthBasicChange.next(this.data.authBasic);
     }
@@ -713,8 +716,8 @@ export class AccountService extends BaseGraphqlService {
   }
 
   /**
-  * Save account into the local storage
-  */
+   * Save account into the local storage
+   */
   async saveLocally(): Promise<void> {
     if (!this.data.pubkey) throw new Error("User not logged");
 
@@ -1010,30 +1013,30 @@ export class AccountService extends BaseGraphqlService {
         message: 'ERROR.ACCOUNT.SUBSCRIBE_ACCOUNT_ERROR'
       }
     }).subscribe({
-        async next({updateAccount}) {
-          if (!updateAccount) return;
-          const existingUpdateDate = self.data.account && toDateISOString(self.data.account.updateDate);
-          if (existingUpdateDate !== updateAccount.updateDate) {
-            console.debug("[account] [WS] Detected update on {" + updateAccount.updateDate + "}");
-            await self.refresh();
-          }
-        },
-      async error(err) {
-          if (err && +err.code === ServerErrorCodes.NOT_FOUND) {
-            console.info("[account] Account not exists anymore: force user to logout...", err);
-            await self.logout();
-          }
-          else if (err && +err.code === ServerErrorCodes.UNAUTHORIZED) {
-             console.info("[account] Account not authorized: force user to logout...", err);
-             await self.logout();
-          }
-          else {
-            console.warn("[account] [WS] Received error:", err);
-          }
-        },
-        complete() {
-          console.debug('[account] [WS] Completed');
+      async next({updateAccount}) {
+        if (!updateAccount) return;
+        const existingUpdateDate = self.data.account && toDateISOString(self.data.account.updateDate);
+        if (existingUpdateDate !== updateAccount.updateDate) {
+          console.debug("[account] [WS] Detected update on {" + updateAccount.updateDate + "}");
+          await self.refresh();
         }
+      },
+      async error(err) {
+        if (err && +err.code === ServerErrorCodes.NOT_FOUND) {
+          console.info("[account] Account not exists anymore: force user to logout...", err);
+          await self.logout();
+        }
+        else if (err && +err.code === ServerErrorCodes.UNAUTHORIZED) {
+          console.info("[account] Account not authorized: force user to logout...", err);
+          await self.logout();
+        }
+        else {
+          console.warn("[account] [WS] Received error:", err);
+        }
+      },
+      complete() {
+        console.debug('[account] [WS] Completed');
+      }
     });
 
     // Add log when closing WS

@@ -54,8 +54,8 @@ export class MatAutocompleteConfigHolder {
     }
     options = options || <MatAutocompleteFieldAddOptions>{};
     const suggestFn: SuggestFn<T, F> = options.suggestFn
-        || (options.service && ((v, f) => options.service.suggest(v, f)))
-        || undefined;
+      || (options.service && ((v, f) => options.service.suggest(v, f)))
+      || undefined;
     const attributes = this.getUserAttributes(fieldName, options.attributes) || ['label', 'name'];
     const attributesOrFn = attributes.map((a, index) => typeof a === "function" && options.attributes[index] || a);
     const filter: Partial<F> = {
@@ -264,11 +264,11 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
       || (this.displayAttributes.length === 1 && [undefined])
       || this.displayAttributes.map(attr =>
         // If label, set col size = 2
-         (attr && attr.endsWith('label')) ? 2 :
-           // If rankOrder => col size = 1
-           ((attr && attr.endsWith('rankOrder')) ? 1
-             // Else => auto size
-             : undefined));
+        (attr && attr.endsWith('label')) ? 2 :
+          // If rankOrder => col size = 1
+          ((attr && attr.endsWith('rankOrder')) ? 1
+            // Else => auto size
+            : undefined));
     this.displayColumnNames = this.displayAttributes.map((attr, index) => {
       return this.displayColumnNames && this.displayColumnNames[index] ||
         (this.i18nPrefix + changeCaseToUnderscore(attr).toUpperCase());
@@ -279,9 +279,9 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     if (!this.searchable && !this.compareWith) this.compareWith = (o1: any, o2: any) => o1 && o2 && o1.id === o2.id;
     this.panelWidth = this.panelWidth || (this.classList
       && (this.classList === 'min-width-medium' && '300px')
-        || (this.classList === 'min-width-large' && '400px')
-        || (this.classList === 'min-width-xlarge' && '450px')
-        || (this.classList === 'mat-autocomplete-panel-full-size' && '100vw'));
+      || (this.classList === 'min-width-large' && '400px')
+      || (this.classList === 'min-width-xlarge' && '450px')
+      || (this.classList === 'mat-autocomplete-panel-full-size' && '100vw'));
 
     // No suggestFn: filter on the given items
     if (!this.suggestFn) {
@@ -318,7 +318,7 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
           takeWhile((_) => !this.searchable), // Close subscription, when enabling search (no more mat-select)
           switchMap((filter) => this.suggest('*', filter) )
         )
-        .subscribe(items => this.$inputItems.next(items))
+          .subscribe(items => this.$inputItems.next(items))
       );
     }
 
@@ -341,36 +341,36 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
 
     const updateFilteredItemsEvents$ = merge(
       merge(
-          // Focus or click => Load all
-          merge(this.onFocus, this.onClick)
+        // Focus or click => Load all
+        merge(this.onFocus, this.onClick)
           .pipe(
             filter(_ => this.searchable && this.enabled),
             map((_) => this.showAllOnFocus ? '*' : this.formControl.value)
           ),
-          this.onDropButtonClick
-            .pipe(
-              filter(event => (!event || !event.defaultPrevented) && this.formControl.enabled),
-              map((_) =>  this.showAllOnFocus ? '*' : this.formControl.value)
-            ),
-          this.formControl.valueChanges
-            .pipe(
-              startWith<any, any>(this.formControl.value),
-              // Compute display value
-              tap(value => {
-                const displayValue = this.displayWith(value) || '';
-                if (this.displayValue !== displayValue) {
-                  this.displayValue = displayValue;
-                  this.cd.markForCheck();
-                }
-              }),
-              filter(value => isNotNil(value)),
-              //tap((value) => console.debug(this.logPrefix + " valueChanges:", value)),
-              debounceTime(this.debounceTime)
-            ),
-          merge(this.$inputItems, this._$filter)
-            .pipe(
-              map(_ => this.formControl.value)
-            ),
+        this.onDropButtonClick
+          .pipe(
+            filter(event => (!event || !event.defaultPrevented) && this.formControl.enabled),
+            map((_) =>  this.showAllOnFocus ? '*' : this.formControl.value)
+          ),
+        this.formControl.valueChanges
+          .pipe(
+            startWith<any, any>(this.formControl.value),
+            // Compute display value
+            tap(value => {
+              const displayValue = this.displayWith(value) || '';
+              if (this.displayValue !== displayValue) {
+                this.displayValue = displayValue;
+                this.cd.markForCheck();
+              }
+            }),
+            filter(value => isNotNil(value)),
+            //tap((value) => console.debug(this.logPrefix + " valueChanges:", value)),
+            debounceTime(this.debounceTime)
+          ),
+        merge(this.$inputItems, this._$filter)
+          .pipe(
+            map(_ => this.formControl.value)
+          ),
       ).pipe(distinctUntilChanged()),
 
       // Not distinguish changes
@@ -383,35 +383,35 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
         switchMap(value => this.suggest(value, this.filter)),
         // Store implicit value (will use it onBlur if not other value selected)
         tap(value => this.updateImplicitValue(value))
-    );
+      );
 
     // Applying implicit value, on blur
     this._subscription.add(
       this.onBlur
-       .pipe(
-         // Skip if no implicit value, or has already a value
-         filter(_ => this.searchable),
-         map(_ => this.formControl.value)
-       )
-       .subscribe( value => {
-         // When leave component without object, use implicit value if :
-         // - an explicit value
-         // - field is not empty (user fill something)
-         // - OR field empty but is required
-         if (this._implicitValue && ((this.required && isNilOrBlank(value)) || (isNotNilOrBlank(value) && typeof value !== "object"))) {
-           this.writeValue(this._implicitValue);
-           this.formControl.markAsPending({emitEvent: false, onlySelf: true});
-           this.formControl.updateValueAndValidity({emitEvent: false, onlySelf: true});
-           this.checkIfTouched();
-         }
-         else if (isNilOrBlank(value)) {
-           this.writeValue(null);
-           this.formControl.markAsPending({emitEvent: false, onlySelf: true});
-           this.formControl.updateValueAndValidity({emitEvent: false, onlySelf: true});
-           this.checkIfTouched();
-         }
-         this._implicitValue = null; // reset the implicit value
-       }));
+        .pipe(
+          // Skip if no implicit value, or has already a value
+          filter(_ => this.searchable),
+          map(_ => this.formControl.value)
+        )
+        .subscribe( value => {
+          // When leave component without object, use implicit value if :
+          // - an explicit value
+          // - field is not empty (user fill something)
+          // - OR field empty but is required
+          if (this._implicitValue && ((this.required && isNilOrBlank(value)) || (isNotNilOrBlank(value) && typeof value !== "object"))) {
+            this.writeValue(this._implicitValue);
+            this.formControl.markAsPending({emitEvent: false, onlySelf: true});
+            this.formControl.updateValueAndValidity({emitEvent: false, onlySelf: true});
+            this.checkIfTouched();
+          }
+          else if (isNilOrBlank(value)) {
+            this.writeValue(null);
+            this.formControl.markAsPending({emitEvent: false, onlySelf: true});
+            this.formControl.updateValueAndValidity({emitEvent: false, onlySelf: true});
+            this.checkIfTouched();
+          }
+          this._implicitValue = null; // reset the implicit value
+        }));
   }
 
   ngOnDestroy(): void {

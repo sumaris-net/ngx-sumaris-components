@@ -1,15 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  HostListener,
-  Inject,
-  InjectionToken,
-  Input,
-  OnInit,
-  Optional,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, InjectionToken, Input, OnInit, Optional, ViewChild} from '@angular/core';
 import {AlertController, IonSplitPane, MenuController, ModalController} from "@ionic/angular";
 
 import {Router} from "@angular/router";
@@ -29,6 +18,7 @@ import {HammerSwipeEvent} from "../../shared/gesture/hammer.utils";
 import {PlatformService} from "../services/platform.service";
 import {IconRef} from "../../shared/types";
 import {ENVIRONMENT} from "../../../environments/environment.class";
+import {MenuService} from "./menu.service";
 
 export interface MenuItem extends IconRef {
   title: string;
@@ -56,7 +46,7 @@ export class MenuItems {
                           isLogin?: boolean;
                           debug?: boolean;
                           logPrefix?: string;
-                  }): boolean {
+                        }): boolean {
     opts = opts || {};
     if (item.profile) {
       const hasProfile = accountService.isLogin() && accountService.hasMinProfile(item.profile);
@@ -97,7 +87,8 @@ const SPLIT_PANE_SHOW_WHEN = 'lg';
   selector: 'app-menu',
   templateUrl: 'menu.component.html',
   styleUrls: ['./menu.component.scss'],
-  animations: [fadeInAnimation]
+  animations: [fadeInAnimation],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenuComponent implements OnInit {
 
@@ -137,6 +128,7 @@ export class MenuComponent implements OnInit {
     protected translate: TranslateService,
     protected configService: ConfigService,
     protected cd: ChangeDetectorRef,
+    protected menuService: MenuService,
     @Inject(ENVIRONMENT) protected environment,
     @Optional() @Inject(APP_MENU_ITEMS) public items: MenuItem[]
   ) {
@@ -161,6 +153,10 @@ export class MenuComponent implements OnInit {
 
     this.splitPaneOpened = true;
 
+    // Listen to menu service event
+    this.menuService.menuToggled$
+      .subscribe(() => this.toggleSplitPane());
+
     // Update component when refresh is need (=login events or config changed)
     this._subscription.add(
       merge(
@@ -170,7 +166,7 @@ export class MenuComponent implements OnInit {
           .pipe(
             tap(config => this._config = config)
           )
-        )
+      )
         .pipe(
           // Wait account service ready (can be restarted)
           mergeMap(() => this.accountService.ready()),
@@ -196,7 +192,7 @@ export class MenuComponent implements OnInit {
 
     setTimeout(() => {
       this.loading = false;
-      this.markForCheck();
+      this.detectChanges();
     }, 500);
   }
 
@@ -216,8 +212,8 @@ export class MenuComponent implements OnInit {
     }
 
     //setTimeout(() => {
-      this.loading = false;
-      this.markForCheck();
+    this.loading = false;
+    this.detectChanges();
     //}, 1000);
 
   }
@@ -265,15 +261,19 @@ export class MenuComponent implements OnInit {
     return modal.present();
   }
 
-  toggleSplitPane($event: MouseEvent) {
-    if ($event.defaultPrevented) return;
+  toggleSplitPane(event?: MouseEvent) {
+    if (event && event.defaultPrevented) return;
+    if (event) event.preventDefault();
+
     this.splitPaneOpened = !this.splitPaneOpened;
     if (!this.splitPaneOpened) {
       this.splitPane.when = false;
     } else {
       this.splitPane.when = SPLIT_PANE_SHOW_WHEN;
     }
-    $event.preventDefault();
+    this.menuService.menuVisible(this.splitPaneOpened);
+
+    this.detectChanges();
   }
 
   async doAction(action: string, event: UIEvent) {
@@ -335,8 +335,8 @@ export class MenuComponent implements OnInit {
     this.$filteredItems.next(filteredItems);
   }
 
-  protected markForCheck() {
-    this.cd.markForCheck();
+  protected detectChanges() {
+    this.cd.detectChanges();
   }
 }
 

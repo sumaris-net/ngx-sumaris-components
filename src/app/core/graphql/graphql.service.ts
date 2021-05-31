@@ -89,6 +89,7 @@ export class GraphqlService {
   } = {};
   private readonly _defaultFetchPolicy: WatchQueryFetchPolicy;
   private onNetworkError = new Subject();
+  private customErrors: {code: number; message: string}[] = [];
 
   public onStart = new Subject<void>();
 
@@ -301,18 +302,18 @@ export class GraphqlService {
     }
 
     const res = await this.apollo.mutate<ApolloQueryResult<T>, V>({
-        mutation: opts.mutation,
-        variables: opts.variables,
-        context: opts.context,
-        optimisticResponse: opts.optimisticResponse as any,
-        update: opts.update as any
-      })
-        .pipe(
-          catchError(error => this.onApolloError<T>(error, opts.error)),
-          first(),
-          // To debug, if need:
-          //tap((res) => (!res) && console.error('[graphql] Unknown error during mutation. Check errors in console (may be an invalid generated cache id ?)'))
-        ).toPromise();
+      mutation: opts.mutation,
+      variables: opts.variables,
+      context: opts.context,
+      optimisticResponse: opts.optimisticResponse as any,
+      update: opts.update as any
+    })
+      .pipe(
+        catchError(error => this.onApolloError<T>(error, opts.error)),
+        first(),
+        // To debug, if need:
+        //tap((res) => (!res) && console.error('[graphql] Unknown error during mutation. Check errors in console (may be an invalid generated cache id ?)'))
+      ).toPromise();
     if (res.errors instanceof Array) {
       throw res.errors[0];
     }
@@ -343,13 +344,13 @@ export class GraphqlService {
   }
 
   insertIntoQueryCache<T, V = EmptyObject>(cache: ApolloCache<any>,
-                                 opts: Cache.ReadQueryOptions<V, any> & {
-                                   arrayFieldName: string;
-                                   totalFieldName?: string;
-                                   data: T;
-                                   sortFn?: (d1: T, d2: T) => number;
-                                   size?: number;
-                                 }) {
+                                           opts: Cache.ReadQueryOptions<V, any> & {
+                                             arrayFieldName: string;
+                                             totalFieldName?: string;
+                                             data: T;
+                                             sortFn?: (d1: T, d2: T) => number;
+                                             size?: number;
+                                           }) {
 
     cache = cache || this.apollo.client.cache;
     opts.arrayFieldName = opts.arrayFieldName || 'data';
@@ -402,13 +403,13 @@ export class GraphqlService {
   }
 
   addManyToQueryCache<T = any, V = EmptyObject>(cache: ApolloCache<any>,
-                             opts: Cache.ReadQueryOptions<V, any> & {
-                               arrayFieldName: string;
-                               totalFieldName?: string;
-                               data: T[];
-                               equalsFn?: (d1: T, d2: T) => boolean;
-                               sortFn?: (d1: T, d2: T) => number;
-                             }) {
+                                                opts: Cache.ReadQueryOptions<V, any> & {
+                                                  arrayFieldName: string;
+                                                  totalFieldName?: string;
+                                                  data: T[];
+                                                  equalsFn?: (d1: T, d2: T) => boolean;
+                                                  sortFn?: (d1: T, d2: T) => number;
+                                                }) {
 
     if (!opts.data || !opts.data.length) return; // nothing to process
 
@@ -475,11 +476,11 @@ export class GraphqlService {
    * @param opts
    */
   removeFromCachedQueryById<V = EmptyObject, ID = number>(cache: ApolloCache<any>,
-                                   opts: Cache.ReadQueryOptions<V, any> & {
-                                     arrayFieldName: string;
-                                     totalFieldName?: string;
-                                     ids: ID; // Do NOT use 'id', as already used by the Apollo API
-                                   }): boolean {
+                                                          opts: Cache.ReadQueryOptions<V, any> & {
+                                                            arrayFieldName: string;
+                                                            totalFieldName?: string;
+                                                            ids: ID; // Do NOT use 'id', as already used by the Apollo API
+                                                          }): boolean {
 
     cache = cache || this.apollo.client.cache;
     opts.arrayFieldName = opts.arrayFieldName || 'data';
@@ -535,11 +536,11 @@ export class GraphqlService {
    * @param opts
    */
   removeFromCachedQueryByIds<V = EmptyObject, ID = number>(cache: ApolloCache<any>,
-                                    opts: Cache.ReadQueryOptions<V, any> & {
-                                      arrayFieldName: string;
-                                      totalFieldName?: string;
-                                      ids: ID[]
-                                    }): number {
+                                                           opts: Cache.ReadQueryOptions<V, any> & {
+                                                             arrayFieldName: string;
+                                                             totalFieldName?: string;
+                                                             ids: ID[]
+                                                           }): number {
 
     cache = cache || this.apollo.client.cache;
     opts.arrayFieldName = opts.arrayFieldName || 'data';
@@ -612,12 +613,12 @@ export class GraphqlService {
 
   updateToQueryCache<T extends IEntity<any>,
     V = EmptyObject>(cache: ApolloCache<any>,
-                      opts: Cache.ReadQueryOptions<V, any> & {
-                        arrayFieldName: string;
-                        totalFieldName?: string;
-                        data: T,
-                        equalsFn?: (d1: T, d2: T) => boolean
-                      }) {
+                     opts: Cache.ReadQueryOptions<V, any> & {
+                       arrayFieldName: string;
+                       totalFieldName?: string;
+                       data: T,
+                       equalsFn?: (d1: T, d2: T) => boolean
+                     }) {
     cache = cache || this.apollo.client.cache;
     opts.arrayFieldName = opts.arrayFieldName || 'data';
 
@@ -673,6 +674,10 @@ export class GraphqlService {
     }
   }
 
+  registerCustomError(error: {code: number; message: string}) {
+    this.customErrors.push(error);
+  }
+
   /* -- protected methods -- */
 
   protected async initApollo() {
@@ -725,8 +730,8 @@ export class GraphqlService {
         }
         const headers = new HttpHeaders()
           .append('Authorization', authorization);
-          //.append('X-App-Name', environment.name)
-          //.append('X-App-Version', environment.version)
+        //.append('X-App-Name', environment.name)
+        //.append('X-App-Version', environment.version)
         ;
 
 
@@ -885,9 +890,9 @@ export class GraphqlService {
     let error =
       // If network error: try to convert to App (read as JSON), or create an UNKNOWN_NETWORK_ERROR
       (err.networkError && (
-        (err.networkError.error && this.toAppError(err.networkError.error))
-        || this.toAppError(err.networkError)
-        || this.createAppErrorByCode(ErrorCodes.UNKNOWN_NETWORK_ERROR)
+          (err.networkError.error && this.toAppError(err.networkError.error))
+          || this.toAppError(err.networkError)
+          || this.createAppErrorByCode(ErrorCodes.UNKNOWN_NETWORK_ERROR)
         )
       )
       // If graphQL: try to convert the first error found
@@ -924,6 +929,14 @@ export class GraphqlService {
   }
 
   private getI18nErrorMessageByCode(errorCode: number): string | undefined {
+
+    // look in registered error codes
+    const customError = this.customErrors.find(error => error.code === errorCode);
+    if (customError) {
+      return customError.message;
+    }
+
+    // Default, switch on error code
     switch (errorCode) {
       case ServerErrorCodes.UNAUTHORIZED:
         return "ERROR.UNAUTHORIZED";

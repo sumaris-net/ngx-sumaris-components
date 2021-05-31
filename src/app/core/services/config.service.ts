@@ -17,6 +17,7 @@ import {filter} from "rxjs/operators";
 import {EntityServiceLoadOptions, IEntityService} from "../../shared/services/entity-service.class";
 import {ENVIRONMENT} from "../../../environments/environment.class";
 import {BaseGraphqlService} from "./base-graphql-service.class";
+import {UserProfileLabels} from "./model/person.model";
 
 
 const CONFIGURATION_STORAGE_KEY = "configuration";
@@ -130,9 +131,7 @@ export class ConfigService
     this._optionDefs = Object.values({...CORE_CONFIG_OPTIONS, ...defaultOptionsMap});
 
     // Restart if graphql service restart
-    this._subscription.add(
-      this.graphql.onStart.subscribe(() => this.restart()));
-
+    this.graphql.onStart.subscribe(() => this.restart());
 
     // Start
     if (this.graphql.started) {
@@ -146,11 +145,16 @@ export class ConfigService
 
     console.info("[config] Starting configuration...");
 
+    // Update model enum, when data loaded
+    this._subscription.add(
+      this.$data.subscribe(config => this.updateModelEnumerations(config)));
+
     this._startPromise = this.graphql.ready()
       .then(() => this.loadOrRestoreLocally())
       .then(() => {
         this._started = true;
         this._startPromise = undefined;
+
       })
       .catch((err) => {
         console.error(err && err.message || err, err);
@@ -440,6 +444,20 @@ export class ConfigService
         if (this._debug) console.debug(`[config] Saving config into local storage [OK] in ${Date.now() - now}ms`);
       }
     }
+  }
+
+
+  private updateModelEnumerations(config: Configuration) {
+    if (!config.properties) {
+      console.warn("[config] No properties found in pod config! Skip model enumerations update");
+      return;
+    }
+    console.info("[config] Updating model enumerations...");
+
+    // User profiles
+    UserProfileLabels.ADMIN = config.getProperty(CORE_CONFIG_OPTIONS.PROFILE_ADMIN_LABEL);
+    UserProfileLabels.SUPERVISOR = config.getProperty(CORE_CONFIG_OPTIONS.PROFILE_SUPERVISOR_LABEL);
+    UserProfileLabels.USER = config.getProperty(CORE_CONFIG_OPTIONS.PROFILE_USER_LABEL);
   }
 
   protected async showToast(opts: ShowToastOptions) {
