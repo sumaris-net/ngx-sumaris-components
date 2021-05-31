@@ -39,4 +39,8 @@ export class Environment {
 
   // Storage
   storage?: Partial<StorageConfig>;
+
+  // About
+  sourceUrl?: string;
+  reportIssueUrl?: string;
 }

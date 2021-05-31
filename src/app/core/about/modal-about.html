@@ -30,27 +30,27 @@
     </ion-item>
 
     <!-- Report issue -->
-    <ion-item>
+    <ion-item *ngIf="reportIssueUrl">
       <ion-icon slot="start" name="bug" color="dark"></ion-icon>
       <ion-label>
         <p>
           {{'ABOUT.REPORT_ISSUE'|translate}}
         </p>
         <p>
-          <a color="primary" href="https://github.com/sumaris-net/sumaris-app/issues" target="_system" translate>ABOUT.BTN_REPORT_ISSUE</a>
+          <a color="primary" href="{{reportIssueUrl}}" target="_system" translate>ABOUT.BTN_REPORT_ISSUE</a>
         </p>
       </ion-label>
     </ion-item>
 
     <!-- Source code -->
-    <ion-item>
+    <ion-item *ngIf="sourceUrl">
       <ion-icon slot="start" name="code" color="dark"></ion-icon>
       <ion-label>
         <p>
           {{'ABOUT.SOURCE_CODE'|translate}}
         </p>
         <p>
-          <a color="primary" href="https://github.com/sumaris-net/sumaris-app" target="_system">https://github.com/sumaris-net/sumaris-app</a>
+          <a color="primary" href="{{sourceUrl}}" target="_system">{{sourceUrl}}</a>
         </p>
       </ion-label>
     </ion-item>
@@ -67,36 +67,18 @@
         </p>
       </ion-label>
       <a float-end href="https://www.e-is.pro" target="_system">
-        <img  src="assets/img/logo/logo-eis_50px.png">
+        <img src="assets/img/logo/logo-eis_50px.png">
       </a>
     </ion-item>
 
     <!-- Partners -->
-    <ion-item class="item-partners">
+    <ion-item class="item-partners" *ngIf="partners | isNotEmptyArray">
       <ion-icon slot="start" name="megaphone" color="dark"></ion-icon>
       <ion-label>
         <p>{{'ABOUT.PARTNERS'|translate}}</p>
         <p>
-          <a href="https://www.interreg2seas.eu" target="_system">
-            <img src="assets/img/logo/logo-interreg2seas.png">
-          </a>
-          <a href="https://www.fromnord.fr" target="_system">
-            <img src="assets/img/logo/logo-fromnord_50px.png">
-          </a>
-          <a href="https://www.rederscentrale.be" target="_system">
-            <img src="assets/img/logo/logo-redercentrale.png">
-          </a>
-          <a href="https://www.ifremer.fr" target="_system">
-            <img src="assets/img/logo/logo-ifremer.png">
-          </a>
-          <a href="https://www.ilvo.vlaanderen.be/" target="_system">
-            <img src="assets/img/logo/logo-ilvo-text.png">
-          </a>
-          <a href="https://www.nausicaa.fr" target="_system">
-            <img src="assets/img/logo/logo-nausicaa.png">
-          </a>
-          <a href="https://www.pecheursdebretagne.eu" target="_system">
-            <img src="assets/img/logo/logo-lpdb.png">
+          <a *ngFor="let item of partners" href="{{item.siteUrl}}" target="_system">
+            <img src="{{item.logo}}">
           </a>
         </p>
       </ion-label>

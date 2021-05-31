@@ -41,6 +41,8 @@ import {APP_GRAPHQL_TYPE_POLICIES} from "./core/graphql/graphql.service";
 import {SocialModule} from "./social/social.module";
 import {DATE_ISO_PATTERN} from "./shared/constants";
 import {JDENTICON_CONFIG} from "ngx-jdenticon";
+import {APP_ABOUT_PARTNERS} from "./core/about/modal-about";
+import {Department} from "./core/services/model/department.model";
 
 
 @NgModule({
@@ -189,6 +191,13 @@ import {JDENTICON_CONFIG} from "ngx-jdenticon";
 
     // Entities storage options
     { provide: APP_LOCAL_STORAGE_TYPE_POLICIES, useValue: {} },
+
+    // About partners
+    { provide: APP_ABOUT_PARTNERS, useValue: <Partial<Department>[]>[
+        { siteUrl: 'https://www.sumaris.net', logo: 'assets/img/logo/logo-sumaris.png' },
+        { siteUrl: 'https://www.e-is.pro', logo: 'assets/img/logo/logo-eis_50px.png' }
+      ]
+    },
 
     // Testing pages
     { provide: APP_TESTING_PAGES, useValue: {}},
