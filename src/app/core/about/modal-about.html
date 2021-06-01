@@ -56,7 +56,7 @@
     </ion-item>
 
     <!-- Developers -->
-    <ion-item>
+    <ion-item *ngIf="developers | isNotEmptyArray">
       <ion-icon slot="start" name="people" color="dark"></ion-icon>
       <ion-label>
         <p>
