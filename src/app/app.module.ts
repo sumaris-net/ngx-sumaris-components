@@ -41,8 +41,9 @@ import {APP_GRAPHQL_TYPE_POLICIES} from "./core/graphql/graphql.service";
 import {SocialModule} from "./social/social.module";
 import {DATE_ISO_PATTERN} from "./shared/constants";
 import {JDENTICON_CONFIG} from "ngx-jdenticon";
-import {APP_ABOUT_PARTNERS} from "./core/about/modal-about";
+import {APP_ABOUT_DEVELOPERS, APP_ABOUT_PARTNERS} from "./core/about/modal-about";
 import {Department} from "./core/services/model/department.model";
+import {Person} from "./core/services/model/person.model";
 
 
 @NgModule({
@@ -191,6 +192,12 @@ import {Department} from "./core/services/model/department.model";
 
     // Entities storage options
     { provide: APP_LOCAL_STORAGE_TYPE_POLICIES, useValue: {} },
+
+    // About developers
+    { provide: APP_ABOUT_DEVELOPERS, useValue: <Partial<Department>[]>[
+        { siteUrl: 'https://www.e-is.pro', logo: 'assets/img/logo/logo-eis_50px.png', label: 'Environmental Information Systems' }
+      ]
+    },
 
     // About partners
     { provide: APP_ABOUT_PARTNERS, useValue: <Partial<Department>[]>[

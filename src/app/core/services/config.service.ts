@@ -147,14 +147,15 @@ export class ConfigService
 
     // Update model enum, when data loaded
     this._subscription.add(
-      this.$data.subscribe(config => this.updateModelEnumerations(config)));
+      this.$data
+        .pipe(filter(isNotNil))
+        .subscribe(config => this.updateModelEnumerations(config)));
 
     this._startPromise = this.graphql.ready()
       .then(() => this.loadOrRestoreLocally())
       .then(() => {
         this._started = true;
         this._startPromise = undefined;
-
       })
       .catch((err) => {
         console.error(err && err.message || err, err);

@@ -237,6 +237,7 @@
   },
   "ABOUT": {
     "TITLE": "About",
+    "POWERED_BY": "Powered by",
     "VERSION": "<b>v{{version}}</b>",
     "LICENSE": "<b>Free/libre software</b> (License GNU AGPL v3).",
     "REPORT_ISSUE": "Please report any issue to us!",

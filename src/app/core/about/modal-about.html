@@ -15,14 +15,14 @@
 
 <ion-content class="ion-padding">
 
-  <ion-list no-line>
+  <ion-list lines="none">
 
     <!-- Version info -->
     <ion-item>
       <span slot="start">&nbsp;</span>
       <ion-label class="ion-text-wrap">
         <h2>
-          {{'APP_NAME'|translate}}
+          <small>{{'ABOUT.POWERED_BY'|translate}}</small> {{'APP_NAME'|translate}}
           <span [innerHTML]="'ABOUT.VERSION'| translate: {version: appVersion}"></span>
         </h2>
         <p [innerHTML]="'ABOUT.LICENSE'| translate"></p>
@@ -62,13 +62,18 @@
         <p>
           {{'ABOUT.DEVELOPED_BY'|translate}}
         </p>
-        <p>
-          <a color="primary" href="https://www.e-is.pro" target="_system">Environment Information Systems</a> - contact (at) e-is.pro
-        </p>
+        <ion-list lines="none">
+          <ion-item *ngFor="let item of developers"
+                    class="ion-no-padding">
+            <img slot="end" src="{{item.logo}}">
+            <ion-label>
+              <p>
+                <a color="primary" href="{{item.siteUrl}}" target="_system">{{item.name||item.label}}</a>
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
       </ion-label>
-      <a float-end href="https://www.e-is.pro" target="_system">
-        <img src="assets/img/logo/logo-eis_50px.png">
-      </a>
     </ion-item>
 
     <!-- Partners -->
