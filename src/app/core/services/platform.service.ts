@@ -50,8 +50,6 @@ export class PlatformService {
     private toastController: ToastController,
     private translate: TranslateService,
     private dateAdapter: MomentDateAdapter,
-    private statusBar: StatusBar,
-    private keyboard: Keyboard,
     private entitiesStorage: EntitiesStorage,
     private settings: LocalSettingsService,
     private networkService: NetworkService,
@@ -61,6 +59,8 @@ export class PlatformService {
     private storage: Storage,
     private audioProvider: AudioProvider,
     @Inject(ENVIRONMENT) protected environment,
+    @Optional() private statusBar: StatusBar,
+    @Optional() private keyboard: Keyboard,
     @Optional() private splashScreen: SplashScreen,
     @Optional() private browser: InAppBrowser
   ) {
@@ -187,9 +187,13 @@ export class PlatformService {
   protected configureCordovaPlugins(mobile: boolean) {
     console.info("[platform] Configuring Cordova plugins...");
 
-    this.statusBar.styleDefault();
-    this.statusBar.overlaysWebView(false);
-    this.keyboard.hideFormAccessoryBar(true);
+    if (this.statusBar) {
+      this.statusBar.styleDefault();
+      this.statusBar.overlaysWebView(false);
+    }
+    if (this.keyboard) {
+      this.keyboard.hideFormAccessoryBar(true);
+    }
 
     // Force to use InAppBrowser instead of default window.open()
     if (this.browser) {

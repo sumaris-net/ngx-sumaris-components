@@ -1,9 +1,0 @@
-@import '~leaflet/dist/leaflet.css';
-
-// Allow to use zIndex on a TileLayer, to use it as a front layer (e.g. extraction map)
-.leaflet-reset-pane-z-index {
-  .leaflet-pane,
-  .leaflet-tile-pane {
-    z-index: unset !important;
-  }
-}
