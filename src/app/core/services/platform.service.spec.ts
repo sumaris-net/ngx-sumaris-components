@@ -1,17 +1,16 @@
 import {TestBed} from '@angular/core/testing';
 import {TranslateModule} from "@ngx-translate/core";
-import {IonicStorageModule} from "@ionic/storage";
 import {ModalController, Platform} from "@ionic/angular";
 import {HttpClientModule} from "@angular/common/http";
 import {SplashScreen} from "@ionic-native/splash-screen";
-import {Network} from "@ionic-native/network";
+import {Network} from "@ionic-native/network/ngx";
 import {CacheModule} from "ionic-cache";
 import {of} from "rxjs";
 import {PlatformService} from "./platform.service";
 import {NetworkService} from "./network.service";
 import {AudioProvider} from "../../shared/audio/audio";
 import {StatusBar} from "@ionic-native/status-bar/ngx";
-import {Keyboard} from "@ionic-native/keyboard";
+import {Keyboard} from "@ionic-native/keyboard/ngx";
 import {PlatformModule} from "@angular/cdk/platform";
 
 describe('PlatformService', () => {

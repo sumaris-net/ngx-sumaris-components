@@ -8,7 +8,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Optional,
+  Optional, Provider,
   QueryList,
   ViewChild,
   ViewChildren
@@ -37,7 +37,7 @@ import {MatDatepicker, MatDatepickerInputEvent} from "@angular/material/datepick
 import {isNil, isNilOrBlank, sleep, toBoolean} from "../../functions";
 import {fromDateISOString, toDateISOString} from "../../dates";
 
-export const DEFAULT_VALUE_ACCESSOR: any = {
+const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatDateTime),
   multi: true

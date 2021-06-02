@@ -1,5 +1,5 @@
 // Import the core angular services.
-import {AfterContentInit, Directive, ElementRef, OnChanges, OnDestroy, SimpleChanges} from "@angular/core";
+import {AfterContentInit, Directive, ElementRef, OnChanges, OnDestroy, Optional, SimpleChanges} from "@angular/core";
 import {Platform} from "@ionic/angular";
 import {Keyboard} from "@ionic-native/keyboard/ngx";
 import Timeout = NodeJS.Timeout;
@@ -26,7 +26,10 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
   private touchUi: boolean;
 
   // I initialize the autofocus directive.
-  constructor( elementRef: ElementRef, platform: Platform, protected keyboard: Keyboard ) {
+  constructor(
+    elementRef: ElementRef,
+    platform: Platform,
+    @Optional() protected keyboard: Keyboard ) {
 
     this.elementRef = elementRef;
 
@@ -106,7 +109,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
   private startFocusWorkflow() {
 
     // if touch UI: do NOT focus when keyboard hide
-    if (this.touchUi && this.keyboard.isVisible === false) return;
+    if (this.touchUi && this.keyboard && this.keyboard.isVisible === false) return;
 
     // If there is already a timer running for this element, just let it play out -
     // resetting it at this point will only push-out the time at which the focus is

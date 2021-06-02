@@ -16,6 +16,9 @@ export * from './src/app/shared/material/chips/material.chips';
 export * from './src/app/shared/material/material.animations';
 export * from './src/app/shared/material/paginator/material.paginator-i18n';
 export * from './src/app/shared/material/stepper/material.stepper-i18n';
+export {MatDateShort} from './src/app/shared/material/datetime/material.dateshort';
+export {MatDateTime} from './src/app/shared/material/datetime/material.datetime';
+export {MatDate} from './src/app/shared/material/datetime/material.date';
 
 // Shared components
 export * from './src/app/shared/inputs';
@@ -83,7 +86,8 @@ export * from './src/app/core/services/model/person.model';
 export { IReferentialRef, ReferentialRef,
   BaseReferential, Referential,
   ReferentialAsObjectOptions,
-  referentialToString, referentialsToString } from './src/app/core/services/model/referential.model';
+  referentialToString, referentialsToString,
+  StatusValue, DefaultStatusList } from './src/app/core/services/model/referential.model';
 export * from './src/app/core/services/model/settings.model';
 
 // GraphQL
@@ -105,6 +109,7 @@ export {CORE_CONFIG_OPTIONS} from './src/app/core/services/config/core.config';
 export * from './src/app/core/services/local-settings.service';
 export * from './src/app/core/services/account.service';
 export * from './src/app/core/services/crypto.service';
+export * from './src/app/core/services/auth-guard.service';
 export * from './src/app/core/services/base58';
 export * from './src/app/core/services/base-graphql-service.class';
 export * from './src/app/core/services/storage/entities-storage.service';
@@ -112,31 +117,33 @@ export * from './src/app/core/services/validator/base.validator.class';
 
 // Core components
 export * from './src/app/core/form/editor.class';
+export * from './src/app/core/form/entity-editor.class';
 export * from './src/app/core/form/form.class';
 export * from './src/app/core/form/form.utils';
 export * from './src/app/core/form/form-buttons-bar.component';
 export * from './src/app/core/form/list.form';
 export * from './src/app/core/form/properties.form';
-export * from './src/app/core/form/tab-editor.class';
 export * from './src/app/core/table/table.class';
 export * from './src/app/core/table/table.utils';
 export * from './src/app/core/table/memory-table.class';
 export * from './src/app/core/table/entities-table-datasource.class';
 export * from './src/app/core/table/table-select-columns.component';
 export * from './src/app/core/home/home';
+export * from './src/app/core/settings/settings.page';
+export * from './src/app/core/account/account';
 export * from './src/app/core/menu/menu.component';
 export * from './src/app/core/menu/menu.service';
 export * from './src/app/core/about/modal-about';
 export * from './src/app/core/peer/select-peer.modal';
+
+// Core decorator
+export {EntityClass} from "./src/app/core/services/model/entity.decorators";
 
 // Social
 export * from './src/app/social/social.module';
 export * from './src/app/social/services/model/user-event.model';
 export * from './src/app/social/services/user-event.service';
 export * from './src/app/social/list/user-events.table';
-
-// Decorator
-export {EntityClass} from "./src/app/core/services/model/entity.decorators";
 
 // Admin
 export * from './src/app/admin/admin.module';
@@ -146,3 +153,4 @@ export * from './src/app/admin/services/validator/person.validator';
 export * from './src/app/admin/services/errors';
 export * from './src/app/admin/services/person.service';
 export * from './src/app/admin/users/list/users';
+

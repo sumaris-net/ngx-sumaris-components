@@ -306,7 +306,8 @@
     "SETTINGS": {
       "TITLE": "Préférences",
       "DESCRIPTION": "Les préférences ci-dessous serviront dans les courriers électroniques et rapports que vous recevrez.",
-      "LOCALE": "Langue"
+      "LOCALE": "Langue",
+      "LAT_LONG_FORMAT": "Format latitude/longitude"
     },
     "ERROR": {
       "SUBSCRIBE_ACCOUNT_ERROR": "Echec de l'abonnement distant au compte utilisateur."
@@ -317,6 +318,7 @@
     "DESCRIPTION": "Voici les paramètres de l'application :",
     "INHERIT_FROM_ACCOUNT": "Utiliser les préférences de l'utilisateur connecté",
     "LOCALE": "Langue",
+    "LAT_LONG_FORMAT": "Format latitude/longitude",
     "NETWORK_DIVIDER": "Paramètres réseau",
     "PEER_URL": "Addresse du nœud réseau",
     "BTN_CHANGE_PEER": "Voir les nœuds disponibles",

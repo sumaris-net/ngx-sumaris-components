@@ -22,10 +22,14 @@
     "paths": {
       // Force using the RxJS project's version
       "rxjs": ["node_modules/rxjs"],
-      "rxjs/*": ["node_modules/rxjs/*"]
+      "rxjs/*": ["node_modules/rxjs/*"],
+      "@angular/*": [
+        "./node_modules/@angular/*"
+      ]
     }
   },
   "angularCompilerOptions": {
+    "enableIvy": true,
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
   }

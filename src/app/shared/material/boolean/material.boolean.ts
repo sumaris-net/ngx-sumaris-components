@@ -9,7 +9,7 @@ import {
   Input,
   OnInit,
   Optional,
-  Output, QueryList,
+  Output, Provider, QueryList,
   ViewChild, ViewChildren
 } from '@angular/core';
 import {FloatLabelType} from '@angular/material/form-field';
@@ -19,6 +19,14 @@ import {isNil, isNotNil} from '../../functions';
 import {InputElement} from "../../inputs";
 import {MatRadioButton, MatRadioChange} from "@angular/material/radio";
 import {MatCheckbox, MatCheckboxChange} from "@angular/material/checkbox";
+import {MatDateShort} from "../datetime/material.dateshort";
+
+const DEFAULT_VALUE_ACCESSOR: Provider = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => MatBooleanField),
+  multi: true
+};
+
 
 const noop = () => {
 };
@@ -28,11 +36,7 @@ const noop = () => {
   templateUrl: './material.boolean.html',
   styleUrls: ['./material.boolean.scss'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: forwardRef(() => MatBooleanField),
-    }
+    DEFAULT_VALUE_ACCESSOR
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

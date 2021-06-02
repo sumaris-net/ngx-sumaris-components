@@ -123,10 +123,10 @@ export class NetworkService {
     private cryptoService: CryptoService,
     private storage: Storage,
     private settings: LocalSettingsService,
-    private network: Network,
     private cache: CacheService,
     private http: HttpClient,
     @Inject(ENVIRONMENT) protected environment,
+    @Optional() private network: Network,
     @Optional() private splashScreen: SplashScreen,
     @Optional() private translate: TranslateService,
     @Optional() private toastController: ToastController
@@ -208,14 +208,16 @@ export class NetworkService {
       // Wait settings starts, then save peer in settings
       .then(() => this.settings.ready())
       .then(() => this.settings.apply({peerUrl: this._peer.url}))
-      .then(() => this.onDeviceConnectionChanged(this.network.type))
+      .then(() => this.onDeviceConnectionChanged(this.network && this.network.type || 'unknown'))
 
       // Start the refresh timer
       .then(() => this.startRefreshTimer());
 
     // Listen for device network changes
-    this._subscription.add(this.network.onDisconnect().subscribe(() => this.onDeviceConnectionChanged('none')));
-    this._subscription.add(this.network.onConnect().subscribe(() => this.onDeviceConnectionChanged(this.network.type)));
+    if (this.network) {
+      this._subscription.add(this.network.onDisconnect().subscribe(() => this.onDeviceConnectionChanged('none')));
+      this._subscription.add(this.network.onConnect().subscribe(() => this.onDeviceConnectionChanged(this.network.type)));
+    }
 
 
     return this._startPromise;

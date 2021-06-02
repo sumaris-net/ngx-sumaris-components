@@ -5,7 +5,7 @@ import {NetworkService} from "./network.service";
 import {ModalController} from "@ionic/angular";
 import {HttpClientModule} from "@angular/common/http";
 import {SplashScreen} from "@ionic-native/splash-screen";
-import {Network} from "@ionic-native/network";
+import {Network} from "@ionic-native/network/ngx";
 import {CacheModule} from "ionic-cache";
 import {of} from "rxjs";
 

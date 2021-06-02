@@ -1,740 +1,614 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Directive,
-  EventEmitter,
-  Injector,
-  OnDestroy,
-  OnInit,
-  Optional
-} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {AlertController, ToastController} from "@ionic/angular";
-
+import {Directive, Input, OnDestroy, OnInit, Optional, ViewChild} from '@angular/core';
+import {ActivatedRoute, Params, Router} from "@angular/router";
+import {MatTabChangeEvent, MatTabGroup} from "@angular/material/tabs";
+import {AlertController, IonContent, ToastController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
-import {Subject} from 'rxjs';
-import {Moment} from "moment";
-import {AddToPageHistoryOptions, LocalSettingsService} from "../services/local-settings.service";
-import {filter} from "rxjs/operators";
-import {Entity} from "../services/model/entity.model";
-import {UsageMode} from "../services/model/settings.model";
-import {FormGroup} from "@angular/forms";
-import {AppTabEditor, AppTabEditorOptions} from "./tab-editor.class";
-import {AppFormUtils} from "./form.utils";
-import {Alerts} from "../../shared/alerts";
-import {ErrorCodes, ServerErrorCodes} from "../services/errors";
-import {isInt, isNotEmptyArray, isNumber, toNumber} from "../../shared/functions";
-import {EntityServiceLoadOptions, IEntityService} from "../../shared/services/entity-service.class";
-import {isNil, isNilOrBlank, isNotNil, toBoolean} from "../../shared/functions";
-import {DateFormatPipe} from "../../shared/pipes/date-format.pipe";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {HistoryPageReference} from "../services/model/history.model";
+import {Subscription, TeardownLogic} from 'rxjs';
+import {AppTable} from '../table/table.class';
+import {AppForm} from './form.class';
+import {FormButtonsBarToken} from './form-buttons-bar.component';
+import {AppFormHolder, AppFormUtils, IAppForm, IAppFormFactory} from "./form.utils";
+import {ShowToastOptions, Toasts} from "../../shared/toasts";
+import {HammerSwipeEvent} from "../../shared/gesture/hammer.utils";
+import {ToolbarToken} from "../../shared/toolbar/toolbar";
+import {isNotNil, toNumber} from "../../shared/functions";
+import {CanLeave} from "../../shared/guard/component-dirty.guard";
 
-export class AppEditorOptions extends AppTabEditorOptions {
-  autoLoad?: boolean;
-  autoLoadDelay?: number;
-  pathIdAttribute?: string;
-  enableListenChanges?: boolean;
-
-  /**
-   * Change page route (window URL) when saving for the first time
-   */
-  autoUpdateRoute?: boolean; // Default to true
-
-  /**
-   * Open the next tab, after saving for the first time
-   */
-  autoOpenNextTab?: boolean; // Default to true
-
-  i18nPrefix?: string;
+export interface IAppEditor
+  extends CanLeave, IAppForm {
+  save(event?: Event, options?: any): Promise<boolean>;
+  cancel(event?: Event): Promise<void>;
 }
 
-// @dynamic
+export class AppTabEditorOptions {
+
+  /**
+   * Number of tab. 1 by default
+   */
+  tabCount?: number;
+
+  /**
+   * '200ms' by default
+   */
+  tabGroupAnimationDuration?: string;
+
+  /**
+   * Should enable swipe between tab, on touch screen
+   */
+  enableSwipe?: boolean; // true by default
+}
+
 @Directive()
 // tslint:disable-next-line:directive-class-suffix
-export abstract class AppEntityEditor<
-  T extends Entity<T, ID>,
-  S extends IEntityService<T, ID> = IEntityService<T, any>,
-  ID = number
-  >
-  extends AppTabEditor<T, ID, EntityServiceLoadOptions>
-  implements OnInit, OnDestroy, AfterViewInit {
+export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAppEditor, OnInit, OnDestroy {
 
-  private _usageMode: UsageMode;
-  private readonly _enableListenChanges: boolean;
-  private readonly _pathIdAttribute: string;
-  private readonly _autoLoad: boolean;
-  private readonly _autoLoadDelay: number;
-  private readonly _autoUpdateRoute: boolean;
-  private _autoOpenNextTab: boolean;
+  private _children: IAppForm[];
+  private _subscription = new Subscription();
+  protected _enabled = false;
+  protected _dirty = false;
 
-  protected dateFormat: DateFormatPipe;
-  protected cd: ChangeDetectorRef;
-  protected settings: LocalSettingsService;
+  // From options
+  tabCount: number;
+  enableSwipe: boolean;
+  tabGroupAnimationDuration: string;
 
-  data: T;
-  saving = false;
-  hasRemoteListener = false;
-  defaultBackHref: string;
-  historyIcon: {icon?: string; matIcon?: string; };
+  debug = false;
+  previousDataId: ID;
+  selectedTabIndex = 0;
 
-  $title = new Subject<string>();
-  onUpdateView = new EventEmitter<T>();
+  submitted = false;
+  error: string;
+  loading = true;
+  queryParams: Params;
+  i18nContext: {
+    prefix: string;
+    suffix: string;
+  };
 
-  get usageMode(): UsageMode {
-    return this._usageMode;
+  @Input() queryTabIndexParamName: string;
+
+  protected toastController: ToastController;
+
+  @ViewChild('tabGroup', { static: true }) tabGroup: MatTabGroup;
+
+  @ViewChild(ToolbarToken) toolbar: ToolbarToken|null = null;
+
+  @ViewChild(FormButtonsBarToken, { static: true }) formButtonsBar: FormButtonsBarToken|null = null;
+
+  @ViewChild(IonContent, {static: true}) content: IonContent;
+
+  get tables(): AppTable<any>[] {
+    return this._children && (this._children.filter(c => c instanceof AppTable) as AppTable<any>[]);
   }
 
-  set usageMode(value: UsageMode) {
-    if (this._usageMode !== value) {
-      this._usageMode = value;
-      this.markForCheck();
-    }
+  get dirty(): boolean {
+    return this._dirty || (this._children && this._children.find(c => c.dirty) && true);
   }
 
-  get isOnFieldMode(): boolean {
-    return this.settings.isOnFieldMode(this._usageMode);
+  /**
+   * Is valid (tables and forms)
+   */
+  get valid(): boolean {
+    // Important: Should be not invalid AND not pending, so use '!valid' (DO NOT use 'invalid')
+    return (!this._children || !this._children.filter(c => c.enabled).find(c => !c.valid));
   }
 
-  get isNewData(): boolean {
-    return !this.data || this.data.id === undefined || this.data.id === null;
+  get invalid(): boolean {
+    return this._children && this._children.filter(c => c.enabled).find(c => c.invalid) && true;
   }
 
-  get service(): S {
-    return this.dataService;
+  get pending(): boolean {
+    return this._children && this._children.find(c => c.pending) && true;
   }
 
-  markAsSaving(opts?: { emitEvent?: boolean; }){
-    if (!this.saving) {
-      this.saving = true;
-      if (!opts || opts.emitEvent !== false) this.markForCheck();
-    }
+  get enabled(): boolean {
+    return this._enabled;
   }
 
-  markAsSaved(opts?: { emitEvent?: boolean; }){
-    if (this.saving) {
-      this.saving = false;
-      if (!opts || opts.emitEvent !== false) this.markForCheck();
-    }
+  get disabled(): boolean {
+    return !this._enabled;
   }
+
+  get children(): IAppForm[] {
+    return this._children;
+  }
+
+  get empty(): boolean {
+    return this._enabled;
+  }
+
+  abstract get isNewData(): boolean;
 
   protected constructor(
-    injector: Injector,
-    protected dataType: new() => T,
-    protected dataService?: S,
-    @Optional() options?: AppEditorOptions
+    protected route: ActivatedRoute,
+    protected router: Router,
+    protected alertCtrl: AlertController,
+    protected translate: TranslateService,
+    @Optional() options?: AppTabEditorOptions
   ) {
-    super(injector.get(ActivatedRoute),
-      injector.get(Router),
-      injector.get(AlertController),
-      injector.get(TranslateService),
-      options);
-    options = <AppEditorOptions>{
-      // Default options
-      enableListenChanges: (injector.get(ENVIRONMENT).listenRemoteChanges === true),
-      pathIdAttribute: 'id',
-      autoLoad: true,
-      autoLoadDelay: 0,
-      autoUpdateRoute: true,
-      i18nPrefix: '',
-
-      // Following options are override inside ngOnInit()
-      // autoOpenNextTab: ...,
-
-      // Override defaults
+    options = {
+      tabCount: 1,
+      tabGroupAnimationDuration: '200ms',
+      enableSwipe: true,
       ...options
     };
-
-    this.settings = injector.get(LocalSettingsService);
-    this.cd = injector.get(ChangeDetectorRef);
-    this.dateFormat = injector.get(DateFormatPipe);
-    this.toastController = injector.get(ToastController);
-    this._enableListenChanges = options.enableListenChanges;
-    this._pathIdAttribute = options.pathIdAttribute;
-    this._autoLoad = options.autoLoad;
-    this._autoLoadDelay = options.autoLoadDelay;
-    this._autoUpdateRoute = options.autoUpdateRoute;
-    this._autoOpenNextTab = options.autoOpenNextTab;
-    this.i18nContext = {
-      prefix: options.i18nPrefix,
-      suffix: ''
-    };
-
-    // FOR DEV ONLY ----
-    //this.debug = !environment.production;
+    this.tabCount = options.tabCount;
+    this.tabGroupAnimationDuration = options.tabGroupAnimationDuration;
+    this.enableSwipe = options.enableSwipe;
   }
 
   ngOnInit() {
-    super.ngOnInit();
 
-    // Defaults
-    this._autoOpenNextTab = toBoolean(this._autoOpenNextTab, !this.isOnFieldMode);
-    this.historyIcon = this.historyIcon || {icon: 'list'};
+    this.queryTabIndexParamName = this.queryTabIndexParamName || 'tab';
 
-    // Register forms
-    this.registerForms();
+    // Read the selected tab index, from path query params
+    if (this.tabGroup) {
+      this.registerSubscription(this.route.queryParams
+        .subscribe(queryParams => {
+          this.queryParams = {...queryParams};
 
-    // Disable page, during load
-    this.disable();
-  }
+          // Parse tab param
+          if (this.tabCount > 1 && this.queryTabIndexParamName) {
+            const tabIndex = queryParams[this.queryTabIndexParamName];
+            this.queryParams[this.queryTabIndexParamName] = tabIndex && parseInt(tabIndex) || undefined;
+            if (isNotNil(this.queryParams[this.queryTabIndexParamName])) {
+              this.selectedTabIndex = this.queryParams[this.queryTabIndexParamName];
+            }
+          }
 
-  ngAfterViewInit() {
-    // Load data
-    if (this._autoLoad) {
-      setTimeout(() => this.loadFromRoute(), this._autoLoadDelay);
+          // Realign tab, after a delay because the tab can be disabled when component is created
+          setTimeout(() => this.tabGroup.realignInkBar(), 500);
+        }));
+    }
+
+    // Catch back click events
+    if (this.toolbar) {
+      this.registerSubscription(this.toolbar.onBackClick.subscribe(event => this.onBackClick(event)));
+    }
+    if (this.formButtonsBar) {
+      this.registerSubscription(this.formButtonsBar.onBack.subscribe(event => this.onBackClick(event)));
     }
   }
 
   ngOnDestroy() {
-    super.ngOnDestroy();
-
-    this.$title.complete();
-    this.$title.unsubscribe();
-    this.onUpdateView.complete();
-    this.onUpdateView.unsubscribe();
+    this._subscription.unsubscribe();
   }
 
-  /**
-   * Load data from the snapshot route
-   * @param route
-   * @protected
-   */
-  protected loadFromRoute(): Promise<void> {
-    const route = this.route.snapshot;
-    if (!route || isNilOrBlank(this._pathIdAttribute)) {
-      throw new Error("Unable to load from route: missing 'route' or 'options.pathIdAttribute'.");
+  abstract load(id?: ID, options?: O): Promise<void>;
+
+  abstract save(event?: Event, options?: any): Promise<boolean>;
+
+  abstract reload(): Promise<void>;
+
+  addChildForm(form: IAppForm | IAppFormFactory): AppTabEditor<T, ID, O> {
+    if (!form) throw new Error('Trying to register an undefined child form');
+    this._children = this._children || [];
+    if (typeof form === "function") {
+      this._children.push(new AppFormHolder(form));
     }
-    let id = route.params[this._pathIdAttribute];
-    if (isNil(id) || id === "new") {
-      return this.load(undefined, route.params);
-    } else {
-      // Convert as number, if need
-      if (isInt(id)) {
-        id = parseInt(id);
+    else {
+      this._children.push(form);
+    }
+    return this;
+  }
+
+  addChildForms(forms: (IAppForm | IAppFormFactory)[]): AppTabEditor<T, ID, O> {
+    (forms || []).forEach(form => this.addChildForm(form));
+    return this;
+  }
+
+  disable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+    this._enabled = false;
+    this._children && this._children.forEach(c => c.disable(opts));
+    if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
+  }
+
+  enable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+    this._enabled = true;
+    this._children && this._children.forEach(c => c.enable(opts));
+    if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
+  }
+
+  markAsPristine(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+    this.error = null;
+    this.submitted = false;
+    this._dirty = false;
+    this._children && this._children.forEach(c => c.markAsPristine(opts));
+    if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
+  }
+
+  markAsUntouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+    // TODO: check if need to pass opts or not ?
+    //this._children && this._children.forEach(c => c.markAsUntouched(opts));
+    this._children && this._children.forEach(c => c.markAsUntouched());
+
+    if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
+  }
+
+  markAsTouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+    this._children && this._children.forEach(c => c.markAsTouched(opts));
+    if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
+  }
+
+  markAsDirty(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){
+    this._dirty = true;
+    if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
+  }
+
+  markAsLoading(opts?: { emitEvent?: boolean; }){
+    if (!this.loading) {
+      this.loading = true;
+      if (!opts || opts.emitEvent !== false) this.markForCheck();
+    }
+  }
+
+  markAsLoaded(opts?: { emitEvent?: boolean; }){
+    if (this.loading) {
+      this.loading = false;
+      if (!opts || opts.emitEvent !== false) this.markForCheck();
+    }
+  }
+
+
+  onTabChange(event: MatTabChangeEvent, queryTabIndexParamName?: string): boolean {
+    queryTabIndexParamName = queryTabIndexParamName || this.queryTabIndexParamName;
+
+    if (!queryTabIndexParamName) return true; // Skip if tab query param not set
+
+    if (!this.queryParams || +this.queryParams[queryTabIndexParamName] !== event.index) {
+
+      this.queryParams = this.queryParams || {};
+      this.queryParams[queryTabIndexParamName] = event.index;
+
+      if (queryTabIndexParamName === 'tab' && isNotNil(this.queryParams['subtab'])) {
+        delete this.queryParams.subtab; // clean subtab
       }
-      return this.load(id, route.params);
+      this.router.navigate(['.'], {
+        relativeTo: this.route,
+        queryParams: this.queryParams,
+        replaceUrl: true
+      });
+      return true;
     }
+    return false;
   }
 
   /**
-   * Load data from id, using the dataService
-   * @param id
+   * Action triggered when user swipes
+   */
+  onSwipeTab(event: HammerSwipeEvent): boolean {
+    // DEBUG
+    // if (this.debug) console.debug("[tab-page] onSwipeTab()");
+
+    // Skip, if not a valid swipe event
+    if (!this.enableSwipe || !event
+      || event.defaultPrevented || (event.srcEvent && event.srcEvent.defaultPrevented)
+      || event.pointerType !== 'touch'
+    ) {
+      return false;
+    }
+
+    // DEBUG
+    //if (this.debug)
+    //console.debug("[tab-page] Detected swipe: " + event.type, event);
+
+    let selectTabIndex = this.selectedTabIndex;
+    switch (event.type) {
+      // Open next tab
+      case "swipeleft":
+        const isLast = selectTabIndex >= (this.tabCount - 1);
+        selectTabIndex = isLast ? 0 : selectTabIndex + 1;
+        break;
+
+
+      // Open previous tab
+      case "swiperight":
+        const isFirst = selectTabIndex <= 0;
+        selectTabIndex = isFirst ? this.tabCount : selectTabIndex - 1;
+        break;
+
+      // Other case
+      default:
+        console.error("[tab-page] Unknown swipe action: " + event.type);
+        return false;
+    }
+
+    setTimeout(() => {
+      this.selectedTabIndex = selectTabIndex;
+      this.markForCheck();
+    });
+
+    return true;
+  }
+
+  onSubTabChange(event: MatTabChangeEvent) {
+    this.onTabChange(event, 'subtab');
+  }
+
+  async cancel(event?: Event): Promise<void> {
+    if (!this.dirty) return; // Skip reload, if not need
+    await this.reloadWithConfirmation();
+  }
+
+  /**
+   * Unload the page (remove all data). Useful when reusing angular cache a cancelled page
    * @param opts
    */
-  async load(id?: ID, opts?: EntityServiceLoadOptions & {
-    emitEvent?: boolean;
-    openTabIndex?: number;
-    updateTabAndRoute?: boolean;
-    [key: string]: any;
-  }) {
-    if (!this.dataService) throw new Error("Cannot load data: missing 'dataService'!");
-
-    this.error = null;
-
-    // New data
-    if (isNil(id)) {
-
-      // Create using default values
-      const data = new this.dataType();
-      this._usageMode = this.computeUsageMode(data);
-      await this.onNewEntity(data, opts);
-      this.updateView(data, {
-        openTabIndex: 0,
-        ...opts
-      });
-      this.markAsLoaded({emitEvent: false});
-    }
-
-    // Load existing data
-    else {
-      try {
-        const data = await this.dataService.load(id, opts);
-        if (!data) throw {code: ErrorCodes.DATA_NOT_FOUND_ERROR, message: 'ERROR.DATA_NO_FOUND'};
-        this._usageMode = this.computeUsageMode(data);
-        await this.onEntityLoaded(data, opts);
-        this.updateView(data, opts);
-        this.markAsLoaded({emitEvent: false});
-        this.startListenRemoteChanges();
+  async unload(opts?: {emitEvent?: boolean; }) {
+    console.debug("[tab-page] Unloading data...");
+    this.loading = true;
+    this.selectedTabIndex = 0;
+    this._children.forEach(f => {
+      if (f instanceof AppForm) {
+        f.reset(null, opts);
       }
-      catch (err) {
-        this.setError(err);
-        this.selectedTabIndex = 0;
-        this.markAsLoaded({emitEvent: false});
+      else if (f instanceof AppTable) {
+        f.dataSource.disconnect();
       }
-    }
+    });
+    // TODO: find a way to remove current page from the navigation history
   }
 
-  startListenRemoteChanges() {
-    // Skip if disable, or already listening
-    if (this.hasRemoteListener || !this._enableListenChanges || this.isNewData) return;
+  onBackClick(event: Event) {
+    if (event.defaultPrevented) return;
 
-    // Listen for changes on server
-    this.hasRemoteListener = true;
+    // Stop the go back event, to be able to override it
+    event.preventDefault();
 
-    this.registerSubscription(
-      this.dataService.listenChanges(this.data.id)
-        .pipe(filter(isNotNil))
-        .subscribe((data: T) => {
-          if (data.updateDate && (data.updateDate as Moment).isAfter(this.data.updateDate)) {
-            if (!this.dirty) {
-              if (this.debug) console.debug(`[data-editor] Changes detected on server, at {${data.updateDate}} : reloading page...`);
-              this.updateView(data);
-            } else {
-              if (this.debug) console.debug(`[data-editor] Changes detected on server, at {${data.updateDate}}, but page is dirty: skip reloading.`);
+    setTimeout(async () => {
+      const dirty = this.dirty;
+      let confirm = !dirty;
+      let save = false;
+
+      if (dirty) {
+
+        let alert;
+        // Ask user before
+        if (this.valid) {
+          const translations = this.translate.instant(['COMMON.BTN_CANCEL', 'COMMON.BTN_SAVE', 'COMMON.BTN_ABORT_CHANGES',
+            'CONFIRM.SAVE_BEFORE_CLOSE', 'CONFIRM.ALERT_HEADER']);
+          alert = await this.alertCtrl.create({
+            header: translations['CONFIRM.ALERT_HEADER'],
+            message: translations['CONFIRM.SAVE_BEFORE_CLOSE'],
+            buttons: [
+              {
+                text: translations['COMMON.BTN_CANCEL'],
+                role: 'cancel',
+                cssClass: 'secondary',
+                handler: () => {
+                }
+              },
+              {
+                text: translations['COMMON.BTN_ABORT_CHANGES'],
+                cssClass: 'secondary',
+                handler: () => {
+                  confirm = true;
+                }
+              },
+              {
+                text: translations['COMMON.BTN_SAVE'],
+                handler: () => {
+                  save = true;
+                  confirm = true;
+                }
+              }
+            ]
+          });
+        } else {
+          const translations = this.translate.instant(['COMMON.BTN_ABORT_CHANGES', 'COMMON.BTN_CANCEL', 'CONFIRM.CANCEL_CHANGES', 'CONFIRM.ALERT_HEADER']);
+
+          alert = await this.alertCtrl.create({
+            header: translations['CONFIRM.ALERT_HEADER'],
+            message: translations['CONFIRM.CANCEL_CHANGES'],
+            buttons: [
+              {
+                text: translations['COMMON.BTN_ABORT_CHANGES'],
+                cssClass: 'secondary',
+                handler: () => {
+                  confirm = true; // update upper value
+                }
+              },
+              {
+                text: translations['COMMON.BTN_CANCEL'],
+                role: 'cancel',
+                handler: () => {
+                }
+              }
+            ]
+          });
+        }
+        await alert.present();
+        await alert.onDidDismiss();
+
+      }
+
+
+      if (confirm) {
+        if (save) {
+          await this.save(event); // sync save
+        } else if (dirty) {
+          if (this.isNewData) {
+            this.unload(); // async reset
+          }
+          else {
+            this.reload(); // async reload
+          }
+        }
+
+        // Execute the action
+        this.toolbar.goBack();
+      }
+
+    }, 300);
+  }
+
+  async reloadWithConfirmation(confirm?: boolean) {
+    const needConfirm = this.dirty;
+    // if not confirm yet: ask confirmation
+    if (!confirm && needConfirm) {
+      const translations = this.translate.instant(['COMMON.BTN_ABORT_CHANGES', 'COMMON.BTN_CANCEL', 'CONFIRM.CANCEL_CHANGES', 'CONFIRM.ALERT_HEADER']);
+      const alert = await this.alertCtrl.create({
+        header: translations['CONFIRM.ALERT_HEADER'],
+        message: translations['CONFIRM.CANCEL_CHANGES'],
+        buttons: [
+          {
+            text: translations['COMMON.BTN_ABORT_CHANGES'],
+            cssClass: 'secondary',
+            handler: () => {
+              confirm = true; // update upper value
+            }
+          },
+          {
+            text: translations['COMMON.BTN_CANCEL'],
+            role: 'cancel',
+            handler: () => {
             }
           }
-        })
-        .add(() => this.hasRemoteListener = false)
-    );
-  }
-
-  updateView(data: T | null, opts?: {
-    emitEvent?: boolean;
-    openTabIndex?: number;
-    updateRoute?: boolean;
-  }) {
-    const idChanged = isNotNil(data.id)
-      && this.previousDataId !== undefined // Ignore if first loading (=undefined)
-      && this.previousDataId !== data.id;
-
-    opts = {
-      updateRoute: this._autoUpdateRoute && idChanged && !this.loading,
-      openTabIndex: this._autoOpenNextTab && idChanged && isNil(this.previousDataId) && this.selectedTabIndex < this.tabCount - 1 ? this.selectedTabIndex + 1 : undefined,
-      ...opts
-    };
-
-    this.data = data;
-    this.previousDataId = data.id || null;
-
-    this.setValue(data);
-
-    if (!opts || opts.emitEvent !== false) {
-      this.markAsPristine();
-      this.markAsUntouched();
-      this.updateViewState(data);
-
-      // Need to update route
-      if (opts.updateRoute === true) {
-        this.updateTabAndRoute(data, opts)
-          // Update the title - should be executed AFTER updateRoute because of path change - fix #185
-          .then(() => this.updateTitle(data));
-      }
-      else {
-        // Update the tag group index
-        this.updateTabIndex(opts.openTabIndex);
-
-        // Update the title.
-        this.updateTitle(data);
-      }
-
-      this.onUpdateView.emit(data);
-    }
-  }
-
-  /**
-   * Enable or disable state
-   */
-  updateViewState(data: T, opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
-    if (this.isNewData || this.canUserWrite(data)) {
-      this.enable(opts);
-    }
-    else {
-      this.disable(opts);
-
-      // Allow to sort table
-      this.tables.forEach(t => t.enableSort());
-    }
-
-  }
-
-  /**
-   * Update the route location, and open the next tab
-   */
-  async updateTabAndRoute(data: T, opts?: {
-    openTabIndex?: number;
-  }): Promise<void> {
-
-    this.queryParams = this.queryParams || {};
-
-    // Open the tab group
-    this.updateTabIndex(opts && opts.openTabIndex);
-
-    // Save the opened tab into the queryParams
-    this.queryParams.tab = this.selectedTabIndex;
-
-    // Update route location
-    const forcedQueryParams = {};
-    forcedQueryParams[this._pathIdAttribute] = data && isNotNil(data.id) ? data.id : 'new';
-    if (data && isNotNil(data.id)) {
-      await this.router.navigate(['.'], {
-        relativeTo: this.route,
-        queryParams: {...this.queryParams, ...forcedQueryParams}
+        ]
       });
-    }
-    else {
-      await this.router.navigate(['..', 'new'], {
-        relativeTo: this.route,
-        queryParams: {...this.queryParams, ...forcedQueryParams}
-      });
+      await alert.present();
+      await alert.onDidDismiss();
     }
 
-    await this.updateRoute(data, this.queryParams);
-  }
-
-  /**
-   * Update the route location, and open the next tab
-   */
-  updateTabIndex(tabIndex?: number) {
-
-    // Open the second tab
-    if (isNotNil(tabIndex)) {
-      if (this.selectedTabIndex !== tabIndex) {
-        this.selectedTabIndex = tabIndex;
-        this.markForCheck();
-      }
-    }
-  }
-
-  async saveAndClose(event: Event, options?: any): Promise<boolean> {
-
-    const saved = await this.save(event);
-    if (saved) {
-      await this.close(event);
-    }
-    return saved;
-  }
-
-  async close(event: Event) {
-    if (event) {
-      if (event.defaultPrevented) return;
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    if (this.toolbar && this.toolbar.canGoBack) {
-      await this.toolbar.goBack();
-    }
-    else if (this.defaultBackHref) {
-      await this.router.navigateByUrl(this.defaultBackHref);
-    }
-  }
-
-  async save(event?: Event, options?: any): Promise<boolean> {
-    if (this.loading || this.saving) {
-      console.debug("[data-editor] Skip save: editor is busy (loading or saving)");
-      return false;
-    }
-    if (!this.dirty) {
-      console.debug("[data-editor] Skip save: editor not dirty");
-      return true;
-    }
-
-    // Wait end of async validation
-    await this.waitWhilePending();
-
-    // If invalid
-    if (this.invalid) {
-      this.markAsTouched({emitEvent: true});
-      this.logFormErrors();
-      this.openFirstInvalidTab();
-
-      this.submitted = true;
-      return false;
-    }
-
-    this.markAsSaving();
-    this.error = undefined;
-
-    if (this.debug) console.debug("[data-editor] Saving data...");
-
-    try {
-      // Get data
-      const data = await this.getValue();
-
+    // If confirm: execute the reload
+    if (confirm || !needConfirm) {
+      this.scrollToTop();
       this.disable();
-
-      // Save form
-      const updatedData = await this.dataService.save(data, options);
-
-      await this.onEntitySaved(updatedData);
-
-      // Update the view (e.g metadata)
-      this.updateView(updatedData, options);
-
-      // Subscribe to remote changes
-      if (!this.hasRemoteListener) this.startListenRemoteChanges();
-
-      this.submitted = false;
-
-      return true;
-    } catch (err) {
-      this.submitted = true;
-      this.setError(err);
-      this.selectedTabIndex = 0;
-      this.scrollToTop(); // Scroll to top (to show error)
-      this.markAsDirty();
-      this.enable();
-
-      // Concurrent change on pod
-      if (err.code === ServerErrorCodes.BAD_UPDATE_DATE && isNotNil(this.data.id)) {
-        // Call a data reload (in background), to update the GraphQL cache, and allow to cancel changes
-        this.dataService.load(this.data.id, {fetchPolicy: "network-only"}).then(() => {
-          console.debug('[data-editor] Data cache reloaded. User can reload page');
-        });
-      }
-
-
-
-      return false;
-    } finally {
-      this.markAsSaved();
+      return await this.reload();
     }
   }
 
-  /**
-   * Save data (if dirty and valid), and return it. Otherwise, return nil value.
-   */
-  async saveAndGetDataIfValid(): Promise<T | undefined> {
-    // Form is not valid
-    if (!this.valid) {
-
-      // Make sure validation is finished
-      await AppFormUtils.waitWhilePending(this);
-
-      // If invalid: Open the first tab in error
-      if (this.invalid) {
-        this.openFirstInvalidTab();
-        return undefined;
-      }
-
-      // Continue (valid)
+  setSelectedTabIndex(value: number, opts?: {emitEvent?: boolean; realignInkBar?: boolean; }) {
+    // Fix value
+    if (value < 0) {
+      value = 0;
+    }
+    else if (value > this.tabCount - 1) {
+      value = this.tabCount - 1;
     }
 
-    // Form is valid, but not saved
-    if (this.dirty) {
-      const saved = await this.save(new Event('save'));
-      if (!saved) return undefined;
+    this.selectedTabIndex = value;
+    if (!opts || opts.realignInkBar !== false) {
+      this.markForCheck();
+      this.tabGroup.selectedIndex = value;
+      setTimeout(() => this.tabGroup.realignInkBar());
     }
-
-    // Valid and saved data
-    return this.data;
-  }
-
-  async delete(event?: UIEvent): Promise<boolean> {
-    if (this.loading || this.saving) return false;
-
-    // Ask user confirmation
-    const confirmation = await Alerts.askDeleteConfirmation(this.alertCtrl, this.translate);
-    if (!confirmation) return;
-
-    console.debug("[data-editor] Asking to delete...");
-
-    this.markAsSaving();
-    this.error = undefined;
-
-    try {
-      // Get data
-      const data = await this.getValue();
-      const isNew = this.isNewData;
-
-      this.disable();
-
-      if (!isNew) {
-        await this.dataService.delete(data);
-      }
-
-      this.onEntityDeleted(data);
-
-      // Remove page history
-      this.removePageHistory();
-
-    } catch (err) {
-      this.submitted = true;
-      this.setError(err);
-      this.selectedTabIndex = 0;
-      this.markAsSaved();
-      this.enable();
-      return false;
+    else if (!opts || opts.emitEvent !== false) {
+      this.markForCheck();
     }
-
-    // Wait, then go back (wait is need in order to update back href is need)
-    setTimeout(() => {
-      // Go back
-      if (this.toolbar && this.toolbar.canGoBack) {
-        return this.toolbar.goBack();
-      } else {
-        // Back to home
-        return this.router.navigateByUrl('/');
-      }
-    }, 500);
-
-
   }
-
-  async reload() {
-    this.loading = true;
-    await this.load(this.data && this.data.id);
-  }
-
-  setError(err: any) {
-    console.error("[data-editor] " + err && err.message || err, err);
-    let userMessage = err && err.message && this.translate.instant(err.message) || err;
-
-    // Add details error (if any) under the main message
-    const detailMessage = err && err.details && (err.details.message || err.details) || undefined;
-    if (detailMessage) {
-      userMessage += `<br/><small class="hidden-xs hidden-sm" title="${detailMessage}">`;
-      userMessage += detailMessage.length < 70 ? detailMessage : detailMessage.substring(0, 67) + '...';
-      userMessage += "</small>";
-    }
-    this.error = userMessage;
-  }
-
-  /* -- protected methods to override -- */
-
-  protected abstract registerForms();
-
-  protected abstract computeTitle(data: T): Promise<string>;
-
-  protected abstract setValue(data: T);
-
-  protected abstract get form(): FormGroup;
-
-  protected abstract getFirstInvalidTabIndex(): number;
-
-  protected abstract canUserWrite(data: T): boolean;
-
 
   /* -- protected methods -- */
 
-  async unload(): Promise<void> {
-    this.form.reset();
-    this.registerForms();
-    this._dirty = false;
-    this.data = null;
-    this.saving = false;
-  }
+  protected async scrollToTop(duration?: number) {
+    duration = toNumber(duration, 500);
 
-  protected async onNewEntity(data: T, options?: EntityServiceLoadOptions): Promise<void> {
-    // can be overwrite by subclasses
-  }
+    if (!this.content) {
+      console.warn(`[tab-editor] Cannot scroll to top. (no 'ion-content' tag found ${this.constructor.name}`);
 
-  protected async onEntityLoaded(data: T, options?: EntityServiceLoadOptions): Promise<void> {
-    // can be overwrite by subclasses
-  }
-
-  protected async onEntitySaved(data: T): Promise<void> {
-    // can be overwrite by subclasses
-  }
-
-  protected async onEntityDeleted(data: T): Promise<void> {
-    // can be overwrite by subclasses
-  }
-
-
-  protected computeUsageMode(data: T): UsageMode {
-    return this.settings.isUsageMode('FIELD') ? 'FIELD' : 'DESK';
-  }
-
-  protected async waitWhilePending(): Promise<void> {
-    return await AppFormUtils.waitWhilePending(this);
-  }
-
-  protected async getValue(): Promise<T> {
-    const json = await this.getJsonValueToSave();
-
-    const res = new this.dataType();
-    res.fromObject(json);
-
-    return res;
-  }
-
-  protected getJsonValueToSave(): Promise<any> {
-    return Promise.resolve(this.form.value);
-  }
-
-  /**
-   * Compute the title
-   * @param data
-   */
-  protected async updateTitle(data?: T) {
-    data = data || this.data;
-    const title = await this.computeTitle(data);
-    this.$title.next(title);
-
-    // If NOT data, then add to page history
-    if (!this.isNewData) {
-      const page = await this.computePageHistory(title);
-      return this.addToPageHistory(page);
+      // TODO: FIXME (not working as the page is not the window)
+      const scrollToTop = window.setInterval(() => {
+        const pos = window.pageYOffset;
+        if (pos > 0) {
+          window.scrollTo(0, pos - 20); // how far to scroll on each step
+        } else {
+          window.clearInterval(scrollToTop);
+        }
+      }, 16);
+      return;
     }
+
+    return this.content.scrollToTop(duration);
   }
 
-  protected async addToPageHistory(page: HistoryPageReference, opts?: AddToPageHistoryOptions) {
-    if (!page) return; // Skip
+  protected registerSubscription(sub: Subscription|TeardownLogic) {
+    this._subscription.add(sub);
+  }
 
-    return this.settings.addToPageHistory(page, {
-      removePathQueryParams: true,
-      removeTitleSmallTag: true,
-      emitEvent: false,
-      ...opts
+  protected unregisterSubscription(sub: Subscription) {
+    this._subscription.remove(sub);
+  }
+
+  protected async saveIfDirtyAndConfirm(event?: UIEvent, opts?: {
+    emitEvent: boolean;
+
+  }): Promise<boolean> {
+    if (!this.dirty) return true;
+
+    let confirm = false;
+    let cancel = false;
+    const translations = this.translate.instant(['COMMON.BTN_SAVE', 'COMMON.BTN_CANCEL', 'COMMON.BTN_ABORT_CHANGES', 'CONFIRM.SAVE', 'CONFIRM.ALERT_HEADER']);
+    const alert = await this.alertCtrl.create({
+      header: translations['CONFIRM.ALERT_HEADER'],
+      message: translations['CONFIRM.SAVE'],
+      buttons: [
+        {
+          text: translations['COMMON.BTN_CANCEL'],
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            cancel = true;
+          }
+        },
+        {
+          text: translations['COMMON.BTN_ABORT_CHANGES'],
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+          text: translations['COMMON.BTN_SAVE'],
+          handler: () => {
+            confirm = true; // update upper value
+          }
+        }
+      ]
+    });
+    await alert.present();
+    await alert.onDidDismiss();
+
+    if (!confirm) {
+      return !cancel;
+    }
+
+    return await this.save(event, opts);
+  }
+
+  protected async showToast(opts: ShowToastOptions) {
+    if (!this.toastController) throw new Error("Missing toastController in component's constructor");
+    await Toasts.show(this.toastController, this.translate, opts);
+  }
+
+  protected logFormErrors() {
+    if (this.debug) console.debug("[root-editor-form] Page not valid. Checking where (forms, tables)...");
+    this._children.forEach(c => {
+      // If form
+      if (c instanceof AppTabEditor) {
+        c.logFormErrors();
+      }
+      // If form
+      else if (c instanceof AppForm) {
+        if (!c.empty && !c.valid) {
+          if (c.pending) {
+            console.warn( `[root-editor-form] [${c.constructor.name.toLowerCase()}] - pending form state`);
+            AppFormUtils.waitWhilePending(c)
+              .then(() => c.invalid && AppFormUtils.logFormErrors(c.form, `[root-editor-form] [${c.constructor.name.toLowerCase()}] `));
+          }
+          else {
+            AppFormUtils.logFormErrors(c.form, `[root-editor-form] [${c.constructor.name.toLowerCase()}] `);
+          }
+        }
+      }
+      // If table
+      else if (c instanceof AppTable) {
+        if (c.invalid && c.editedRow && c.editedRow.validator) {
+          AppFormUtils.logFormErrors(c.editedRow.validator, `[root-editor-form] [${c.constructor.name.toLowerCase()}] `);
+        }
+      }
     });
   }
 
-  protected async computePageHistory(title: string): Promise<HistoryPageReference> {
-    return {
-      title,
-      path: this.router.url
-    };
-  }
-
-  protected async removePageHistory(opts?: { emitEvent?: boolean; }) {
-    return this.settings.removePageHistory(this.router.url, opts);
-  }
-
-
-  protected computePageUrl(id: ID|'new'): string | any[] {
-    const parentUrl = this.getParentPageUrl();
-    return parentUrl && `${parentUrl}/${id}`;
-  }
-
-  protected getParentPageUrl(withQueryParams?: boolean) {
-    let parentUrl = this.defaultBackHref;
-
-    // Remove query params
-    if (withQueryParams !== true && parentUrl && parentUrl.indexOf('?') !== -1) {
-      parentUrl = parentUrl.substr(0, parentUrl.indexOf('?'));
-    }
-
-    return parentUrl;
-  }
-
   protected markForCheck() {
-    this.cd.markForCheck();
-  }
-
-  /* -- private functions -- */
-
-  /**
-   * Open the first tab that is invalid
-   */
-  private openFirstInvalidTab() {
-    const invalidTabIndex = this.getFirstInvalidTabIndex();
-    if (invalidTabIndex !== -1 && this.selectedTabIndex !== invalidTabIndex) {
-      this.selectedTabIndex = invalidTabIndex;
-    }
-  }
-
-  protected async updateRoute(data: T, queryParams: any): Promise<boolean> {
-    const path = this.computePageUrl(isNotNil(data.id) ? data.id : 'new');
-    const commands: any[] = (path && typeof path === 'string') ? path.split('/') : path as any[];
-    if (isNotEmptyArray(commands)) {
-      return await this.router.navigate(commands, {
-        replaceUrl: true,
-        queryParams: this.queryParams
-      });
-    }
-    else {
-      console.warn('Skip page route update. Invalid page path: ', path);
-    }
+    // Should be override by subclasses, if change detection is Push
   }
 }
-

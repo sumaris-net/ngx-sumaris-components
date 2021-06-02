@@ -8,7 +8,7 @@ import {
   OnDestroy,
   OnInit,
   Optional,
-  Output,
+  Output, Provider,
   ViewChild
 } from "@angular/core";
 import {ControlValueAccessor, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR} from "@angular/forms";
@@ -26,7 +26,7 @@ import {MatButton} from "@angular/material/button";
 import {firstNotNilPromise} from "../../observables";
 import {filter} from "rxjs/operators";
 
-const DEFAULT_VALUE_ACCESSOR: any = {
+const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatSwipeField),
   multi: true

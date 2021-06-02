@@ -1,27 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  forwardRef,
-  Input,
-  OnInit,
-  Optional,
-  QueryList,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, forwardRef, Input, OnInit, Optional, Provider, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Platform} from '@ionic/angular';
-import {
-  AbstractControl,
-  ControlValueAccessor,
-  FormBuilder,
-  FormControl,
-  FormGroupDirective,
-  NG_VALUE_ACCESSOR,
-  ValidationErrors,
-  Validators
-} from "@angular/forms";
+import {AbstractControl, ControlValueAccessor, FormBuilder, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR, ValidationErrors, Validators} from "@angular/forms";
 import {TranslateService} from "@ngx-translate/core";
 import {Moment} from "moment/moment";
 import {DATE_ISO_PATTERN, DEFAULT_PLACEHOLDER_CHAR, KEYBOARD_HIDE_DELAY_MS} from '../../constants';
@@ -33,11 +12,11 @@ import {first} from "rxjs/operators";
 import {InputElement, setTabIndex} from "../../inputs";
 import {BehaviorSubject} from "rxjs";
 import {FloatLabelType} from "@angular/material/form-field";
-import {MatDatepicker, MatDatepickerInputEvent} from "@angular/material/datepicker";
+import {MatDatepicker} from "@angular/material/datepicker";
 import {DateAdapter} from "@angular/material/core";
 import {isFocusableElement} from "../../focusable";
 
-export const DEFAULT_VALUE_ACCESSOR: any = {
+const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatDateShort),
   multi: true
@@ -359,7 +338,7 @@ export class MatDateShort implements OnInit, ControlValueAccessor, InputElement 
 
   protected async waitKeyboardHide(waitKeyboardDelay: boolean) {
 
-    if (!this.keyboard.isVisible || !this.keyboard) return; // ok, already hidden
+    if (!this.keyboard || !this.keyboard.isVisible) return; // ok, already hidden (or not accessible)
 
     // Force keyboard to be hide
     this.keyboard.hide();

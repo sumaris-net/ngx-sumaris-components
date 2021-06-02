@@ -7,7 +7,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Optional,
+  Optional, Provider,
   QueryList,
   ViewChildren
 } from '@angular/core';
@@ -27,20 +27,18 @@ import {TranslateService} from "@ngx-translate/core";
 import {Moment} from "moment";
 import {DEFAULT_PLACEHOLDER_CHAR} from '../../constants';
 import {isNil, toBoolean} from "../../functions";
-import {Keyboard} from "@ionic-native/keyboard/ngx";
 import {InputElement, moveInputCaretToSeparator, setTabIndex} from "../../inputs";
 import {isFocusableElement} from "../../focusable";
 import {DEFAULT_MAX_DECIMALS, formatDuration, parseDuration} from "./duration.utils";
 import {BehaviorSubject, Subscription} from "rxjs";
 import {filter} from "rxjs/operators";
 
-const DEFAULT_VALUE_ACCESSOR: any = {
+const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatDuration),
   multi: true
 };
 
-1
 const HOUR_TIME_PATTERN = /[0-9]\d\d:[0-5]\d/;
 const HOUR_MASK = [/\d/, /\d/, /\d/, ':', /[0-5]/, /\d/];
 
@@ -63,7 +61,6 @@ export class MatDuration implements OnInit, OnDestroy, ControlValueAccessor, Inp
   protected writing = true;
   protected disabling = false;
   protected _tabindex: number;
-  protected keyboardHideDelay: number;
 
   textControl: FormControl;
   _value: number;
@@ -113,7 +110,6 @@ export class MatDuration implements OnInit, OnDestroy, ControlValueAccessor, Inp
     private dateAdapter: DateAdapter<Moment>,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private keyboard: Keyboard,
     private cd: ChangeDetectorRef,
     @Optional() private formGroupDir: FormGroupDirective,
   ) {

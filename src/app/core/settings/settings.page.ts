@@ -19,7 +19,7 @@ import {LocalSettingsService} from "../services/local-settings.service";
 import {FormFieldDefinition, FormFieldDefinitionMap} from "../../shared/form/field.model";
 import {merge} from "rxjs";
 import {AlertController} from "@ionic/angular";
-import {Alerts, askConfirmation} from "../../shared/alerts";
+import {Alerts} from "../../shared/alerts";
 import {Property} from "../../shared/types";
 import {ActivatedRoute, Router} from "@angular/router";
 

@@ -6,7 +6,7 @@ import {
   forwardRef,
   Input, OnDestroy,
   OnInit,
-  Optional,
+  Optional, Provider,
   QueryList,
   ViewChild,
   ViewChildren
@@ -37,7 +37,7 @@ import {DateAdapter} from "@angular/material/core";
 import {isFocusableElement} from "../../focusable";
 import {toDateISOString} from "../../dates";
 
-const DEFAULT_VALUE_ACCESSOR: any = {
+const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => MatDate),
   multi: true
@@ -121,8 +121,8 @@ export class MatDate implements OnInit, OnDestroy, ControlValueAccessor, InputEl
     private dateAdapter: DateAdapter<Moment>,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private keyboard: Keyboard,
     private cd: ChangeDetectorRef,
+    @Optional() private keyboard: Keyboard,
     @Optional() private formGroupDir: FormGroupDirective,
   ) {
     // Workaround because ion-datetime has issue (do not returned a ISO date)
@@ -354,7 +354,7 @@ export class MatDate implements OnInit, OnDestroy, ControlValueAccessor, InputEl
 
   protected async waitKeyboardHide(waitKeyboardDelay: boolean) {
 
-    if (!this.keyboard.isVisible) return; // ok, already hidden
+    if (!this.keyboard || !this.keyboard.isVisible) return; // ok, already hidden (or not accessible)
 
     // Force keyboard to be hide
     this.keyboard.hide();
