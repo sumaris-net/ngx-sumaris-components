@@ -22,8 +22,8 @@
       <span slot="start">&nbsp;</span>
       <ion-label class="ion-text-wrap">
         <h2>
-          <small>{{'ABOUT.POWERED_BY'|translate}}</small> {{'APP_NAME'|translate}}
-          <span [innerHTML]="'ABOUT.VERSION'| translate: {version: appVersion}"></span>
+          <small>{{'ABOUT.POWERED_BY'|translate}}</small> {{appName|translate}}
+          <span *ngIf="version" [innerHTML]="'ABOUT.VERSION'| translate: {version: version}"></span>
         </h2>
         <p [innerHTML]="'ABOUT.LICENSE'| translate"></p>
       </ion-label>

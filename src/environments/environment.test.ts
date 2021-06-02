@@ -53,8 +53,8 @@ export const environment: Environment = Object.freeze({
   },
 
   // About
-  sourceUrl: 'https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components',
-  reportIssueUrl: 'https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components/-/issues',
+  sourceUrl: (pkg.repository && pkg.repository.url as string),
+  reportIssueUrl: (pkg.bugs && pkg.bugs.url as string),
 });
 
 /*

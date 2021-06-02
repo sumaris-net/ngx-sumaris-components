@@ -14,19 +14,19 @@ export const APP_ABOUT_PARTNERS = new InjectionToken<Partial<Department>[]>('abo
 })
 export class AboutModal {
 
-  readonly appVersion: string;
+  readonly version: string;
   readonly sourceUrl: string;
   readonly reportIssueUrl: string;
 
   constructor(
       protected modalController: ModalController,
-      @Inject(ENVIRONMENT) protected environment,
+      @Optional() @Inject(ENVIRONMENT) environment,
       @Optional() @Inject(APP_ABOUT_DEVELOPERS) public developers: Partial<Department>[],
       @Optional() @Inject(APP_ABOUT_PARTNERS) public partners: Partial<Department>[]
   ) {
-    this.appVersion = environment.version;
-    this.sourceUrl = environment.sourceUrl;
-    this.reportIssueUrl = environment.reportIssueUrl;
+    this.version = environment && environment.version;
+    this.sourceUrl = environment && environment.sourceUrl;
+    this.reportIssueUrl = environment && environment.reportIssueUrl;
   }
 
   async close() {

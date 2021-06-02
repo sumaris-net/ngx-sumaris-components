@@ -178,11 +178,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sumaris-net/ngx-sumaris-components.git"
+    "url": "https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components.git"
   },
-  "homepage": "https://github.com/sumaris-net/ngx-sumaris-components",
+  "homepage": "https://github.com/sumaris-net/ngx-components",
   "bugs": {
-    "url": "https://github.com/sumaris-net/ngx-sumaris-components/issues"
+    "url": "https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components/-/issues"
   },
   "engines": {
     "node": ">= 12.19.1",

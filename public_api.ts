@@ -84,7 +84,7 @@ export * from './src/app/core/services/model/model.enum';
 export * from './src/app/core/services/model/peer.model';
 export * from './src/app/core/services/model/person.model';
 export { IReferentialRef, ReferentialRef,
-  BaseReferential, Referential,
+  BaseReferential, Referential, ReferentialUtils,
   ReferentialAsObjectOptions,
   referentialToString, referentialsToString,
   StatusValue, DefaultStatusList } from './src/app/core/services/model/referential.model';
