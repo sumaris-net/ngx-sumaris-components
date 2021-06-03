@@ -3,10 +3,6 @@ image: trion/ng-cli
 stages:
   - build
   - test
-  - docs
-  - prepare
-  - release
-  - deploy
 
 .build:
   stage: build
@@ -23,7 +19,6 @@ build_auto:
   extends: .build
   only:
     - develop
-    - feature/imagine
   except:
     - schedules
 
@@ -48,81 +43,4 @@ build_registry:
         - www/*.zip
     only:
         - develop
-        - feature/imagine
-    when: manual
-
-pages:
-    stage: docs
-    tags:
-        - sih_public_runner
-    image: python:3.7-alpine
-    before_script:
-        - apk --update --upgrade add gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev gdk-pixbuf-dev
-        - pip install --upgrade pip
-        - pip install --upgrade mkdocs
-        - pip install --upgrade mkdocs-pdf-export-plugin==0.5.5
-    script:
-        - mkdocs -v build
-        - mv site public
-    artifacts:
-        paths:
-            - public
-    only:
-        - develop
-        - feature/imagine
-    when: manual
-
-package:
-    stage: prepare
-    tags:
-        - sih_public_runner
-    before_script:
-        - git checkout -B "$CI_BUILD_REF_NAME"
-        - git config --global user.email "lbruvryl@ifremer.fr"
-        - git config --global user.name "Leo BRUVRY-LAGADEC"
-        - echo "TAG=$RELEASE_VERSION" >> variables.env
-    script:
-        - echo "Release in progress"
-        - mvn -P prod release:clean -Dslf4jJclScope=provided
-        - mvn -P prod -s ./settings.xml release:prepare --batch-mode -Dtag=emso-charts-$RELEASE_VERSION -DreleaseVersion=$RELEASE_VERSION -DdevelopmentVersion=$NEW_DEV_VERSION -DscmCommentPrefix="[ci skip] to "
-        - mvn -P prod -s ./settings.xml release:perform -Dslf4jJclScope=provided -X -DscmCommentPrefix="[ci skip] to "
-    artifacts:
-        paths:
-            - web-services/target/*.war
-        reports:
-            dotenv: variables.env
-    only:
-        - develop
-        - feature/imagine
-    allow_failure: false
-    when: manual
-
-release:
-    stage: release
-    tags:
-        - sih_public_runner
-    image: registry.gitlab.com/gitlab-org/release-cli:latest
-    needs:
-        - job: package
-          artifacts: true
-    script:
-        - echo "running release for emso-charts-$TAG"
-    release:
-        name: "Release emso-charts-$TAG"
-        description: "Created using the release-cli $EXTRA_DESCRIPTION"
-        tag_name: "emso-charts-$TAG"
-        ref: "$CI_COMMIT_SHA"
-    only:
-        - develop
-        - feature/imagine
-deploy:
-    stage: deploy
-    tags:
-        - sih_public_runner
-    script:
-        - echo "Deploy in progress"
-        - mvn -s ./settings.xml deploy:deploy-file -DgroupId=fr.ifremer -DartifactId=emso-charts -Dversion=$TAG -Dfile=web-services/target/ROOT.war -DrepositoryId=gitlab-maven -Durl=https://gitlab.ifremer.fr/api/v4/projects/1226/packages/maven
-    only:
-        - develop
-        - feature/imagine
     when: manual

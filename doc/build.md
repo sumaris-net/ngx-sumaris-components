@@ -1,8 +1,8 @@
 # Building from source
 
-Technologies: SUMARiS App is an Ionic 5 + Angular 9 App.
+SUMARiS Angular Components used Ionic Framework and Angular.
 
-This article will explain how to install your environment, then build the application.
+This article will explain how to install your environment, then build the library.
 
 ## Installation tools, and get sources
 
@@ -31,12 +31,12 @@ sudo apt-get install chromium-browser docker.io
 
 1. Install project's dependencies:
 ```bash
-cd sumaris-app
+cd ngx-components
 npm install
 ```
 OR, alternatively: 
 ```bash
-cd sumaris-app/scripts
+cd ngx-components/scripts
 ./env-global.sh
 ```
 
@@ -46,7 +46,7 @@ cd sumaris-app/scripts
    
 3. Start the app
     ```bash
-    cd sumaris-app
+    cd ngx-components
     npm start
     ```
    By default, the app should be accessible at [http://localhost:4200](http://localhost:4200)
@@ -54,7 +54,7 @@ cd sumaris-app/scripts
    To change the default port, use this command instead:
     
     ```bash
-    cd sumaris-app
+    cd ngx-components
     ng serve --port [port]
     ```
 
@@ -77,13 +77,13 @@ The application should be accessible at [localhost:4200](http://localhost:4200)
 
 1. Install the android build environment:
     ```bash
-    cd sumaris-app/scripts
+    cd ngx-components/scripts
     ./env-android.sh
     ```
 
 2. Create a debug APK file:
     ```bash
-    cd sumaris-app/scripts
+    cd ngx-components/scripts
     ./build-android.sh
     ```
 
@@ -95,14 +95,12 @@ The application should be accessible at [localhost:4200](http://localhost:4200)
 
 2. Create a release APK file:
     ```bash
-    cd sumaris-app/scripts
+    cd ngx-components/scripts
     ./release-android.sh
     ```
 
 ## Useful links
 
-- Ionic 4 colors: https://www.joshmorony.com/a-primer-on-css-4-variables-for-ionic-4/
-- Migration to Ionic 4 tips: https://www.joshmorony.com/my-method-for-upgrading-from-ionic-3-to-ionic-4/
 - Signing Android APK: See doc at 
    https://www.c-sharpcorner.com/article/create-ionic-4-release-build-for-android/
 
@@ -112,8 +110,8 @@ The application should be accessible at [localhost:4200](http://localhost:4200)
 
 - Checkout the project https://github.com/e-is/angular4-material-table
 ```bash
-git clone https://github.com/e-is/angular4-material-table.git
-cd angular4-material-table
+git clone https://github.com/e-is/ngx-material-table.git
+cd ngx-material-table
 ```
 - Build the project: 
 ```bash
@@ -126,8 +124,8 @@ cp package*.json ./dist
 cd dist
 npm link 
 ```
-- Use it from Sumaris project:
+- Use it from SAR App project:
 ```bash
-cd <sumaris_app_root>
-npm link angular4-material-table
+cd <sar_app_root>
+npm link ngx-material-table
 ```

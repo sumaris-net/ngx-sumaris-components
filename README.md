@@ -7,10 +7,12 @@ Features :
 - Ionic framework
 - i18n
 - New form field components:
-  * Autocomplete field, with search and highlight
-  * Latitude and longitude field, with 3 entry format
-  * Date + time
-
+  * Authentication forms
+  * Extensible menu
+  * UI components :
+    * Autocomplete field, with search and highlight
+    * Latitude and longitude field, with 3 entry format
+    * Date + time
 
 ## Contribute
 

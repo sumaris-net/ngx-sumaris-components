@@ -29,18 +29,8 @@ body {
 
 // Page Container Structure
 // --------------------------------------------------
-.ion-page {
-  @include position(0, 0, 0, 0);
-  display: flex;
-  position: absolute;
-  flex-direction: column;
-  justify-content: space-between;
-  contain: layout size style;
-  overflow: hidden;
-  z-index: $z-index-page-container;
-}
 
-ion-route,
+/*ion-route,
 ion-route-redirect,
 ion-router,
 ion-animation-controller,
@@ -55,9 +45,9 @@ ion-popover-controller,
 ion-toast-controller,
 .ion-page-hidden,
 [hidden] {
-  /* stylelint-disable-next-line declaration-no-important */
+  !* stylelint-disable-next-line declaration-no-important *!
   display: none !important;
-}
+}*/
 
 .ion-page-invisible {
   opacity: 0;
