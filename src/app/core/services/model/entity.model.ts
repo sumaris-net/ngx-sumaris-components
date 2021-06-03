@@ -207,7 +207,7 @@ export abstract class EntityUtils {
       return (a, b) => {
         const valueA = isNotNil(a) ? a[sortBy] : undefined;
         const valueB = isNotNil(b) ? b[sortBy] : undefined;
-        return EntityUtils.compare(valueA, valueB, after);
+        return EntityUtils.compare(valueA, valueB, after, sortBy as any);
       };
     }
     else {
@@ -224,6 +224,10 @@ export abstract class EntityUtils {
     if (EntityUtils.isNotEmptyEntity(value1, checkAttribute) && EntityUtils.isNotEmptyEntity(value2, checkAttribute)) {
       return EntityUtils.equals(value1, value2, checkAttribute) ? 0 : (value1[checkAttribute] > value2[checkAttribute] ? direction : (-1 * direction));
     }
+    return value1 === value2 ? 0 : (value1 > value2 ? direction : (-1 * direction));
+  }
+
+  static compareValue<T>(value1: T, value2: T, direction: 1 | -1): number {
     return value1 === value2 ? 0 : (value1 > value2 ? direction : (-1 * direction));
   }
 

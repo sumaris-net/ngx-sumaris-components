@@ -5,18 +5,18 @@ import {ErrorCodes} from "./errors";
 import {FetchPolicy, MutationUpdaterFn, WatchQueryFetchPolicy} from "@apollo/client/core";
 import {SortDirection} from "@angular/material/sort";
 
-import {BaseGraphqlService} from "../../core/services/base-graphql-service.class";
-import {EntityServiceLoadOptions, IEntitiesService, IEntityService, LoadResult} from "../../shared/services/entity-service.class";
-import {GraphqlService} from "../../core/graphql/graphql.service";
-import {PlatformService} from "../../core/services/platform.service";
+import {BaseGraphqlService} from "./base-graphql-service.class";
+import {EntitiesServiceWatchOptions, EntityServiceLoadOptions, IEntitiesService, IEntityService, LoadResult} from "../../shared/services/entity-service.class";
+import {GraphqlService} from "../graphql/graphql.service";
+import {PlatformService} from "./platform.service";
 import {environment} from "../../../environments/environment";
-import {Entity, EntityAsObjectOptions, EntityUtils} from "../../core/services/model/entity.model";
+import {Entity, EntityAsObjectOptions, EntityUtils} from "./model/entity.model";
 import {chainPromises} from "../../shared/observables";
 import {isEmptyArray, isNil, isNotNil, toBoolean} from "../../shared/functions";
 import {Directive} from "@angular/core";
 import {RefetchQueryDescription} from "@apollo/client/core/watchQueryOptions";
 import {FetchResult} from "@apollo/client/link/core";
-import {EntityFilter, EntityFilterUtils} from "../../core/services/model/filter.model";
+import {EntityFilter, EntityFilterUtils} from "./model/filter.model";
 
 
 export interface BaseEntityGraphqlQueries {
@@ -62,13 +62,15 @@ export abstract class BaseEntityService<
   T extends Entity<T, ID>,
   F extends EntityFilter<F, T, ID>,
   ID = number,
+  WO extends EntitiesServiceWatchOptions = EntitiesServiceWatchOptions,
+  LO extends EntityServiceLoadOptions = EntityServiceLoadOptions,
   Q extends BaseEntityGraphqlQueries = BaseEntityGraphqlQueries,
   M extends BaseEntityGraphqlMutations = BaseEntityGraphqlMutations,
   S extends BaseEntityGraphqlSubscriptions = BaseEntityGraphqlSubscriptions>
   extends BaseGraphqlService<T, F, ID>
   implements
-    IEntitiesService<T, F>,
-    IEntityService<T, ID> {
+    IEntitiesService<T, F, WO>,
+    IEntityService<T, ID, LO> {
 
   protected readonly _entityName: string;
   protected readonly _typename: string;
@@ -90,8 +92,8 @@ export abstract class BaseEntityService<
   ) {
     super(graphql, environment);
     this.queries = options.queries;
-    this.mutations = options.mutations || {};
-    this.subscriptions = options.subscriptions || {};
+    this.mutations = options.mutations || <Partial<M>>{};
+    this.subscriptions = options.subscriptions || <Partial<S>>{};
     this.equalsFn = options.equalsFn || ((e1, e2) => EntityUtils.equals(e1, e2, 'id'));
     this.defaultSortBy = options.defaultSortBy || 'id';
     this.defaultSortDirection = options.defaultSortDirection || 'asc';
@@ -111,10 +113,7 @@ export abstract class BaseEntityService<
     this._debug = !environment.production;
   }
 
-  watch(id: number, opts?: EntityServiceLoadOptions & {
-    query?: any;
-    toEntity?: boolean;
-  }): Observable<T> {
+  watch(id: number, opts?: WO & { query?: any; }): Observable<T> {
 
     if (this._debug) console.debug(`[base-entity-service] Watching ${this._entityName} {${id}}...`);
 
@@ -134,10 +133,7 @@ export abstract class BaseEntityService<
       );
   }
 
-  async load(id: ID, opts?: EntityServiceLoadOptions & {
-    query?: any;
-    toEntity?: boolean;
-  }): Promise<T> {
+  async load(id: ID, opts?: LO & { query?: any; }): Promise<T> {
 
     if (this._debug) console.debug(`[base-entity-service] Loading ${this._entityName} {${id}}...`);
     const query = opts && opts.query || this.queries.load;
@@ -162,12 +158,7 @@ export abstract class BaseEntityService<
            sortBy?: string,
            sortDirection?: SortDirection,
            filter?: F,
-           opts?: {
-             query?: any,
-             fetchPolicy?: WatchQueryFetchPolicy;
-             withTotal: boolean;
-             toEntity?: boolean;
-           }
+           opts?: WO & { query?: any; }
   ): Observable<LoadResult<T>> {
 
     filter = this.asFilter(filter);
@@ -219,13 +210,10 @@ export abstract class BaseEntityService<
                 sortBy?: string,
                 sortDirection?: SortDirection,
                 filter?: Partial<F>,
-                opts?: {
-                  [key: string]: any;
+                opts?: LO & {
                   query?: any;
-                  fetchPolicy?: FetchPolicy;
                   debug?: boolean;
                   withTotal?: boolean;
-                  toEntity?: boolean;
                 }
   ): Promise<LoadResult<T>> {
 
@@ -339,7 +327,7 @@ export abstract class BaseEntityService<
     const now = Date.now();
     if (this._debug) console.debug(`[base-entity-service] Saving ${this._entityName}...`, json);
 
-    await this.graphql.mutate< {data: any}>({
+    await this.graphql.mutate<{data: any}>({
       refetchQueries: opts && opts.refetchQueries,
       awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
       mutation: this.mutations.save,

@@ -1,19 +1,22 @@
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {EntityUtils, IEntity} from "../../core/services/model/entity.model";
-import {filter, mergeMap} from "rxjs/operators";
-import {isNotEmptyArray, isNotNil} from "../functions";
-import {FilterFnFactory, IEntitiesService, LoadResult} from "./entity-service.class";
+import {filter, map, mergeMap} from "rxjs/operators";
+import {isEmptyArray, isNotEmptyArray, isNotNil, toBoolean} from "../functions";
+import {EntitiesService, EntitiesServiceWatchOptions, FilterFn, FilterFnFactory, IEntitiesService, LoadResult} from "./entity-service.class";
 import {SortDirection} from "@angular/material/sort";
-import {EntityFilter, IEntityFilter} from "../../core/services/model/filter.model";
-import {Directive} from "@angular/core";
+import {EntityFilter} from "../../core/services/model/filter.model";
+import {Directive, OnDestroy} from "@angular/core";
 
 export interface InMemoryEntitiesServiceOptions<T, F> {
   onSort?: (data: T[], sortBy?: string, sortDirection?: SortDirection) => T[];
   onLoad?: (data: T[]) => T[] | Promise<T[]>;
   onSave?: (data: T[]) => T[] | Promise<T[]>;
   equals?: (d1: T, d2: T) => boolean;
+
   filterFnFactory?: FilterFnFactory<T, F>;
-  onFilter?: (data: T[], filter: F) => T[] | Promise<T[]>;
+  filterFn?: FilterFn<T>;
+
+  sortByReplacement?: { [key: string]: string };
 }
 
 // @dynamic
@@ -22,36 +25,30 @@ export interface InMemoryEntitiesServiceOptions<T, F> {
 export class InMemoryEntitiesService<
   T extends IEntity<T, ID>,
   F = any,
-  ID = number>
-  implements IEntitiesService<T, F, ID> {
+  ID = number,
+  O extends EntitiesServiceWatchOptions = EntitiesServiceWatchOptions>
+  extends EntitiesService<T, F, ID>
+  implements IEntitiesService<T, F, O> {
 
-  private _dataSubject = new BehaviorSubject<LoadResult<T>>(undefined);
-
+  private readonly _onChange = new BehaviorSubject(true);
   private readonly _sortFn: (data: T[], sortBy?: string, sortDirection?: SortDirection) => T[];
   private readonly _onLoad: (data: T[]) => T[] | Promise<T[]>;
   private readonly _onSaveFn: (data: T[]) => T[] | Promise<T[]>;
   private readonly _equalsFn: (d1: T, d2: T) => boolean;
-  private readonly _onFilterFn: (data: T[], filter: F) => T[] | Promise<T[]>;
+  private readonly _filterFn: (data: T) => boolean;
   private readonly _filterFnFactory: FilterFnFactory<T, F>;
+  private readonly _sortByReplacement: { [key: string]: string };
 
   protected data: T[];
   private _hiddenData: T[];
 
   // TODO add test  see sub-batches.modal.ts onLoadData & _hiddenData
 
-  hasRankOrder = false;
   debug = false;
   dirty = false;
 
   set value(data: T[]) {
-    if (this.data !== data) {
-      this._hiddenData = [];
-      this.data = data;
-      if (this._dataSubject.observers.length) {
-        this._dataSubject.next({data: data || [], total: data && data.length || 0});
-      }
-    }
-    this.dirty = false;
+    this.setValue(data);
   }
 
   get value(): T[] {
@@ -63,9 +60,9 @@ export class InMemoryEntitiesService<
     protected filterType: new() => F,
     options?: InMemoryEntitiesServiceOptions<T, F>
   ) {
+    super();
     options = {
       onSort: this.sort,
-      onFilter: this.filter,
       equals: this.equals,
       ...options
     };
@@ -74,7 +71,6 @@ export class InMemoryEntitiesService<
     this._onLoad = options.onLoad;
     this._onSaveFn = options.onSave;
     this._equalsFn = options.equals;
-    this._onFilterFn = options.onFilter;
     this._filterFnFactory = options.filterFnFactory || ((f) => {
       const filter = this.asFilter(f) as F;
       if (filter instanceof EntityFilter) {
@@ -83,14 +79,30 @@ export class InMemoryEntitiesService<
       return undefined;
     });
 
-    // Detect rankOrder on the entity class
-    this.hasRankOrder = Object.getOwnPropertyNames(new dataType()).findIndex(key => key === 'rankOrder') !== -1;
+    this._sortByReplacement = {
+      // Detect rankOrder on the entity class
+      'id': (Object.getOwnPropertyNames(new dataType()).findIndex(key => key === 'rankOrder') !== -1) ? 'rankOrder' : undefined,
+      ...options.sortByReplacement
+    };
   }
 
   ngOnDestroy() {
-    console.log('TODO Destroying In MemoryDataService...');
-    this._dataSubject.complete();
-    this._dataSubject.unsubscribe();
+    if (this.debug) console.debug('[memory-data-service] Destroying...');
+    this._onChange.complete();
+    this._onChange.unsubscribe();
+  }
+
+  setValue(data: T[], opts?: { emitEvent?: boolean; }) {
+    if (this.data !== data) {
+      this._hiddenData = [];
+      this.data = data;
+
+      // Send to observers
+      if (!opts || opts.emitEvent !== false) {
+        this._onChange.next(true);
+      }
+    }
+    this.dirty = false;
   }
 
   watchAll(
@@ -102,45 +114,84 @@ export class InMemoryEntitiesService<
     options?: any
   ): Observable<LoadResult<T>> {
 
+    offset = offset >= 0 ? offset : 0;
+    size = size >= 0 ? size : -1;
+
     if (!this.data) {
       console.warn("[memory-data-service] Waiting value to be set...");
-    } else {
-      // /!\ If already observed, then always create a copy of the original array
-      // Because datasource will only update if the array changed
-      this.data = this.data.slice(0);
-      this._dataSubject.next({
-        data: this.data,
-        total: this.data.length
-      });
     }
 
-    return this._dataSubject
+    return this._onChange
       .pipe(
         filter(isNotNil),
-        mergeMap(async (res) => {
+        mergeMap(async (_) => {
+          this._hiddenData = [];
+
+          if (isEmptyArray(this.data)) {
+            return {data: [], total: 0};
+          }
 
           // Apply sort
-          let data = this._sortFn(res.data || [], sortBy, sortDirection) ;
+          let data = this._sortFn(this.data || [], sortBy, sortDirection) ;
 
           if (this._onLoad) {
             const promiseOrData = this._onLoad(data);
             data = ((promiseOrData instanceof Promise)) ? await promiseOrData : promiseOrData;
           }
 
-          // Apply filter
-          {
-            const promiseOrData = this._onFilterFn(data, filterData);
-            data = ((promiseOrData instanceof Promise)) ? await promiseOrData : promiseOrData;
+
+          // Apply filter (will update hiddenData)
+          data = this.filter(data, filterData, this._hiddenData);
+
+          // Compute the total length
+          const total = data.length;
+
+          // If page size=0 (e.g. only need total)
+          if (size === 0) {
+            this._hiddenData.push(...data);
+            return {data: [], total};
           }
 
-          // Apply page
-          // TODO
-          // Add
+          // Slice in a page (using offset and size)
+          if (offset > 0) {
 
-          return {
-            data,
-            total: res && res.total || data.length // FIXME: total should be always = data.length, because res.total still has the previous unfiltered data length
-          };
+            // Offset after the end: no result
+            if (offset >= data.length) {
+              this._hiddenData.push(...data);
+              data = [];
+            }
+            else {
+              const hiddenData = (size > 0 && ((offset + size) < data.length)) ?
+                // Slice using limit to size
+                data.slice(0, offset -1).concat(data.slice(offset + size)) :
+                // Slice without limit
+                data.slice(0, offset-1);
+              this._hiddenData.push(...hiddenData);
+              data = (size > 0 && ((offset + size) < data.length)) ?
+                // Slice using limit to size
+                data.slice(offset, offset + size) :
+                // Slice without limit
+                data.slice(offset);
+            }
+          }
+
+          // Apply a limit
+          else if (size > 0){
+            this._hiddenData.push(...data.slice(size));
+            data = data.slice(0, size);
+          }
+          // No limit:
+          else if (size === -1){
+            // Keep all data
+          }
+
+          // /!\ If already observed, then always create a copy of the original array
+          // Because datasource will only update if the array changed
+          if (data === this.data) {
+            data = data.slice(0);
+          }
+
+          return {data, total};
         })
       );
   }
@@ -172,38 +223,33 @@ export class InMemoryEntitiesService<
     });
     const deleteCount = this.data.length - updatedData.length;
     if (deleteCount > 0) {
-      const updatedTotal = this._dataSubject.getValue().total - deleteCount;
       this.data = updatedData;
       this.dirty = true;
-      this._dataSubject.next({
-        data: updatedData,
-        total: updatedTotal
-      });
+      this._onChange.next(true);
     }
 
   }
 
   sort(data: T[], sortBy?: string, sortDirection?: SortDirection): T[] {
-    // Replace id with rankOrder
-    sortBy = this.hasRankOrder && (!sortBy || sortBy === 'id') ? 'rankOrder' : sortBy || 'id';
+    // Replace sortBy, using the replacement map
+    sortBy = sortBy && this._sortByReplacement[sortBy] || sortBy || 'id';
 
     // Execute the sort
     return EntityUtils.sort(data, sortBy, sortDirection);
   }
 
-  filter(data: T[], _filter: F): T[] {
+  protected filter(data: T[], _filter: F, hiddenData: T[]): T[] {
 
     // if filter is DataFilter instance, use its test function
-    const testFn = this._filterFnFactory && this._filterFnFactory(_filter);
-    if (testFn) {
-      this._hiddenData = [];
+    const filterFn = this._filterFnFactory && this._filterFnFactory(_filter);
+    if (filterFn) {
       const filteredData = [];
 
       data.forEach(value => {
-        if (testFn(value))
+        if (filterFn(value))
           filteredData.push(value);
         else
-          this._hiddenData.push(value);
+          hiddenData.push(value);
       });
 
       return filteredData;
@@ -214,7 +260,13 @@ export class InMemoryEntitiesService<
   }
 
   connect(): Observable<LoadResult<T>> {
-    return this._dataSubject;
+    return this._onChange.pipe(
+      map(_ => {
+        const data = this.data || [];
+        const total = data.length;
+        return {data, total};
+      })
+    );
   }
 
   asFilter(source: Partial<F>): F {

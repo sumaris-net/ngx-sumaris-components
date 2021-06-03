@@ -44,6 +44,7 @@ import {JDENTICON_CONFIG} from "ngx-jdenticon";
 import {APP_ABOUT_DEVELOPERS, APP_ABOUT_PARTNERS} from "./core/about/modal-about";
 import {Department} from "./core/services/model/department.model";
 import {Person} from "./core/services/model/person.model";
+import {CORE_TESTING_PAGES} from "./core/core.testing.module";
 
 
 @NgModule({
@@ -207,7 +208,9 @@ import {Person} from "./core/services/model/person.model";
     },
 
     // Testing pages
-    { provide: APP_TESTING_PAGES, useValue: {}},
+    { provide: APP_TESTING_PAGES, useValue: [
+      ...CORE_TESTING_PAGES
+      ]},
 
     // Custom identicon style
     // https://jdenticon.com/icon-designer.html?config=4451860010ff320028501e5a

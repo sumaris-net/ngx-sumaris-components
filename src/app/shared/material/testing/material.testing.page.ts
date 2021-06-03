@@ -21,6 +21,7 @@ export class MaterialTestingPage {
       protected translate: TranslateService,
       @Optional() @Inject(APP_TESTING_PAGES) public pages: TestingPage[]
     ) {
+    console.log('Testing pages:', pages);
   }
 
   async openPage(page): Promise<boolean> {

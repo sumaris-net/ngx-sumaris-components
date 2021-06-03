@@ -99,6 +99,7 @@
     "RECORDER": "Saisisseur",
     "RESULT_COUNT": "{{count}} résultats",
     "NO_RESULT": "Aucun résultat",
+    "LOADING_DOTS": "Chargement...",
     "MISSING": "Manquant",
 
     "DISPLAYED_COLUMNS": "Paramétrage des colonnes",

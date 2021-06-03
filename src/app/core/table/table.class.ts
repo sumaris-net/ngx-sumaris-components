@@ -1,9 +1,28 @@
-import {AfterViewInit, Directive, EventEmitter, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
+import {
+  AfterViewInit,
+  Directive,
+  EventEmitter,
+  Injector,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from "@angular/core";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort, MatSortable, SortDirection} from "@angular/material/sort";
 import {MatTable} from "@angular/material/table";
 import {BehaviorSubject, EMPTY, merge, Observable, of, Subject, Subscription} from 'rxjs';
-import {catchError, debounceTime, distinctUntilChanged, filter, mergeMap, startWith, switchMap, tap} from "rxjs/operators";
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  mergeMap,
+  startWith,
+  switchMap,
+  tap
+} from "rxjs/operators";
 import {TableElement} from "@e-is/ngx-material-table";
 import {EntitiesTableDataSource} from "./entities-table-datasource.class";
 import {SelectionModel} from "@angular/cdk/collections";
@@ -22,11 +41,16 @@ import {ShowToastOptions, Toasts} from "../../shared/toasts";
 import {Alerts} from "../../shared/alerts";
 import {createPromiseEventEmitter, emitPromiseEvent} from "../../shared/events";
 import {Environment} from "../../../environments/environment.class";
-import {MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions, MatAutocompleteFieldConfig} from "../../shared/material/autocomplete/material.autocomplete";
+import {
+  MatAutocompleteConfigHolder,
+  MatAutocompleteFieldAddOptions,
+  MatAutocompleteFieldConfig
+} from "../../shared/material/autocomplete/material.autocomplete";
 import {firstFalsePromise} from "../../shared/observables";
 
 export const SETTINGS_DISPLAY_COLUMNS = "displayColumns";
 export const SETTINGS_SORTED_COLUMN = "sortedColumn";
+export const SETTINGS_FILTER = "filter";
 export const SETTINGS_PAGE_SIZE = "pageSize";
 export const DEFAULT_PAGE_SIZE = 20;
 export const DEFAULT_PAGE_SIZE_OPTIONS = [20, 50, 100, 200, 500];
@@ -74,7 +98,7 @@ export abstract class AppTable<
 
   protected _enabled = true;
   protected _dirty = false;
-  protected _destroy$ = new Subject();
+  protected _$destroy = new Subject();
   protected _autocompleteConfigHolder: MatAutocompleteConfigHolder;
   protected allowRowDetail = true;
   protected translate: TranslateService;
@@ -339,9 +363,12 @@ export abstract class AppTable<
 
     this.displayedColumns = this.getDisplayColumns();
 
-    const sortedColumn = this.getSortedColumn();
-    this.defaultSortBy = sortedColumn.id;
-    this.defaultSortDirection = sortedColumn.start;
+    // Load the sorted columns, from settings
+    {
+      const sortedColumn = this.getSortedColumn();
+      this.defaultSortBy = sortedColumn.id;
+      this.defaultSortDirection = sortedColumn.start;
+    }
 
     this.defaultPageSize = this.getPageSize();
 
@@ -470,8 +497,8 @@ export abstract class AppTable<
     this.onAfterDeletedRows.unsubscribe();
     this.onSort.unsubscribe();
 
-    this._destroy$.next();
-    this._destroy$.unsubscribe();
+    this._$destroy.next();
+    this._$destroy.unsubscribe();
 
     if (this._dataSource) {
       this._dataSource.ngOnDestroy();

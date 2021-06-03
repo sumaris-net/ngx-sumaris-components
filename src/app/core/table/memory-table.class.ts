@@ -68,7 +68,11 @@ export abstract class AppInMemoryTable<
       this.markForCheck();
     }
     const firstCall = isEmptyArray(this.memoryDataService.value);
+
+    // TODO BLA: review
+    //this.memoryDataService.setValue(value, {emitEvent: false});
     this.memoryDataService.value = value;
+
     if (firstCall || (opts && opts.emitEvent !== false)) {
       this.onRefresh.emit();
     }

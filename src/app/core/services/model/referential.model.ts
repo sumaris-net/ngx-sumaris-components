@@ -55,7 +55,6 @@ export abstract class BaseReferential<
   validityStatusId: number = null;
   levelId: number = null;
   parentId: number = null;
-  rankOrder: number = null;
   entityName: string = null;
 
   constructor(__typename?: string) {
@@ -85,7 +84,6 @@ export abstract class BaseReferential<
     this.statusId = source.statusId;
     this.validityStatusId  = source.validityStatusId;
     this.levelId = source.levelId && source.levelId !== 0 ? source.levelId : undefined; // Do not set as null (need for account.department, when register)
-    this.rankOrder = source.rankOrder;
     this.parentId = source.parentId;
     this.creationDate = fromDateISOString(source.creationDate);
     this.entityName = source.entityName;

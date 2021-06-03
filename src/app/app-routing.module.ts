@@ -54,6 +54,11 @@ const routes: Routes = [
       {
         path: 'shared',
         loadChildren: () => import('./shared/shared.testing.module').then(m => m.SharedTestingModule)
+      },
+      // Core module
+      {
+        path: 'core',
+        loadChildren: () => import('./core/core.testing.module').then(m => m.CoreTestingModule)
       }
     ]
   },

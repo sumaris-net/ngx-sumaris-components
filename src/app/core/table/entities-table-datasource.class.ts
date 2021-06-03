@@ -106,7 +106,7 @@ export class EntitiesTableDataSource<
            size: number,
            sortBy?: string,
            sortDirection?: SortDirection,
-           filter?: F): Observable<LoadResult<T>> {
+           filter?: Partial<F>): Observable<LoadResult<T>> {
 
     this._stopWatchAll$.next(); // stop previous watch observable
     this._editingRowCount = 0;

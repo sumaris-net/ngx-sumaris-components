@@ -1,6 +1,7 @@
 import {Observable} from "rxjs";
 import {FetchPolicy, WatchQueryFetchPolicy} from "@apollo/client/core";
 import {SortDirection} from "@angular/material/sort";
+import {Directive, OnDestroy} from "@angular/core";
 
 export declare interface Page {
   offset: number;
@@ -27,6 +28,7 @@ export declare type FilterFnFactory<T, F> = (filter: F) => FilterFn<T>;
 export declare interface EntityServiceLoadOptions {
   fetchPolicy?: FetchPolicy;
   trash?: boolean;
+  toEntity?: boolean;
   [key: string]: any;
 }
 
@@ -87,4 +89,33 @@ export interface IEntityFullService<T, ID, F, O extends EntitiesServiceWatchOpti
   extends IEntityService<T, ID, O>, IEntitiesService<T, F, O>  {
 }
 
+@Directive()
+export abstract class EntitiesService<T, F, O extends EntitiesServiceWatchOptions = EntitiesServiceWatchOptions>
+  implements IEntitiesService<T, F, O>, OnDestroy {
 
+  ngOnDestroy() {
+    // Can be override by subclasses
+  }
+
+  abstract watchAll(
+    offset: number,
+    size: number,
+    sortBy?: string,
+    sortDirection?: SortDirection,
+    filter?: Partial<F>,
+    options?: O
+  ): Observable<LoadResult<T>>;
+
+  // TODO
+  /*watchPage(
+    page: Page<T>,
+    filter?: F,
+    options?: O
+  ): Observable<LoadResult<T>>;*/
+
+  abstract saveAll(data: T[], options?: any): Promise<T[]>;
+
+  abstract deleteAll(data: T[], options?: any): Promise<any>;
+
+  abstract asFilter(filter: Partial<F>): F;
+}

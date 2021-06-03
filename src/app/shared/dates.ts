@@ -59,6 +59,13 @@ export function fromDateISOString(value: any): Moment | undefined {
   return undefined;
 }
 
+export function fromUnixTimestamp(timeInSec: number) {
+  return moment(timeInSec, DATE_UNIX_TIMESTAMP);
+}
+export function fromUnixMsTimestamp(timeInMs: number) {
+  return moment(timeInMs, DATE_UNIX_MS_TIMESTAMP);
+}
+
 export function toDuration(value: number, unit?: moment.unitOfTime.DurationConstructor): Duration {
   if (!value) return undefined;
 

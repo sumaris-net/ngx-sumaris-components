@@ -3,7 +3,7 @@ import {Storage} from "@ionic/storage";
 import {map, mergeMap} from "rxjs/operators";
 import {Entity, EntityUtils, IEntity} from "../model/entity.model";
 import {isEmptyArray, isNil, isNotEmptyArray, isNotNil} from "../../../shared/functions";
-import {LoadResult} from "../../../shared/services/entity-service.class";
+import {IEntitiesService, LoadResult} from "../../../shared/services/entity-service.class";
 import {chainPromises} from "../../../shared/observables";
 import {ErrorCodes} from "../errors";
 
@@ -554,7 +554,7 @@ export class EntityStore<
       else {
         data = (variables.size > 0 && ((variables.offset + variables.size) < data.length)) ?
           // Slice using limit to size
-          data.slice(variables.offset, (variables.offset + variables.size) - 1) :
+          data.slice(variables.offset, variables.offset + variables.size) :
           // Slice without limit
           data.slice(variables.offset);
       }
