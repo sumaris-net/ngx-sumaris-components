@@ -22,7 +22,10 @@
     "lint": "npm run ng lint",
     "e2e": "npm run ng e2e",
     "packagr": "ng-packagr -p ng-package.json",
-    "publish": "npm run packagr && npm publish dist"
+    "publish": "npm run packagr && cd dist npm publish"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "lodash.clonedeep": "^4.5.0"
