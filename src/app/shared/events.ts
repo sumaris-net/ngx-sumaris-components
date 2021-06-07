@@ -34,3 +34,8 @@ export function emitPromiseEvent<T = any, D = void>(emitter: EventEmitter<Promis
     emitter.emit(event);
   });
 }
+
+export interface CompletableEvent extends Event {
+  target: EventTarget & { complete?: () => void; }
+}
+

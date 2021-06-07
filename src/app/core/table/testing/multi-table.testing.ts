@@ -7,20 +7,25 @@ import {Location} from "@angular/common";
 import {LocalSettingsService} from "../../services/local-settings.service";
 import {EntitiesTableDataSource} from "../entities-table-datasource.class";
 import {InMemoryEntitiesService} from "../../../shared/services/memory-entity-service.class";
+import {EntityClass} from "../../services/model/entity.decorators";
+import {EntityFilter} from "../../services/model/filter.model";
 import {AppValidatorService} from "../../services/validator/base.validator.class";
 import {AbstractControl, FormBuilder, FormGroup} from "@angular/forms";
 import {isNil, isNotNil} from "../../../shared/functions";
 import {fromUnixMsTimestamp} from "../../../shared/dates";
-import {ReferentialFilter} from "../../services/testing/referential-filter.model";
+import {FilterFn} from "../../../shared/services/entity-service.class";
+import {EntityAsObjectOptions, EntityUtils} from "../../services/model/entity.model";
 import {debounceTime, filter, tap} from "rxjs/operators";
 import {MatExpansionPanel} from "@angular/material/expansion";
+import {StoreObject} from "@apollo/client/core";
 import Timeout = NodeJS.Timeout;
+import {ReferentialFilter} from "../../services/testing/referential-filter.model";
 import {ReferentialValidatorService} from "../../services/testing/referential.validator";
 
 
 @Component({
-  selector: 'app-table-testing',
-  templateUrl: 'table.testing.html',
+  selector: 'app-multi-table-testing',
+  templateUrl: 'multi-table.testing.html',
   providers: [
     {
       provide: InMemoryEntitiesService,
@@ -35,7 +40,7 @@ import {ReferentialValidatorService} from "../../services/testing/referential.va
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
+export class MultiTableTestingPage extends AppTable<Referential, ReferentialFilter>
   implements OnInit, OnDestroy {
 
   static maxRowCount = 100;

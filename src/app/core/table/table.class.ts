@@ -39,7 +39,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {PlatformService} from "../services/platform.service";
 import {ShowToastOptions, Toasts} from "../../shared/toasts";
 import {Alerts} from "../../shared/alerts";
-import {createPromiseEventEmitter, emitPromiseEvent} from "../../shared/events";
+import {CompletableEvent, createPromiseEventEmitter, emitPromiseEvent} from "../../shared/events";
 import {Environment} from "../../../environments/environment.class";
 import {
   MatAutocompleteConfigHolder,
@@ -47,6 +47,7 @@ import {
   MatAutocompleteFieldConfig
 } from "../../shared/material/autocomplete/material.autocomplete";
 import {firstFalsePromise} from "../../shared/observables";
+import {CompleteEvent} from "apollo-link-serialize/build/dist/TestUtils";
 
 export const SETTINGS_DISPLAY_COLUMNS = "displayColumns";
 export const SETTINGS_SORTED_COLUMN = "sortedColumn";
@@ -874,7 +875,7 @@ export abstract class AppTable<
     return row.id;
   }
 
-  doRefresh(event?: CustomEvent & { target?: EventTarget & { complete?: () => void; }  }) {
+  doRefresh(event?: CompletableEvent) {
     this.onRefresh.emit(event);
 
     // When target wait for a complete (e.g. IonRefresher)
