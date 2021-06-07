@@ -22,7 +22,7 @@
     "lint": "npm run ng lint",
     "e2e": "npm run ng e2e",
     "packagr": "ng-packagr -p ng-package.json",
-    "publish": "npm run packagr && cd dist npm publish"
+    "publish": "npm run packagr && cd dist && npm publish"
   },
   "publishConfig": {
     "access": "public"
