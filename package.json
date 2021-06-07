@@ -1,7 +1,7 @@
 {
   "name": "@sumaris-net/ngx-components",
   "description": "SUMARiS Angular components",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "contact@e-is.pro",
   "license": "AGPL-3.0",
   "readmeFilename": "README.md",
@@ -121,7 +121,7 @@
     "type": "git",
     "url": "https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components.git"
   },
-  "homepage": "https://github.com/sumaris-net/ngx-components",
+  "homepage": "https://github.com/sumaris-net/ngx-sumaris-components",
   "bugs": {
     "url": "https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components/-/issues"
   },

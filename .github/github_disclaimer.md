@@ -1,6 +1,6 @@
 # Initial disclaimer
 This project is now tracked on a gitlab server at:
-https://gitlab.ifremer.fr/sih/sumaris/sumaris-app
+https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components
 
 The current github repository is a simple clone taken up to date at each push on the main gitlab repository.
 
