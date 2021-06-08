@@ -2,6 +2,7 @@ import { Environment } from './environment.class';
 const pkg = require('../../package.json');
 
 /* eslint-disable */
+// FIXME SHOULD NOT BE USED BY PACKAGER
 export const environment: Environment = Object.freeze({
   name: (pkg.name as string),
   version: (pkg.version as string),

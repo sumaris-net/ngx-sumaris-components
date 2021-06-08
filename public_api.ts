@@ -112,6 +112,7 @@ export * from './src/app/core/services/crypto.service';
 export * from './src/app/core/services/auth-guard.service';
 export * from './src/app/core/services/base58';
 export * from './src/app/core/services/base-graphql-service.class';
+export * from './src/app/core/services/base-entity-service.class';
 export * from './src/app/core/services/storage/entities-storage.service';
 export * from './src/app/core/services/validator/base.validator.class';
 

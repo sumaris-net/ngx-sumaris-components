@@ -4,12 +4,10 @@
 
 import {Environment} from './environment.class';
 
-const pkg = require('../../package.json');
-
 export const environment: Environment = Object.freeze({
-  name: (pkg.name as string),
-  version: (pkg.version as string),
-  production: false,
+  name: '@sumaris-net/ngx-components', // overridden by ENVIRONMENT token
+  version: undefined, // overridden by ENVIRONMENT token
+  production: true, // let to true ! because used by packager
   baseUrl: '/',
   defaultLocale: 'fr',
   defaultLatLongFormat: 'DDMM',
