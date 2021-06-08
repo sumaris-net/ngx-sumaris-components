@@ -13,14 +13,14 @@ import {ModalController} from '@ionic/angular';
 import {Subscription} from 'rxjs';
 import {Configuration} from '../services/model/config.model';
 import {ConfigService} from '../services/config.service';
-import {PlatformService} from "../services/platform.service";
-import {distinctUntilChanged, map} from "rxjs/operators";
-import {NetworkService} from "../services/network.service";
-import {CORE_CONFIG_OPTIONS} from "../services/config/core.config";
-import {VersionUtils} from "../../shared/version/versions";
-import {fadeInAnimation, slideUpDownAnimation} from "../../shared/material/material.animations";
-import {isNilOrBlank, isNotEmptyArray, isNotNilOrBlank} from "../../shared/functions";
-import {ENVIRONMENT} from "../../../environments/environment.class";
+import {PlatformService} from '../services/platform.service';
+import {distinctUntilChanged, map} from 'rxjs/operators';
+import {NetworkService} from '../services/network.service';
+import {CORE_CONFIG_OPTIONS} from '../services/config/core.config';
+import {VersionUtils} from '../../shared/version/versions';
+import {fadeInAnimation, slideUpDownAnimation} from '../../shared/material/material.animations';
+import {isNilOrBlank, isNotEmptyArray, isNotNilOrBlank} from '../../shared/functions';
+import {ENVIRONMENT} from '../../../environments/environment.class';
 
 
 export declare interface InstallAppLink {
@@ -100,7 +100,7 @@ export class AppInstallUpgradeCard implements OnInit, OnDestroy {
     this._subscription.add(
       this.configService.config
         .subscribe(config => {
-          console.info("[install] Checking if upgrade  or install is need...");
+          console.info('[install] Checking if upgrade  or install is need...');
 
           const installLinks = this.getAllInstallLinks(config);
 
@@ -176,7 +176,7 @@ export class AppInstallUpgradeCard implements OnInit, OnDestroy {
   }
 
   getAppFileName(): string {
-    return
+    return;
   }
 
   /* -- protected method  -- */

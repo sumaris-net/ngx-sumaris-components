@@ -1,13 +1,13 @@
-import {Moment} from "moment";
-import {Entity, EntityAsObjectOptions, IEntity} from "../../../core/services/model/entity.model";
-import {PredefinedColors} from "@ionic/core";
-import {fromDateISOString} from "../../../shared/dates";
-import {EntityClass} from "../../../core/services/model/entity.decorators";
+import {Moment} from 'moment';
+import {Entity, EntityAsObjectOptions, IEntity} from '../../../core/services/model/entity.model';
+import {PredefinedColors} from '@ionic/core';
+import {fromDateISOString} from '../../../shared/dates';
+import {EntityClass} from '../../../core/services/model/entity.decorators';
 
 export const UserEventTypes = {
   DEBUG_DATA: 'DEBUG_DATA',
   INBOX_MESSAGE: 'INBOX_MESSAGE'
-}
+};
 
 // @dynamic
 @EntityClass({typename: 'UserEventVO'})
@@ -57,7 +57,7 @@ export class UserEvent extends Entity<UserEvent> {
       }
     }
     catch(err) {
-      console.error("Error during UserEvent deserialization", err);
+      console.error('Error during UserEvent deserialization', err);
     }
   }
 }

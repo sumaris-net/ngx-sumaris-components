@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {toBoolean} from "../functions";
-import {Subscription} from "rxjs";
-import {Hotkeys} from "../hotkeys/hotkeys.service";
-import {IconRef} from "../types";
+import {toBoolean} from '../functions';
+import {Subscription} from 'rxjs';
+import {Hotkeys} from '../hotkeys/hotkeys.service';
+import {IconRef} from '../types';
 
 @Component({
   selector: 'app-modal-toolbar',

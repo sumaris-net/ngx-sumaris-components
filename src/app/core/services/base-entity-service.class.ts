@@ -1,22 +1,22 @@
-import {Observable} from "rxjs";
-import {map} from "rxjs/operators";
-import {ErrorCodes} from "./errors";
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {ErrorCodes} from './errors';
 
-import {FetchPolicy, MutationUpdaterFn, WatchQueryFetchPolicy} from "@apollo/client/core";
-import {SortDirection} from "@angular/material/sort";
+import {FetchPolicy, MutationUpdaterFn, WatchQueryFetchPolicy} from '@apollo/client/core';
+import {SortDirection} from '@angular/material/sort';
 
-import {BaseGraphqlService} from "./base-graphql-service.class";
-import {EntitiesServiceWatchOptions, EntityServiceLoadOptions, IEntitiesService, IEntityService, LoadResult} from "../../shared/services/entity-service.class";
-import {GraphqlService} from "../graphql/graphql.service";
-import {PlatformService} from "./platform.service";
-import {environment} from "../../../environments/environment";
-import {Entity, EntityAsObjectOptions, EntityUtils} from "./model/entity.model";
-import {chainPromises} from "../../shared/observables";
-import {isEmptyArray, isNil, isNotNil, toBoolean} from "../../shared/functions";
-import {Directive} from "@angular/core";
-import {RefetchQueryDescription} from "@apollo/client/core/watchQueryOptions";
-import {FetchResult} from "@apollo/client/link/core";
-import {EntityFilter, EntityFilterUtils} from "./model/filter.model";
+import {BaseGraphqlService} from './base-graphql-service.class';
+import {EntitiesServiceWatchOptions, EntityServiceLoadOptions, IEntitiesService, IEntityService, LoadResult} from '../../shared/services/entity-service.class';
+import {GraphqlService} from '../graphql/graphql.service';
+import {PlatformService} from './platform.service';
+import {environment} from '../../../environments/environment';
+import {Entity, EntityAsObjectOptions, EntityUtils} from './model/entity.model';
+import {chainPromises} from '../../shared/observables';
+import {isEmptyArray, isNil, isNotNil, toBoolean} from '../../shared/functions';
+import {Directive} from '@angular/core';
+import {RefetchQueryDescription} from '@apollo/client/core/watchQueryOptions';
+import {FetchResult} from '@apollo/client/link/core';
+import {EntityFilter, EntityFilterUtils} from './model/filter.model';
 
 
 export interface BaseEntityGraphqlQueries {
@@ -51,13 +51,13 @@ export interface BaseEntityServiceOptions<
 export interface EntitySaveOptions {
   refetchQueries?: ((result: FetchResult<{data: any}>) => RefetchQueryDescription) | RefetchQueryDescription;
   awaitRefetchQueries?: boolean;
-  update?: MutationUpdaterFn<{ data: any; }>;
+  update?: MutationUpdaterFn<{ data: any }>;
 }
 
 
 // @dynamic
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export abstract class BaseEntityService<
   T extends Entity<T, ID>,
   F extends EntityFilter<F, T, ID>,
@@ -113,7 +113,7 @@ export abstract class BaseEntityService<
     this._debug = !environment.production;
   }
 
-  watch(id: number, opts?: WO & { query?: any; }): Observable<T> {
+  watch(id: number, opts?: WO & { query?: any }): Observable<T> {
 
     if (this._debug) console.debug(`[base-entity-service] Watching ${this._entityName} {${id}}...`);
 
@@ -122,18 +122,16 @@ export abstract class BaseEntityService<
       query,
       variables: { id },
       fetchPolicy: opts && (opts.fetchPolicy as FetchPolicy) || undefined,
-      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "REFERENTIAL.ERROR.LOAD_DATA_ERROR"}
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: 'REFERENTIAL.ERROR.LOAD_DATA_ERROR'}
     })
       .pipe(
-        map(({data}) => {
-          return (!opts || opts.toEntity !== false)
+        map(({data}) => (!opts || opts.toEntity !== false)
             ? (data && this.fromObject(data))
-            : (data as T);
-        })
+            : (data as T))
       );
   }
 
-  async load(id: ID, opts?: LO & { query?: any; }): Promise<T> {
+  async load(id: ID, opts?: LO & { query?: any }): Promise<T> {
 
     if (this._debug) console.debug(`[base-entity-service] Loading ${this._entityName} {${id}}...`);
     const query = opts && opts.query || this.queries.load;
@@ -144,7 +142,7 @@ export abstract class BaseEntityService<
         id
       },
       fetchPolicy: opts && (opts.fetchPolicy as FetchPolicy) || undefined,
-      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "REFERENTIAL.ERROR.LOAD_DATA_ERROR"}
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: 'REFERENTIAL.ERROR.LOAD_DATA_ERROR'}
     });
 
     // Convert to entity
@@ -158,7 +156,7 @@ export abstract class BaseEntityService<
            sortBy?: string,
            sortDirection?: SortDirection,
            filter?: F,
-           opts?: WO & { query?: any; }
+           opts?: WO & { query?: any }
   ): Observable<LoadResult<T>> {
 
     filter = this.asFilter(filter);
@@ -186,7 +184,7 @@ export abstract class BaseEntityService<
       totalFieldName: withTotal ? 'total' : undefined,
       insertFilterFn: filter && filter.asFilterFn(),
       variables,
-      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "REFERENTIAL.ERROR.LOAD_DATA_ERROR"},
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: 'REFERENTIAL.ERROR.LOAD_DATA_ERROR'},
       fetchPolicy: opts && opts.fetchPolicy || 'network-only'
     })
       .pipe(
@@ -239,7 +237,7 @@ export abstract class BaseEntityService<
     const {data, total} = await this.graphql.query<LoadResult<any>>({
       query,
       variables,
-      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: "ERROR.LOAD_DATA_ERROR"},
+      error: {code: ErrorCodes.LOAD_DATA_ERROR, message: 'ERROR.LOAD_DATA_ERROR'},
       fetchPolicy: opts && opts.fetchPolicy || 'network-only'
     });
     const entities = (!opts || opts.toEntity !== false) ?
@@ -276,7 +274,7 @@ export abstract class BaseEntityService<
       variables: {
         data: json
       },
-      error: {code: ErrorCodes.SAVE_DATA_ERROR, message: "ERROR.SAVE_DATA_ERROR"},
+      error: {code: ErrorCodes.SAVE_DATA_ERROR, message: 'ERROR.SAVE_DATA_ERROR'},
       update: (proxy, {data}) => {
         if (data && data.data) {
           // Update entities (id and update date)
@@ -306,6 +304,7 @@ export abstract class BaseEntityService<
 
   /**
    * Save a referential entity
+   *
    * @param entity
    * @param opts
    */
@@ -334,7 +333,7 @@ export abstract class BaseEntityService<
       variables: {
         data: json
       },
-      error: {code: ErrorCodes.SAVE_DATA_ERROR, message: "ERROR.SAVE_DATA_ERROR"},
+      error: {code: ErrorCodes.SAVE_DATA_ERROR, message: 'ERROR.SAVE_DATA_ERROR'},
       update: (proxy, {data}) => {
         // Update entity
         const savedEntity = data && data.data;
@@ -390,7 +389,7 @@ export abstract class BaseEntityService<
       variables: {
         ids
       },
-      error: {code: ErrorCodes.DELETE_DATA_ERROR, message: "ERROR.DELETE_DATA_ERROR"},
+      error: {code: ErrorCodes.DELETE_DATA_ERROR, message: 'ERROR.DELETE_DATA_ERROR'},
       update: (proxy, res) => {
         // Remove from cache
         if (this.queries.loadAll) {
@@ -439,7 +438,7 @@ export abstract class BaseEntityService<
       variables: {
         id
       },
-      error: {code: ErrorCodes.DELETE_DATA_ERROR, message: "ERROR.DELETE_DATA_ERROR"},
+      error: {code: ErrorCodes.DELETE_DATA_ERROR, message: 'ERROR.DELETE_DATA_ERROR'},
       update: (proxy, res) => {
         // Remove from cache
         this.removeFromMutableCachedQueryByIds(proxy, {
@@ -462,8 +461,8 @@ export abstract class BaseEntityService<
     interval?: number;
     toEntity?: boolean;
   }): Observable<T> {
-    if (isNil(id)) throw Error("Missing argument 'id' ");
-    if (!this.subscriptions.listenChanges) throw Error("Not implemented!");
+    if (isNil(id)) throw Error('Missing argument \'id\' ');
+    if (!this.subscriptions.listenChanges) throw Error('Not implemented!');
 
     const variables = opts && opts.variables || {
       id,

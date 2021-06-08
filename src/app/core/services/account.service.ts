@@ -1,26 +1,26 @@
-import {Inject, Injectable} from "@angular/core";
-import {CryptoService, KeyPair} from "./crypto.service";
-import {Department} from "./model/department.model";
-import {Account} from "./model/account.model";
-import {Person, PersonUtils, UserProfileLabel, UserProfileLabels} from "./model/person.model";
-import {UsageMode, UserSettings} from "./model/settings.model";
-import {BehaviorSubject, Observable, Subject, Subscription} from "rxjs";
-import {FetchPolicy, gql} from "@apollo/client/core";
+import {Inject, Injectable} from '@angular/core';
+import {CryptoService, KeyPair} from './crypto.service';
+import {Department} from './model/department.model';
+import {Account} from './model/account.model';
+import {Person, PersonUtils, UserProfileLabel, UserProfileLabels} from './model/person.model';
+import {UsageMode, UserSettings} from './model/settings.model';
+import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
+import {FetchPolicy, gql} from '@apollo/client/core';
 import {Storage} from '@ionic/storage';
 
-import {sleep} from "../../shared/functions";
-import {BaseGraphqlService} from "./base-graphql-service.class";
-import {ErrorCodes, ServerErrorCodes} from "./errors";
-import {GraphqlService} from "../graphql/graphql.service";
-import {LocalSettingsService} from "./local-settings.service";
-import {FormFieldDefinition} from "../../shared/form/field.model";
-import {AuthTokenType, NetworkService} from "./network.service";
-import {FileService} from "../../shared/file/file.service";
-import {Referential, ReferentialUtils} from "./model/referential.model";
-import {StatusIds} from "./model/model.enum";
-import {Base58} from "./base58";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {toDateISOString} from "../../shared/dates";
+import {sleep} from '../../shared/functions';
+import {BaseGraphqlService} from './base-graphql-service.class';
+import {ErrorCodes, ServerErrorCodes} from './errors';
+import {GraphqlService} from '../graphql/graphql.service';
+import {LocalSettingsService} from './local-settings.service';
+import {FormFieldDefinition} from '../../shared/form/field.model';
+import {AuthTokenType, NetworkService} from './network.service';
+import {FileService} from '../../shared/file/file.service';
+import {Referential, ReferentialUtils} from './model/referential.model';
+import {StatusIds} from './model/model.enum';
+import {Base58} from './base58';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {toDateISOString} from '../../shared/dates';
 
 
 export declare interface AccountHolder {
@@ -44,12 +44,12 @@ export interface RegisterData extends AuthData {
   account: Account;
 }
 
-const TOKEN_STORAGE_KEY = "token";
-const PUBKEY_STORAGE_KEY = "pubkey";
-const SECKEY_STORAGE_KEY = "seckey";
-const ACCOUNT_STORAGE_KEY = "account";
+const TOKEN_STORAGE_KEY = 'token';
+const PUBKEY_STORAGE_KEY = 'pubkey';
+const SECKEY_STORAGE_KEY = 'seckey';
+const ACCOUNT_STORAGE_KEY = 'account';
 
-const DEFAULT_AVATAR_IMAGE = "assets/img/person.png";
+const DEFAULT_AVATAR_IMAGE = 'assets/img/person.png';
 
 /* ------------------------------------
  * GraphQL queries
@@ -218,7 +218,7 @@ export class AccountService extends BaseGraphqlService {
 
   set tokenType(value: AuthTokenType) {
     if (this._tokenType !== value) {
-      console.info("[account] Using authentication token type: " + value);
+      console.info('[account] Using authentication token type: ' + value);
       this._tokenType = value;
       // Reset values
       this.data.authToken = undefined;
@@ -253,7 +253,7 @@ export class AccountService extends BaseGraphqlService {
         this.ready();
       }
       if (this._started && this.isLogin()) {
-        console.debug("[account] Restarting, to retry to authenticate...");
+        console.debug('[account] Restarting, to retry to authenticate...');
         this.restart();
       }
     });
@@ -262,7 +262,7 @@ export class AccountService extends BaseGraphqlService {
     this.network.on('beforeTryOnlineFinish', async (online) => {
       // If online, wait a full restart, because it can force offline mode
       if (online && (!this._started || this.isLogin())) {
-        console.debug("[account] Force networkService.tryOnline() to wait, that account service is restarted...");
+        console.debug('[account] Force networkService.tryOnline() to wait, that account service is restarted...');
         //await this.stop();
         await sleep(500);
         return this.ready();
@@ -390,7 +390,7 @@ export class AccountService extends BaseGraphqlService {
   canUserWriteDataForDepartment(recorderDepartment: Referential | any): boolean {
     if (ReferentialUtils.isEmpty(recorderDepartment)) {
       if (!this.isAdmin())
-        console.warn("Unable to check if user has right: invalid recorderDepartment", recorderDepartment);
+        console.warn('Unable to check if user has right: invalid recorderDepartment', recorderDepartment);
       return this.isAdmin();
     }
 
@@ -398,7 +398,7 @@ export class AccountService extends BaseGraphqlService {
     if (!this.data.account || !this.data.account.pubkey || this.data.account.statusId !== StatusIds.ENABLE) return false;
 
     if (!this.data.account.department || !this.data.account.department.id) {
-      console.warn("User account has no department ! Unable to check write right against recorderDepartment");
+      console.warn('User account has no department ! Unable to check write right against recorderDepartment');
       return false;
     }
 
@@ -411,9 +411,9 @@ export class AccountService extends BaseGraphqlService {
 
   async register(data: RegisterData): Promise<Account> {
     if (this.isLogin()) {
-      throw new Error("User already login. Please logout before register.");
+      throw new Error('User already login. Please logout before register.');
     }
-    if (!data.username || !data.username) throw new Error("Missing required username por password");
+    if (!data.username || !data.username) throw new Error('Missing required username por password');
 
     if (this._debug) console.debug('[account] Register new user account...', data.account);
     this.data.loaded = false;
@@ -445,7 +445,7 @@ export class AccountService extends BaseGraphqlService {
 
       await this.saveLocally();
 
-      console.debug("[account] Account successfully registered in " + (Date.now() - now) + "ms");
+      console.debug('[account] Account successfully registered in ' + (Date.now() - now) + 'ms');
       this.onLogin.next(this.data.account);
       return this.data.account;
     }
@@ -464,7 +464,7 @@ export class AccountService extends BaseGraphqlService {
       if (!this.data.authBasic) {
         // Skip if token already provided
         if (!(this.data.authToken && this._tokenType === 'basic-and-token')) {
-          if (!data || !data.username || !data.password) throw new Error("Missing username and password");
+          if (!data || !data.username || !data.password) throw new Error('Missing username and password');
           this.data.authBasic = this.cryptoService.encodeBase64(`${data.username}:${data.password}`);
         }
       }
@@ -491,9 +491,9 @@ export class AccountService extends BaseGraphqlService {
   }
 
   async login(data: AuthData): Promise<Account> {
-    if (!data || !data.username || !data.password) throw new Error("Missing required username or password");
+    if (!data || !data.username || !data.password) throw new Error('Missing required username or password');
 
-    console.debug("[account] Login...");
+    console.debug('[account] Login...');
 
     let keypair;
     try {
@@ -501,7 +501,7 @@ export class AccountService extends BaseGraphqlService {
     } catch (error) {
       console.error(error);
       this.resetData();
-      throw { code: ErrorCodes.UNKNOWN_ERROR, message: "ERROR.SCRYPT_ERROR" };
+      throw { code: ErrorCodes.UNKNOWN_ERROR, message: 'ERROR.SCRYPT_ERROR' };
     }
 
     // Store pubkey+keypair
@@ -544,7 +544,7 @@ export class AccountService extends BaseGraphqlService {
       if (err && +(err.code) === ErrorCodes.LOAD_ACCOUNT_ERROR) {
 
         // Check email exists
-        if (data.username.indexOf("@") !== -1) {
+        if (data.username.indexOf('@') !== -1) {
           let isEmailExists;
           try {
             isEmailExists = await this.isEmailExists(data.username);
@@ -554,12 +554,12 @@ export class AccountService extends BaseGraphqlService {
 
           // Email not exists (no account)
           if (!isEmailExists) {
-            throw { code: ErrorCodes.UNKNOWN_ACCOUNT_EMAIL, message: "ERROR.UNKNOWN_ACCOUNT_EMAIL" };
+            throw { code: ErrorCodes.UNKNOWN_ACCOUNT_EMAIL, message: 'ERROR.UNKNOWN_ACCOUNT_EMAIL' };
           }
         }
 
         // Email exists, so error = 'bad password'
-        throw { code: ErrorCodes.BAD_PASSWORD, message: "ERROR.BAD_PASSWORD" };
+        throw { code: ErrorCodes.BAD_PASSWORD, message: 'ERROR.BAD_PASSWORD' };
       }
 
       throw err; // resend the first error
@@ -582,13 +582,13 @@ export class AccountService extends BaseGraphqlService {
   }
 
   async refresh(): Promise<Account> {
-    if (!this.data.pubkey) throw new Error("User not logged");
-    if (this.network.offline) throw new Error("Cannot check account in offline mode");
+    if (!this.data.pubkey) throw new Error('User not logged');
+    if (this.network.offline) throw new Error('Cannot check account in offline mode');
 
     await this.loadData();
     await this.saveLocally();
 
-    console.debug("[account] Successfully reload account");
+    console.debug('[account] Successfully reload account');
 
     // Emit login event to subscribers
     this.onLogin.next(this.data.account);
@@ -600,7 +600,7 @@ export class AccountService extends BaseGraphqlService {
     offline?: boolean;
     fetchPolicy?: FetchPolicy;
   }): Promise<Account> {
-    if (!this.data.pubkey) throw new Error("User not logged");
+    if (!this.data.pubkey) throw new Error('User not logged');
 
     this.data.loaded = false;
 
@@ -669,12 +669,12 @@ export class AccountService extends BaseGraphqlService {
     if (this.network.online) {
       try {
         await this.authenticate();
-        if (!this.data.authToken && !this.data.authBasic) throw new Error("Authentication failed");
+        if (!this.data.authToken && !this.data.authBasic) throw new Error('Authentication failed');
       }
       catch (error) {
         // Offline feature are enable: continue in offline mode
         if (this.settings.hasOfflineFeature()) {
-          console.warn("[account] Unable to authenticate on pod: forcing offline mode");
+          console.warn('[account] Unable to authenticate on pod: forcing offline mode');
           this.network.setForceOffline(true, {showToast: false});
           // Continue
         }
@@ -719,7 +719,7 @@ export class AccountService extends BaseGraphqlService {
    * Save account into the local storage
    */
   async saveLocally(): Promise<void> {
-    if (!this.data.pubkey) throw new Error("User not logged");
+    if (!this.data.pubkey) throw new Error('User not logged');
 
     if (this._debug) console.debug(`[account] Saving account {${this.data.pubkey.substring(0, 6)}} in local storage...`);
 
@@ -736,7 +736,7 @@ export class AccountService extends BaseGraphqlService {
         responseType: 'dataUrl'
       })
         .then(dataUrl => {
-          if (dataUrl && this._debug) console.debug("[account] Image fetched: ", dataUrl.substring(0, 50));
+          if (dataUrl && this._debug) console.debug('[account] Image fetched: ', dataUrl.substring(0, 50));
 
           // TODO: make sure to display Base64 image in the menu top header
           //jsonAccount.avatar = dataUrl;
@@ -756,16 +756,17 @@ export class AccountService extends BaseGraphqlService {
       this.storage.remove(ACCOUNT_STORAGE_KEY)
     ]);
 
-    if (this._debug) console.debug("[account] Account saved in local storage");
+    if (this._debug) console.debug('[account] Account saved in local storage');
   }
 
   /**
    * Create or update an user account, to the remote storage
+   *
    * @param account
    */
   public async saveRemotely(account: Account): Promise<Account> {
-    if (!this.data.pubkey) return Promise.reject("User not logged");
-    if (this.data.pubkey !== account.pubkey) return Promise.reject("Not user account");
+    if (!this.data.pubkey) return Promise.reject('User not logged');
+    if (this.data.pubkey !== account.pubkey) return Promise.reject('Not user account');
 
     account = await this.saveAccount(account, this.data.keypair);
 
@@ -827,6 +828,7 @@ export class AccountService extends BaseGraphqlService {
 
   /**
    * Load a account by pubkey
+   *
    * @param pubkey
    */
   public async loadAccount(opts?: {
@@ -853,7 +855,7 @@ export class AccountService extends BaseGraphqlService {
     else {
       const res = await this.graphql.query<{ account: any }>({
         query: LoadQuery,
-        error: { code: ErrorCodes.LOAD_ACCOUNT_ERROR, message: "ERROR.LOAD_ACCOUNT_ERROR" },
+        error: { code: ErrorCodes.LOAD_ACCOUNT_ERROR, message: 'ERROR.LOAD_ACCOUNT_ERROR' },
         fetchPolicy: opts && opts.fetchPolicy || 'no-cache' || undefined
       });
       accountJson = res && res.account;
@@ -872,6 +874,7 @@ export class AccountService extends BaseGraphqlService {
 
   /**
    * Create or update an user account
+   *
    * @param account
    * @param keyPair
    */
@@ -888,7 +891,7 @@ export class AccountService extends BaseGraphqlService {
     if (!isNew) {
       const existingAccount = await this.loadAccount({ fetchPolicy: 'network-only' });
       if (!existingAccount || !existingAccount.updateDate) {
-        throw { code: ErrorCodes.ACCOUNT_NOT_EXISTS, message: "ERROR.ACCOUNT_NOT_EXISTS" };
+        throw { code: ErrorCodes.ACCOUNT_NOT_EXISTS, message: 'ERROR.ACCOUNT_NOT_EXISTS' };
       }
       account.updateDate = existingAccount.updateDate || account.updateDate;
       if (account.settings && existingAccount.settings) {
@@ -910,7 +913,7 @@ export class AccountService extends BaseGraphqlService {
       },
       error: {
         code: ErrorCodes.SAVE_ACCOUNT_ERROR,
-        message: "ERROR.SAVE_ACCOUNT_ERROR"
+        message: 'ERROR.SAVE_ACCOUNT_ERROR'
       }
     });
 
@@ -930,32 +933,34 @@ export class AccountService extends BaseGraphqlService {
   /**
    * Check if email is available for new account registration.
    * Throw an error if not available
+   *
    * @param email
    */
   public async checkEmailAvailable(email: string): Promise<void> {
     const isEmailExists = await this.isEmailExists(email);
     if (isEmailExists) {
-      throw { code: ErrorCodes.EMAIL_ALREADY_REGISTERED, message: "ERROR.EMAIL_ALREADY_REGISTERED" };
+      throw { code: ErrorCodes.EMAIL_ALREADY_REGISTERED, message: 'ERROR.EMAIL_ALREADY_REGISTERED' };
     }
   }
 
   /**
    * Check if email is exists in server.
+   *
    * @param email
    */
   async isEmailExists(email: string): Promise<boolean> {
 
-    if (this._debug) console.debug("[account] Checking if {" + email + "} exists...");
+    if (this._debug) console.debug('[account] Checking if {' + email + '} exists...');
 
     const data = await this.graphql.query<{ isEmailExists: boolean }, IsEmailExistsVariables>({
       query: IsEmailExistsQuery,
       variables: {
-        email: email,
+        email,
         hash: undefined
       }
     });
 
-    if (this._debug) console.debug("[account] Email exist: " + (data && data.isEmailExists));
+    if (this._debug) console.debug('[account] Email exist: ' + (data && data.isEmailExists));
 
     return data && data.isEmailExists;
   }
@@ -963,34 +968,34 @@ export class AccountService extends BaseGraphqlService {
   async sendConfirmationEmail(email: String, locale?: string): Promise<boolean> {
 
     locale = locale || this.settings.locale;
-    console.debug("[account] Sending confirmation email to {" + email + "} with locale {" + locale + "}...");
+    console.debug('[account] Sending confirmation email to {' + email + '} with locale {' + locale + '}...');
 
     return await this.graphql.mutate<boolean>({
       mutation: SendConfirmEmailMutation,
       variables: {
-        email: email,
-        locale: locale
+        email,
+        locale
       },
       error: {
         code: ErrorCodes.SENT_CONFIRMATION_EMAIL_FAILED,
-        message: "ERROR.SENT_ACCOUNT_CONFIRMATION_EMAIL_FAILED"
+        message: 'ERROR.SENT_ACCOUNT_CONFIRMATION_EMAIL_FAILED'
       }
     });
   }
 
   async confirmEmail(email: String, code: String): Promise<boolean> {
 
-    console.debug("[account] Sendng confirm request for email {" + email + "} with code {" + code + "}...");
+    console.debug('[account] Sendng confirm request for email {' + email + '} with code {' + code + '}...');
 
     const res = await this.graphql.mutate<{ confirmAccountEmail: boolean }>({
       mutation: ConfirmEmailMutation,
       variables: {
-        email: email,
-        code: code
+        email,
+        code
       },
       error: {
         code: ErrorCodes.CONFIRM_EMAIL_FAILED,
-        message: "ERROR.CONFIRM_ACCOUNT_EMAIL_FAILED"
+        message: 'ERROR.CONFIRM_ACCOUNT_EMAIL_FAILED'
       }
     });
     return res && res.confirmAccountEmail;
@@ -1017,21 +1022,21 @@ export class AccountService extends BaseGraphqlService {
         if (!updateAccount) return;
         const existingUpdateDate = self.data.account && toDateISOString(self.data.account.updateDate);
         if (existingUpdateDate !== updateAccount.updateDate) {
-          console.debug("[account] [WS] Detected update on {" + updateAccount.updateDate + "}");
+          console.debug('[account] [WS] Detected update on {' + updateAccount.updateDate + '}');
           await self.refresh();
         }
       },
       async error(err) {
         if (err && +err.code === ServerErrorCodes.NOT_FOUND) {
-          console.info("[account] Account not exists anymore: force user to logout...", err);
+          console.info('[account] Account not exists anymore: force user to logout...', err);
           await self.logout();
         }
         else if (err && +err.code === ServerErrorCodes.UNAUTHORIZED) {
-          console.info("[account] Account not authorized: force user to logout...", err);
+          console.info('[account] Account not authorized: force user to logout...', err);
           await self.logout();
         }
         else {
-          console.warn("[account] [WS] Received error:", err);
+          console.warn('[account] [WS] Received error:', err);
         }
       },
       complete() {
@@ -1081,13 +1086,13 @@ export class AccountService extends BaseGraphqlService {
   }
 
   async authenticateAndGetToken(token?: string, counter?: number): Promise<string> {
-    if (!this.data.pubkey) throw new Error("User not logged");
+    if (!this.data.pubkey) throw new Error('User not logged');
 
-    if (!counter) console.info("[account] Authentication on pod...");
+    if (!counter) console.info('[account] Authentication on pod...');
 
     if (counter > 4) {
       if (this._debug) console.debug(`[account] Failed to authentication on pod (after ${counter} attempts)`);
-      throw { code: ErrorCodes.AUTH_SERVER_ERROR, message: "ERROR.AUTH_SERVER_ERROR" };
+      throw { code: ErrorCodes.AUTH_SERVER_ERROR, message: 'ERROR.AUTH_SERVER_ERROR' };
     }
 
     // Check if valid
@@ -1099,7 +1104,7 @@ export class AccountService extends BaseGraphqlService {
         },
         error: {
           code: ErrorCodes.UNAUTHORIZED,
-          message: "ERROR.UNAUTHORIZED"
+          message: 'ERROR.UNAUTHORIZED'
         },
         fetchPolicy: 'no-cache'
       });
@@ -1119,14 +1124,14 @@ export class AccountService extends BaseGraphqlService {
     // Generate a new token
     const challengeError = {
       code: ErrorCodes.AUTH_CHALLENGE_ERROR,
-      message: "ERROR.AUTH_CHALLENGE_ERROR"
+      message: 'ERROR.AUTH_CHALLENGE_ERROR'
     };
     const data = await this.graphql.query<{
       authChallenge: {
-        pubkey: string,
-        challenge: string,
-        signature: string
-      }
+        pubkey: string;
+        challenge: string;
+        signature: string;
+      };
     }>({
       query: AuthChallengeQuery,
       variables: {},
@@ -1144,7 +1149,7 @@ export class AccountService extends BaseGraphqlService {
       data.authChallenge.pubkey
     );
     if (!signatureOK) {
-      console.warn("FIXME: Bad peer signature on auth challenge !", data.authChallenge);
+      console.warn('FIXME: Bad peer signature on auth challenge !', data.authChallenge);
     }
     // TODO: check server pubkey as a valid certificate
 

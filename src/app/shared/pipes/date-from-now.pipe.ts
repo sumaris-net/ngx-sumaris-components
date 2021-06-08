@@ -1,7 +1,7 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {isMoment, Moment} from "moment";
+import {isMoment, Moment} from 'moment';
 import {DATE_ISO_PATTERN} from '../constants';
-import {MomentDateAdapter} from "@angular/material-moment-adapter";
+import {MomentDateAdapter} from '@angular/material-moment-adapter';
 
 @Pipe({
   name: 'dateFromNow'

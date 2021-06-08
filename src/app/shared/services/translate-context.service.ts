@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {TranslateService} from "@ngx-translate/core";
-import {mergeMap} from "rxjs/operators";
-import {of, Observable} from "rxjs";
-import {isNilOrBlank} from "../functions";
+import {TranslateService} from '@ngx-translate/core';
+import {mergeMap} from 'rxjs/operators';
+import {of, Observable} from 'rxjs';
+import {isNilOrBlank} from '../functions';
 
 
 @Injectable({providedIn: 'root'})
@@ -41,6 +41,7 @@ export class TranslateContextService {
 
   /**
    * Compute a contextual i18n key, using the context as suffix
+   *
    * @param key
    * @param context
    * @private

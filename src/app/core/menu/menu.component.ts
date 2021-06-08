@@ -1,24 +1,24 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Inject, InjectionToken, Input, OnInit, Optional, ViewChild} from '@angular/core';
-import {AlertController, IonSplitPane, MenuController, ModalController} from "@ionic/angular";
+import {AlertController, IonSplitPane, MenuController, ModalController} from '@ionic/angular';
 
-import {Router} from "@angular/router";
-import {Account} from "../services/model/account.model";
-import {UserProfileLabel} from "../services/model/person.model";
-import {Configuration} from "../services/model/config.model";
-import {AccountService} from "../services/account.service";
+import {Router} from '@angular/router';
+import {Account} from '../services/model/account.model';
+import {UserProfileLabel} from '../services/model/person.model';
+import {Configuration} from '../services/model/config.model';
+import {AccountService} from '../services/account.service';
 import {AboutModal} from '../about/modal-about';
 
 import {fadeInAnimation} from '../../shared/material/material.animations';
-import {TranslateService} from "@ngx-translate/core";
-import {isNotNilOrBlank} from "../../shared/functions";
-import {BehaviorSubject, merge, Subscription} from "rxjs";
-import {ConfigService} from "../services/config.service";
-import {mergeMap, tap} from "rxjs/operators";
-import {HammerSwipeEvent} from "../../shared/gesture/hammer.utils";
-import {PlatformService} from "../services/platform.service";
-import {IconRef} from "../../shared/types";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {MenuService} from "./menu.service";
+import {TranslateService} from '@ngx-translate/core';
+import {isNotNilOrBlank} from '../../shared/functions';
+import {BehaviorSubject, merge, Subscription} from 'rxjs';
+import {ConfigService} from '../services/config.service';
+import {mergeMap, tap} from 'rxjs/operators';
+import {HammerSwipeEvent} from '../../shared/gesture/hammer.utils';
+import {PlatformService} from '../services/platform.service';
+import {IconRef} from '../../shared/types';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {MenuService} from './menu.service';
 
 export interface MenuItem extends IconRef {
   title: string;
@@ -69,7 +69,7 @@ export class MenuItems {
       //console.debug("[menu] Checking if property enable ? " + item.ifProperty, config && config.properties);
       const isEnableByConfig = config && config.properties[item.ifProperty] === 'true';
       if (!isEnableByConfig) {
-        if (opts.debug) console.debug("[menu] Config property '" + item.ifProperty + "' not 'true' for ", item.path);
+        if (opts.debug) console.debug('[menu] Config property \'' + item.ifProperty + '\' not \'true\' for ', item.path);
         return false;
       }
     }
@@ -114,11 +114,11 @@ export class MenuComponent implements OnInit {
   @Input()
   appVersion: String = this.environment.version;
 
-  @Input() side = "left";
+  @Input() side = 'left';
 
   @ViewChild('splitPane', { static: true }) splitPane: IonSplitPane;
 
-  constructor (
+  constructor(
     protected platformService: PlatformService,
     protected accountService: AccountService,
     protected router: Router,
@@ -141,7 +141,7 @@ export class MenuComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
   onResize(event?: UIEvent) {
     this._screenWidth = window.innerWidth;
-    console.debug("[menu] Screen size (px): " + this._screenWidth);
+    console.debug('[menu] Screen size (px): ' + this._screenWidth);
   }
 
   async ngOnInit() {
@@ -197,7 +197,7 @@ export class MenuComponent implements OnInit {
   }
 
   async onLogout(skipRedirect?: boolean) {
-    if (!skipRedirect) console.debug("[menu] logout");
+    if (!skipRedirect) console.debug('[menu] logout');
     this.isLogin = false;
     //this.splitPaneOpened = false;
     //this.splitPane.when = false;
@@ -240,10 +240,10 @@ export class MenuComponent implements OnInit {
           handler: () => {
             this.accountService.logout();
 
-            setTimeout(() => {
+            setTimeout(() => 
               // Back to home
-              return this.router.navigateByUrl('/', {replaceUrl: true /* will clear router history */});
-            }, 100);
+               this.router.navigateByUrl('/', {replaceUrl: true /* will clear router history */})
+            , 100);
           }
         }
       ]
@@ -316,7 +316,7 @@ export class MenuComponent implements OnInit {
   /* -- protected methods -- */
 
   protected refreshMenuItems() {
-    if (this._debug) console.debug("[menu] Refreshing menu items...");
+    if (this._debug) console.debug('[menu] Refreshing menu items...');
 
     const filteredItems = (this.items || [])
       .filter((item) => MenuItems.checkIfVisible(item, this.accountService, this._config, {

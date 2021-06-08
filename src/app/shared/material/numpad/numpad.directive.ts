@@ -1,8 +1,8 @@
 import {Directive, ElementRef, HostListener, Input, OnChanges, OnDestroy, SimpleChanges} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {MatNumpadKeymap} from "./numpad.model";
-import {MatNumpadComponent} from "./numpad.component";
+import {MatNumpadKeymap} from './numpad.model';
+import {MatNumpadComponent} from './numpad.component';
 
 @Directive({
   selector: '[matNumpad]',
@@ -55,10 +55,10 @@ export class NumpadDirective implements ControlValueAccessor, OnDestroy, OnChang
   private numpadSubscriptions: Subscription[] = [];
 
   onTouched = () => {
-  }
+  };
 
   private onChange: (value: any) => void = () => {
-  }
+  };
 
   constructor(private elementRef: ElementRef) {
   }
@@ -114,7 +114,7 @@ export class NumpadDirective implements ControlValueAccessor, OnDestroy, OnChang
 
   private registerNumpad(numpad: MatNumpadComponent): void {
     if (numpad) {
-      console.debug("[numpad-directive] Registering numpad", numpad);
+      console.debug('[numpad-directive] Registering numpad', numpad);
       this._numpad = numpad;
       this._numpad.registerInput(this);
       this.numpadSubscriptions.push(this._numpad.keypress
@@ -131,10 +131,10 @@ export class NumpadDirective implements ControlValueAccessor, OnDestroy, OnChang
   }
 
   private applyingKey(event: KeyboardEvent) {
-    console.debug("[numpad-directive] Receiving key=" + event.key);
+    console.debug('[numpad-directive] Receiving key=' + event.key);
     let value = this.value !== null && this.value !== undefined ? this.value : '';
     // Remove french decimal separator
-    value = (typeof value === "number") ? ('' + value) : value.replace(',', '.');
+    value = (typeof value === 'number') ? ('' + value) : value.replace(',', '.');
     if (event.key === '.' || event.key === ',') {
       if (value.indexOf('.') === -1) {
         value += '.';

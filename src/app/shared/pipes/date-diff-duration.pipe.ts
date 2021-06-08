@@ -1,8 +1,8 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {Moment} from "moment";
-import {DateAdapter} from "@angular/material/core";
+import {Moment} from 'moment';
+import {DateAdapter} from '@angular/material/core';
 import {DATE_ISO_PATTERN} from '../constants';
-import {TranslateService} from "@ngx-translate/core";
+import {TranslateService} from '@ngx-translate/core';
 import * as momentImported from 'moment';
 const moment = momentImported;
 

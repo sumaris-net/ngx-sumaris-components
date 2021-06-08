@@ -10,21 +10,21 @@ import {
   Optional,
   Output, Provider,
   ViewChild
-} from "@angular/core";
-import {ControlValueAccessor, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {BehaviorSubject, isObservable, noop, Observable, Subscription} from "rxjs";
+} from '@angular/core';
+import {ControlValueAccessor, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {BehaviorSubject, isObservable, noop, Observable, Subscription} from 'rxjs';
 import {
   isNil, isNotNil,
   joinPropertiesPath,
   toBoolean
-} from "../../functions";
-import {InputElement, selectInputContent} from "../../inputs";
-import {CompareWithFn, DisplayFn} from "../../form/field.model";
-import {FloatLabelType} from "@angular/material/form-field";
-import {IonSlides} from "@ionic/angular";
-import {MatButton} from "@angular/material/button";
-import {firstNotNilPromise} from "../../observables";
-import {filter} from "rxjs/operators";
+} from '../../functions';
+import {InputElement, selectInputContent} from '../../inputs';
+import {CompareWithFn, DisplayFn} from '../../form/field.model';
+import {FloatLabelType} from '@angular/material/form-field';
+import {IonSlides} from '@ionic/angular';
+import {MatButton} from '@angular/material/button';
+import {firstNotNilPromise} from '../../observables';
+import {filter} from 'rxjs/operators';
 
 const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
@@ -58,7 +58,7 @@ export class MatSwipeField implements OnInit, InputElement, OnDestroy, ControlVa
     speed: 100; // FIXME: seems it's not working
   };
 
-  @Input() logPrefix = "[mat-swipe-field]";
+  @Input() logPrefix = '[mat-swipe-field]';
 
   @Input() formControl: FormControl;
 
@@ -159,7 +159,7 @@ export class MatSwipeField implements OnInit, InputElement, OnDestroy, ControlVa
 
   ngOnInit() {
     this.formControl = this.formControl || this.formControlName && this.formGroupDir && this.formGroupDir.form.get(this.formControlName) as FormControl;
-    if (!this.formControl) throw new Error("Missing mandatory attribute 'formControl' or 'formControlName' in <mat-swipe-field>.");
+    if (!this.formControl) throw new Error('Missing mandatory attribute \'formControl\' or \'formControlName\' in <mat-swipe-field>.');
 
     // Default values
     this.displayAttributes = this.displayAttributes || ['label', 'name'];

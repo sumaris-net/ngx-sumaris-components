@@ -1,14 +1,14 @@
 /* -- Network -- */
 
-import {isNilOrBlank, isNotNil, noTrailingSlash} from "../../../shared/functions";
-import {Cloneable, Entity, EntityAsObjectOptions} from "./entity.model";
-import {EntityClass} from "./entity.decorators";
+import {isNilOrBlank, isNotNil, noTrailingSlash} from '../../../shared/functions';
+import {Cloneable, Entity, EntityAsObjectOptions} from './entity.model';
+import {EntityClass} from './entity.decorators';
 
 // @dynamic
 @EntityClass({typename: 'PeerVO'})
 export class Peer extends Entity<Peer> implements Cloneable<Peer> {
 
-  static fromObject: (source: any, opts?: any) => Peer
+  static fromObject: (source: any, opts?: any) => Peer;
 
   static parseUrl(peerUrl: string) {
     const url = new URL(peerUrl);

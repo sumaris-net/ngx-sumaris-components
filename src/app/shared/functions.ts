@@ -1,19 +1,19 @@
-import {LoadResult} from "./services/entity-service.class";
+import {LoadResult} from './services/entity-service.class';
 
 export function isNil<T>(obj: T | null | undefined): boolean {
   return obj === undefined || obj === null;
 }
 export function isNilOrBlank<T>(obj: T | null | undefined): boolean {
-  return obj === undefined || obj === null || (typeof obj === 'string' && obj.trim() === "");
+  return obj === undefined || obj === null || (typeof obj === 'string' && obj.trim() === '');
 }
 export function isNotNil<T>(obj: T | null | undefined): boolean {
   return obj !== undefined && obj !== null;
 }
 export function isNotNilOrBlank<T>(obj: T | null | undefined): boolean {
-  return obj !== undefined && obj !== null && (typeof obj !== 'string' || obj.trim() !== "");
+  return obj !== undefined && obj !== null && (typeof obj !== 'string' || obj.trim() !== '');
 }
 export function isNotNilOrNaN<T>(obj: T | null | undefined): boolean {
-  return obj !== undefined && obj !== null && (typeof obj !== "number" || !isNaN(obj));
+  return obj !== undefined && obj !== null && (typeof obj !== 'number' || !isNaN(obj));
 }
 export function isNotEmptyArray<T>(obj: T[] | null | undefined): boolean {
   return obj !== undefined && obj !== null && obj.length > 0;
@@ -39,7 +39,7 @@ export function arraySize<T>(obj: T[] | null | undefined): number {
 export function arrayGroupBy<
   T = any,
   K extends keyof T = any,
-  M extends { [key: string]: T[]
+  M extends { [key: string]: T[];
 } = { [key: string]: T[] }>(obj: T[], key: keyof T): M {
   if (isNil(obj)) return null;
   return obj.reduce((rv: any, x) => {
@@ -66,7 +66,7 @@ export function trimEmptyToNull<T>(str: string | null | undefined): string | nul
   return value && value.length && value || null;
 }
 export function toBoolean(obj: boolean | null | undefined | string, defaultValue?: boolean): boolean {
-  return (obj !== undefined && obj !== null) ? (obj !== "false" ? !!obj : false) : defaultValue;
+  return (obj !== undefined && obj !== null) ? (obj !== 'false' ? !!obj : false) : defaultValue;
 }
 export function toNumber(obj: number | null | undefined, defaultValue?: number): number {
   return (obj !== undefined && obj !== null) ? +obj : defaultValue;
@@ -113,19 +113,20 @@ export function replaceAll(value: string, searchString: any, replacement): strin
 }
 /**
  * Replace case change by an underscore (.e.g 'myString' becomes 'my_string')
+ *
  * @param value
  */
 export function changeCaseToUnderscore(value: string): string {
   if (isNilOrBlank(value)) return value;
-  return value.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
+  return value.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
 }
 
 export function suggestFromArray<T = any>(items: T[], value: any, options?: {
-  searchAttribute?: string
-  searchAttributes?: string[]
+  searchAttribute?: string;
+  searchAttributes?: string[];
 }): LoadResult<T> {
-  if (isNotNil(value) && typeof value === "object") return {data: [value]};
-  value = (typeof value === "string" && value !== '*') && value.toUpperCase() || undefined;
+  if (isNotNil(value) && typeof value === 'object') return {data: [value]};
+  value = (typeof value === 'string' && value !== '*') && value.toUpperCase() || undefined;
   if (isNilOrBlank(value)) return {data: items};
   const keys = options && (options.searchAttribute && [options.searchAttribute] || options.searchAttributes) || ['label'];
 
@@ -144,10 +145,10 @@ export function suggestFromArray<T = any>(items: T[], value: any, options?: {
 }
 
 export function suggestFromStringArray(values: string[], value: any, options?: {
-  searchAttribute?: string
-  searchAttributes?: string[]
+  searchAttribute?: string;
+  searchAttributes?: string[];
 }): string[] {
-  value = (typeof value === "string" && value !== '*') && value.toUpperCase() || undefined;
+  value = (typeof value === 'string' && value !== '*') && value.toUpperCase() || undefined;
   if (isNilOrBlank(value)) return values;
 
   // If wildcard, search using regexp
@@ -161,19 +162,19 @@ export function suggestFromStringArray(values: string[], value: any, options?: {
 }
 
 export function joinPropertiesPath<T = any>(obj: T, properties: string[], separator?: string): string | undefined {
-  if (!obj) throw new Error("Could not display an undefined entity.");
+  if (!obj) throw new Error('Could not display an undefined entity.');
   return properties
     .map(path => getPropertyByPath(obj, path))
     .filter(isNotNilOrBlank)
-    .join(separator || " - ");
+    .join(separator || ' - ');
 }
 
 export function joinProperties<T = any, K extends keyof T = any>(obj: T, keys: K[], separator?: string): string | undefined {
-  if (!obj) throw new Error("Could not display an undefined entity.");
+  if (!obj) throw new Error('Could not display an undefined entity.');
   return keys
     .map(key => getProperty(obj, key))
     .filter(isNotNilOrBlank)
-    .join(separator || " - ");
+    .join(separator || ' - ');
 }
 
 export function propertyPathComparator<T = any>(path: string): (a: T, b: T) => number {
@@ -194,17 +195,15 @@ export function propertyComparator<T = any, K extends keyof T = any>(key: K, def
 
 export function propertiesPathComparator<T = any>(keys: string[], defaultValues?: any[]): (a: T, b: T) => number {
   if (!keys || !keys.length || (defaultValues && keys.length > defaultValues.length)) {
-    throw new Error("Invalid arguments: missing 'keys' or array 'defaultValues' has a bad length");
+    throw new Error('Invalid arguments: missing \'keys\' or array \'defaultValues\' has a bad length');
   }
-  return (a: T, b: T) => {
-    return keys.map((key, index) => {
+  return (a: T, b: T) => keys.map((key, index) => {
       const valueA = getPropertyByPath(a, key, defaultValues && defaultValues[index]);
       const valueB = getPropertyByPath(b, key, defaultValues && defaultValues[index]);
       return valueA === valueB ? 0 : (valueA > valueB ? 1 : -1);
     })
       // Stop if not equals, otherwise continue with the next key
       .find(res => res !== 0) || 0;
-  };
 }
 
 export function sort<T>(array: T[], attribute: string): T[] {
@@ -243,7 +242,7 @@ export function getPropertyByPath(obj: any, path: string, defaultValue?: any): a
   // Complex property path
   const key = path.substring(0, i);
   if (isNil(obj[key])) return defaultValue;
-  if (obj[key] && typeof obj[key] === "object") {
+  if (obj[key] && typeof obj[key] === 'object') {
     return getPropertyByPath(obj[key], path.substring(i + 1));
   }
   throw new Error(`Invalid property path: '${key}' is not an valid object.`);
@@ -327,6 +326,7 @@ export class Beans {
   /**
    * Copy a source object, by including only properties of the given dataType.
    * IMPORTANT: extra properties that are NOT in the targetClass are NOT copied.
+   *
    * @param source The source object to copy
    * @param dataType the class to use as target class
    * @param keys The keys to copy. If empty, will copy only NOT optional properties from the dataType
@@ -344,7 +344,7 @@ export class Beans {
    * Says if an object all all properties to nil
    */
   static isEmpty<T>(data: T, keys?: KeysEnum<T>|string[], opts?: {
-    blankStringLikeEmpty?: boolean
+    blankStringLikeEmpty?: boolean;
   }): boolean {
     return isNil(data) || (isArray(keys) ? keys : Object.keys(keys || data))
       // Find index of the first NOT nil value

@@ -1,8 +1,8 @@
-import {EntityClass} from "../model/entity.decorators";
-import {EntityFilter} from "../model/filter.model";
-import {Referential} from "../model/referential.model";
-import {EntityUtils} from "../model/entity.model";
-import {FilterFn} from "../../../shared/services/entity-service.class";
+import {EntityClass} from '../model/entity.decorators';
+import {EntityFilter} from '../model/filter.model';
+import {Referential} from '../model/referential.model';
+import {EntityUtils} from '../model/entity.model';
+import {FilterFn} from '../../../shared/services/entity-service.class';
 
 @EntityClass()
 export class ReferentialFilter extends EntityFilter<ReferentialFilter, Referential> {

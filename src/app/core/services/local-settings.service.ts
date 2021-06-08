@@ -1,7 +1,7 @@
-import {EventEmitter, Inject, Injectable, InjectionToken, Optional} from "@angular/core";
-import {LocalSettings, OfflineFeature, UsageMode} from "./model/settings.model";
-import {Peer} from "./model/peer.model";
-import {TranslateService} from "@ngx-translate/core";
+import {EventEmitter, Inject, Injectable, InjectionToken, Optional} from '@angular/core';
+import {LocalSettings, OfflineFeature, UsageMode} from './model/settings.model';
+import {Peer} from './model/peer.model';
+import {TranslateService} from '@ngx-translate/core';
 import {Storage} from '@ionic/storage';
 
 import {
@@ -12,23 +12,23 @@ import {
   isNotNil,
   isNotNilOrBlank,
   toBoolean
-} from "../../shared/functions";
-import {Subject} from "rxjs";
-import {Platform} from "@ionic/angular";
-import {FormFieldDefinition, FormFieldDefinitionMap} from "../../shared/form/field.model";
-import * as momentImported from "moment";
-import {Moment} from "moment";
-import {debounceTime, filter} from "rxjs/operators";
-import {LatLongPattern} from "../../shared/material/latlong/latlong.utils";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {environment} from "../../../environments/environment";
-import {fromDateISOString} from "../../shared/dates";
-import {HistoryPageReference} from "./model/history.model";
+} from '../../shared/functions';
+import {Subject} from 'rxjs';
+import {Platform} from '@ionic/angular';
+import {FormFieldDefinition, FormFieldDefinitionMap} from '../../shared/form/field.model';
+import * as momentImported from 'moment';
+import {Moment} from 'moment';
+import {debounceTime, filter} from 'rxjs/operators';
+import {LatLongPattern} from '../../shared/material/latlong/latlong.utils';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {environment} from '../../../environments/environment';
+import {fromDateISOString} from '../../shared/dates';
+import {HistoryPageReference} from './model/history.model';
 
 const moment = momentImported;
 
-export const SETTINGS_STORAGE_KEY = "settings";
-export const SETTINGS_TRANSIENT_PROPERTIES = ["mobile", "touchUi"];
+export const SETTINGS_STORAGE_KEY = 'settings';
+export const SETTINGS_TRANSIENT_PROPERTIES = ['mobile', 'touchUi'];
 
 // fixme: this constant points to static environment
 const DEFAULT_SETTINGS: LocalSettings = {
@@ -75,7 +75,7 @@ export class LocalSettingsService {
   }
 
   get usageMode(): UsageMode {
-    return (this.data && this.data.usageMode || (this.mobile ? "FIELD" : "DESK"));
+    return (this.data && this.data.usageMode || (this.mobile ? 'FIELD' : 'DESK'));
   }
 
   get mobile(): boolean {
@@ -120,14 +120,14 @@ export class LocalSettingsService {
     if (this._startPromise) return this._startPromise;
     if (this._started) return Promise.resolve(this.data);
 
-    console.info("[settings] Starting settings...");
+    console.info('[settings] Starting settings...');
 
     // Restoring local settings
     this._startPromise = this.platform.ready()
       .then(() => {
         this.data.mobile = isNotNil(this.data.mobile) ? this.data.mobile : this.platform.is('mobile');
         this.data.touchUi = this.data.mobile || this.platform.is('phablet') || this.platform.is('tablet');
-        this.data.usageMode = this.data.mobile ? "FIELD" : "DESK"; // FIELD by default, if mobile detected
+        this.data.usageMode = this.data.mobile ? 'FIELD' : 'DESK'; // FIELD by default, if mobile detected
       })
       .then(() => this.restoreLocally())
       .then(data => {
@@ -162,7 +162,7 @@ export class LocalSettingsService {
 
     // Restore local settings (or keep old settings)
     if (isNotNilOrBlank(settingsStr)) {
-      console.info("[settings] Restoring previous settings...");
+      console.info('[settings] Restoring previous settings...');
 
       const restoredData = JSON.parse(settingsStr);
 
@@ -200,7 +200,7 @@ export class LocalSettingsService {
 
   getPropertyAsBoolean(definition: FormFieldDefinition, defaultValue?: boolean): boolean {
     const value = this.getProperty(definition, defaultValue);
-    return isNotNil(value) ? (value && value !== "false") : undefined;
+    return isNotNil(value) ? (value && value !== 'false') : undefined;
   }
 
   getPropertyAsInt(definition: FormFieldDefinition, defaultValue?: number): number {
@@ -219,7 +219,7 @@ export class LocalSettingsService {
     return value && value.split(',') || undefined;
   }
 
-  async apply(settings: Partial<LocalSettings>, opts?: { emitEvent?: boolean; persistImmediate?: boolean; }) {
+  async apply(settings: Partial<LocalSettings>, opts?: { emitEvent?: boolean; persistImmediate?: boolean }) {
     this.data = { ...this.data, ...settings};
 
     // Save locally
@@ -236,7 +236,7 @@ export class LocalSettingsService {
     }
   }
 
-  async applyProperty(key: keyof LocalSettings, value: any, opts?: { emitEvent?: boolean; persistImmediate?: boolean; }) {
+  async applyProperty(key: keyof LocalSettings, value: any, opts?: { emitEvent?: boolean; persistImmediate?: boolean }) {
     const changes = {};
     changes[key] = value;
     await this.apply(changes, opts);
@@ -272,7 +272,7 @@ export class LocalSettingsService {
   getOfflineFeature(featureName: string): OfflineFeature {
     if (!this.data || !this.data.offlineFeatures || isEmptyArray(this.data.offlineFeatures))
       return undefined;
-    if (!featureName) throw Error("Missing 'featureName' argument");
+    if (!featureName) throw Error('Missing \'featureName\' argument');
 
     featureName = featureName.toLowerCase();
     const featurePrefix = featureName + '#';
@@ -394,7 +394,7 @@ export class LocalSettingsService {
     // New page: insert it
     if (index === -1) {
       //if (this._debug)
-      console.debug("[settings] Adding page to history: ", page);
+      console.debug('[settings] Adding page to history: ', page);
 
       // Prepend to list
       pageHistory.splice(0, 0, page);
@@ -406,7 +406,7 @@ export class LocalSettingsService {
       // Same path: replace existing page
       if (pageHistory[index].path === page.path) {
         //if (this._debug)
-        console.debug("[settings] Updating existing page in history: ", page);
+        console.debug('[settings] Updating existing page in history: ', page);
         pageHistory.splice(index, 1);
 
         // Copy exiting children
@@ -435,7 +435,7 @@ export class LocalSettingsService {
       // If max has been reached, remove old pages
       if (this.data.pageHistory.length > this.data.pageHistoryMaxSize) {
         const removedPages = pageHistory.splice(this.data.pageHistoryMaxSize, pageHistory.length - this.data.pageHistoryMaxSize);
-        console.debug("[settings] Pages removed from history: ", removedPages);
+        console.debug('[settings] Pages removed from history: ', removedPages);
       }
 
       // Apply new value
@@ -444,7 +444,7 @@ export class LocalSettingsService {
   }
 
   async removePageHistory(path: string,
-                          opts?: {emitEvent?: boolean; },
+                          opts?: {emitEvent?: boolean },
                           pageHistory?: HistoryPageReference[] // used for recursive call to children)
   ) {
     pageHistory = pageHistory || this.data.pageHistory;
@@ -452,7 +452,7 @@ export class LocalSettingsService {
     const index = pageHistory.findIndex(p => p.path === path);
     let found = index !== -1;
     if (found) {
-      console.debug("[settings] Remove page history: ", path);
+      console.debug('[settings] Remove page history: ', path);
       // Remove value
       pageHistory.splice(index, 1);
     }
@@ -499,11 +499,11 @@ export class LocalSettingsService {
     // Execute immediate
     if (immediate) {
       if (!this.data) {
-        console.debug("[settings] Removing local settings from storage");
+        console.debug('[settings] Removing local settings from storage');
         return this.storage.remove(SETTINGS_STORAGE_KEY);
       }
       else {
-        console.debug("[settings] Store local settings", this.data);
+        console.debug('[settings] Store local settings', this.data);
         return this.storage.set(SETTINGS_STORAGE_KEY, JSON.stringify(this.data));
       }
     }
@@ -530,7 +530,7 @@ export class LocalSettingsService {
       removePathQueryParams?: boolean;
     removeTitleSmallTag?: boolean;
   }): HistoryPageReference {
-    if (!page || !page.title || !page.path) throw Error("Missing required argument 'page', 'page.path' or 'page.title'");
+    if (!page || !page.title || !page.path) throw Error('Missing required argument \'page\', \'page.path\' or \'page.title\'');
 
     // Set time
     page.time = page.time || moment();

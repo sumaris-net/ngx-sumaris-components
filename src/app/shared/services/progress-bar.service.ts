@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 
 export declare type ProgressMode = 'determinate' | 'indeterminate' | 'buffer' | 'query' | 'none';
 

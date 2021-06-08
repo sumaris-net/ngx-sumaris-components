@@ -1,20 +1,20 @@
-import {Inject, Injectable} from "@angular/core";
-import {FetchPolicy, gql} from "@apollo/client/core";
+import {Inject, Injectable} from '@angular/core';
+import {FetchPolicy, gql} from '@apollo/client/core';
 import {BehaviorSubject} from 'rxjs';
-import {GraphqlService} from "../../core/graphql/graphql.service";
-import {NetworkService} from "../../core/services/network.service";
-import {EntitiesStorage} from "../../core/services/storage/entities-storage.service";
-import {Person, UserProfileLabels} from "../../core/services/model/person.model";
-import {ReferentialUtils} from "../../core/services/model/referential.model";
-import {StatusIds} from "../../core/services/model/model.enum";
-import {SortDirection} from "@angular/material/sort";
-import {JobUtils} from "../../shared/services/job.utils";
-import {LoadResult, SuggestService} from "../../shared/services/entity-service.class";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {PlatformService} from "../../core/services/platform.service";
-import {PersonFilter} from "./filter/person.filter";
-import {isInstanceOf} from "../../core/services/model/entity.model";
-import {BaseEntityGraphqlMutations, BaseEntityService} from "../../core/services/base-entity-service.class";
+import {GraphqlService} from '../../core/graphql/graphql.service';
+import {NetworkService} from '../../core/services/network.service';
+import {EntitiesStorage} from '../../core/services/storage/entities-storage.service';
+import {Person, UserProfileLabels} from '../../core/services/model/person.model';
+import {ReferentialUtils} from '../../core/services/model/referential.model';
+import {StatusIds} from '../../core/services/model/model.enum';
+import {SortDirection} from '@angular/material/sort';
+import {JobUtils} from '../../shared/services/job.utils';
+import {LoadResult, SuggestService} from '../../shared/services/entity-service.class';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {PlatformService} from '../../core/services/platform.service';
+import {PersonFilter} from './filter/person.filter';
+import {isInstanceOf} from '../../core/services/model/entity.model';
+import {BaseEntityGraphqlMutations, BaseEntityService} from '../../core/services/base-entity-service.class';
 
 
 export const PersonFragments = {
@@ -148,7 +148,7 @@ export class PersonService extends BaseEntityService<Person, PersonFilter>
 
   async suggest(value: any, filter?: PersonFilter): Promise<LoadResult<Person>> {
     if (ReferentialUtils.isNotEmpty(value)) return {data: [value]};
-    value = (typeof value === "string" && value !== '*') && value || undefined;
+    value = (typeof value === 'string' && value !== '*') && value || undefined;
     return this.loadAll(0, !value ? 30 : 10, undefined, undefined,
       {
         ...filter,
@@ -171,12 +171,12 @@ export class PersonService extends BaseEntityService<Person, PersonFilter>
       userProfiles: [UserProfileLabels.SUPERVISOR, UserProfileLabels.USER, UserProfileLabels.GUEST]
     };
 
-    console.info("[person-service] Importing persons...");
+    console.info('[person-service] Importing persons...');
 
     const res = await JobUtils.fetchAllPages((offset, size) =>
         super.loadAll(offset, size, 'id', null, filter, {
           debug: false,
-          fetchPolicy: "network-only",
+          fetchPolicy: 'network-only',
           withTotal: (offset === 0), // Compute total only once
           toEntity: false
         }),

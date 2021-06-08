@@ -1,7 +1,7 @@
-import {HttpClient} from "@angular/common/http";
-import {environment} from "../../../environments/environment";
-import {TranslateHttpLoader} from "@ngx-translate/http-loader";
-import {TranslateLoader} from "@ngx-translate/core";
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {TranslateLoader} from '@ngx-translate/core';
 
 // deprecated because of static environment
 export class HttpTranslateLoaderFactory {

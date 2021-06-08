@@ -1,10 +1,10 @@
-import {Inject, Injectable} from "@angular/core";
-import {BaseGraphqlService} from "./base-graphql-service.class";
-import {GraphqlService} from "../graphql/graphql.service";
-import {ErrorCodes} from "./errors";
-import {gql} from "@apollo/client/core";
-import {chainPromises} from "../../shared/observables";
-import {ENVIRONMENT} from "../../../environments/environment.class";
+import {Inject, Injectable} from '@angular/core';
+import {BaseGraphqlService} from './base-graphql-service.class';
+import {GraphqlService} from '../graphql/graphql.service';
+import {ErrorCodes} from './errors';
+import {gql} from '@apollo/client/core';
+import {chainPromises} from '../../shared/observables';
+import {ENVIRONMENT} from '../../../environments/environment.class';
 
 // Load a trash file
 const LoadQuery: any = gql`
@@ -29,7 +29,7 @@ export class TrashRemoteService extends BaseGraphqlService<string, any> {
   ) {
     super(graphql, environment);
 
-    if (this._debug) console.debug("[trash-service] Creating service");
+    if (this._debug) console.debug('[trash-service] Creating service');
   }
 
   async load(entityName: string, id: number): Promise<any> {
@@ -44,7 +44,7 @@ export class TrashRemoteService extends BaseGraphqlService<string, any> {
       },
       error: {
         code: ErrorCodes.LOAD_TRASH_ENTITY_ERROR,
-        message: "ERROR.LOAD_TRASH_ENTITY_ERROR"
+        message: 'ERROR.LOAD_TRASH_ENTITY_ERROR'
       }
     });
 
@@ -63,7 +63,7 @@ export class TrashRemoteService extends BaseGraphqlService<string, any> {
       },
       error: {
         code: ErrorCodes.DELETE_TRASH_ENTITY_ERROR,
-        message: "ERROR.DELETE_TRASH_ENTITY_ERROR"
+        message: 'ERROR.DELETE_TRASH_ENTITY_ERROR'
       }
     });
   }

@@ -17,17 +17,17 @@ import {Department} from '../services/model/department.model';
 import {APP_LOCALES, LocaleConfig, LocalSettings} from '../services/model/settings.model';
 import {TranslateService} from '@ngx-translate/core';
 import {ConfigService} from '../services/config.service';
-import {PlatformService} from "../services/platform.service";
-import {LocalSettingsService} from "../services/local-settings.service";
-import {debounceTime, distinctUntilChanged, map, startWith} from "rxjs/operators";
-import {AuthModal} from "../auth/modal/modal-auth";
-import {NetworkService} from "../services/network.service";
-import {MenuItem, MenuItems} from "../menu/menu.component";
-import {ShowToastOptions, Toasts} from "../../shared/toasts";
-import {fadeInAnimation, slideUpDownAnimation} from "../../shared/material/material.animations";
-import {isNotNil, isNotNilOrBlank} from "../../shared/functions";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {HistoryPageReference} from "../services/model/history.model";
+import {PlatformService} from '../services/platform.service';
+import {LocalSettingsService} from '../services/local-settings.service';
+import {debounceTime, distinctUntilChanged, map, startWith} from 'rxjs/operators';
+import {AuthModal} from '../auth/modal/modal-auth';
+import {NetworkService} from '../services/network.service';
+import {MenuItem, MenuItems} from '../menu/menu.component';
+import {ShowToastOptions, Toasts} from '../../shared/toasts';
+import {fadeInAnimation, slideUpDownAnimation} from '../../shared/material/material.animations';
+import {isNotNil, isNotNilOrBlank} from '../../shared/functions';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {HistoryPageReference} from '../services/model/history.model';
 
 export function getRandomImage(files: String[]) {
   const imgIndex = Math.floor(Math.random() * files.length);
@@ -121,7 +121,7 @@ export class HomePage implements OnDestroy {
   }
 
   changeLanguage(locale: string) {
-    this.settings.apply({locale: locale})
+    this.settings.apply({locale})
       .then(() => {
         this.markForCheck();
       });
@@ -201,7 +201,7 @@ export class HomePage implements OnDestroy {
   }
 
   protected onConfigLoaded(config: Configuration) {
-    console.debug("[home] Applying configuration", config);
+    console.debug('[home] Applying configuration', config);
     this._config = config;
 
     this.appName = config.label || this.environment.defaultAppName || 'SUMARiS';
@@ -248,7 +248,7 @@ export class HomePage implements OnDestroy {
 
   protected onSettingsChanged(settings: LocalSettings) {
     if (settings.pageHistory !== this.pageHistory) {
-      console.debug("[home] Page history loaded");
+      console.debug('[home] Page history loaded');
       this.pageHistory = settings.pageHistory || [];
     }
     // Always force a refresh (same history array, but content may have changed)
@@ -266,7 +266,7 @@ export class HomePage implements OnDestroy {
 
   protected onLogout() {
     this.isLogin = false;
-    this.accountName = "";
+    this.accountName = '';
     this.pageHistory = [];
     this.refreshButtons();
     this.markForCheck();
@@ -274,13 +274,13 @@ export class HomePage implements OnDestroy {
 
   protected refreshButtons() {
     if (!this._config) return; // Skip (waiting config to be loaded)
-    if (this._debug) console.debug("[home] Refreshing buttons...");
+    if (this._debug) console.debug('[home] Refreshing buttons...');
 
     const filteredButtons = (this.buttons || [])
       .filter((item) => MenuItems.checkIfVisible(item, this.accountService, this._config, {
         isLogin: this.isLogin,
         debug: this._debug,
-        logPrefix: "[home]"
+        logPrefix: '[home]'
       }))
       .map(item => {
         // Replace title using properties

@@ -4,7 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {AccountService} from '../../services/account.service';
 import {getRandomImage} from '../../home/home';
 import {ConfigService} from '../../services/config.service';
-import {PlatformService} from "../../services/platform.service";
+import {PlatformService} from '../../services/platform.service';
 
 @Component({
   selector: 'page-register-confirm',
@@ -34,7 +34,7 @@ export class RegisterConfirmPage implements OnDestroy {
       this.subscriptions.push(this.accountService.onLogin.subscribe(account => this.isLogin = true));
       this.subscriptions.push(this.accountService.onLogout.subscribe(() => this.isLogin = false));
       this.subscriptions.push(this.activatedRoute.paramMap.subscribe(params =>
-        this.doConfirm(params.get("email"), params.get("code"))
+        this.doConfirm(params.get('email'), params.get('code'))
       ));
 
       this.configService.config.subscribe(config => {

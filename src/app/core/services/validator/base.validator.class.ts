@@ -1,7 +1,7 @@
-import {ValidatorService} from "@e-is/ngx-material-table";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {IValidatorService} from "../../../shared/services/validator-service.class";
-import {Directive} from "@angular/core";
+import {ValidatorService} from '@e-is/ngx-material-table';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {IValidatorService} from '../../../shared/services/validator-service.class';
+import {Directive} from '@angular/core';
 
 @Directive()
 export abstract class AppValidatorService<T = any>
@@ -20,7 +20,7 @@ export abstract class AppValidatorService<T = any>
     return this.formBuilder.group(this.getFormGroupConfig(data));
   }
 
-  getFormGroupConfig(data?: T): { [key: string]: any;}  {
+  getFormGroupConfig(data?: T): { [key: string]: any}  {
     return {};
   }
 

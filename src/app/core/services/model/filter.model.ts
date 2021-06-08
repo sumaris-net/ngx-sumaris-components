@@ -1,7 +1,7 @@
-import {isEmptyArray, isNotEmptyArray, isNotNilOrBlank} from "../../../shared/functions";
-import {ReferentialUtils} from "./referential.model";
-import {Entity, EntityAsObjectOptions, IEntity, isInstanceOf} from "./entity.model";
-import {FilterFn} from "../../../shared/services/entity-service.class";
+import {isEmptyArray, isNotEmptyArray, isNotNilOrBlank} from '../../../shared/functions';
+import {ReferentialUtils} from './referential.model';
+import {Entity, EntityAsObjectOptions, IEntity, isInstanceOf} from './entity.model';
+import {FilterFn} from '../../../shared/services/entity-service.class';
 
 
 export const MINIFY_FOR_POD_OPTIONS = Object.freeze(<EntityAsObjectOptions>{

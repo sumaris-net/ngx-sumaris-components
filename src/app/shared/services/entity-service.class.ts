@@ -1,7 +1,7 @@
-import {Observable} from "rxjs";
-import {FetchPolicy, WatchQueryFetchPolicy} from "@apollo/client/core";
-import {SortDirection} from "@angular/material/sort";
-import {Directive, OnDestroy} from "@angular/core";
+import {Observable} from 'rxjs';
+import {FetchPolicy, WatchQueryFetchPolicy} from '@apollo/client/core';
+import {SortDirection} from '@angular/material/sort';
+import {Directive, OnDestroy} from '@angular/core';
 
 export declare interface Page {
   offset: number;

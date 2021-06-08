@@ -12,13 +12,13 @@ import {
   ViewChild
 } from '@angular/core';
 import {ControlValueAccessor, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {FloatLabelType} from "@angular/material/form-field";
-import {isNilOrBlank, isNotNilOrBlank, joinPropertiesPath, toBoolean} from "../functions";
-import {DisplayFn, FormFieldDefinition} from "./field.model";
-import {TranslateService} from "@ngx-translate/core";
-import {getColorContrast} from "../graph/colors.utils";
-import {asInputElement, filterNumberInput, selectInputContent} from "../inputs";
-import {toDateISOString} from "../dates";
+import {FloatLabelType} from '@angular/material/form-field';
+import {isNilOrBlank, isNotNilOrBlank, joinPropertiesPath, toBoolean} from '../functions';
+import {DisplayFn, FormFieldDefinition} from './field.model';
+import {TranslateService} from '@ngx-translate/core';
+import {getColorContrast} from '../graph/colors.utils';
+import {asInputElement, filterNumberInput, selectInputContent} from '../inputs';
+import {toDateISOString} from '../dates';
 
 const noop = () => {
 };
@@ -71,7 +71,7 @@ export class AppFormField implements OnInit, ControlValueAccessor {
 
   @Input() compact = false;
 
-  @Input() floatLabel: FloatLabelType = "auto";
+  @Input() floatLabel: FloatLabelType = 'auto';
 
   @Input() tabindex: number;
 
@@ -97,9 +97,9 @@ export class AppFormField implements OnInit, ControlValueAccessor {
 
   ngOnInit() {
 
-    if (!this._definition) throw new Error("Missing mandatory attribute 'definition' in <app-form-field>.");
-    if (typeof this._definition !== 'object') throw new Error("Invalid attribute 'definition' in <app-form-field>. Should be an object.");
-    if (!this.type) throw new Error("Invalid attribute 'definition' in <app-form-field>. Missing type !");
+    if (!this._definition) throw new Error('Missing mandatory attribute \'definition\' in <app-form-field>.');
+    if (typeof this._definition !== 'object') throw new Error('Invalid attribute \'definition\' in <app-form-field>. Should be an object.');
+    if (!this.type) throw new Error('Invalid attribute \'definition\' in <app-form-field>. Missing type !');
 
     this.checkAndResolveFormControl();
 
@@ -109,9 +109,9 @@ export class AppFormField implements OnInit, ControlValueAccessor {
 
     this.updateTabIndex();
 
-    if (this.type === "double") {
+    if (this.type === 'double') {
       this.numberInputStep = this.computeNumberInputStep(this._definition);
-    } else if (this.type === "enum" && this._definition.values instanceof InjectionToken) {
+    } else if (this.type === 'enum' && this._definition.values instanceof InjectionToken) {
       this._definition.values = this.computeValuesFromToken(this._definition.values);
     }
   }
@@ -121,8 +121,8 @@ export class AppFormField implements OnInit, ControlValueAccessor {
       //console.log("WARN: trying to set NaN value, in a config option field ! " + this.constructor.name);
       obj = null;
     }
-    else if (this.type === 'boolean' && typeof obj === "string") {
-      obj = (obj !== "false");
+    else if (this.type === 'boolean' && typeof obj === 'string') {
+      obj = (obj !== 'false');
     }
     else if (this.type === 'date') {
       obj = toDateISOString(obj);
@@ -192,16 +192,16 @@ export class AppFormField implements OnInit, ControlValueAccessor {
   protected computeNumberInputStep(definition: FormFieldDefinition): string {
 
     if (definition.maximumNumberDecimals > 0) {
-      let step = "0.";
+      let step = '0.';
       if (definition.maximumNumberDecimals > 1) {
         for (let i = 0; i < definition.maximumNumberDecimals - 1; i++) {
-          step += "0";
+          step += '0';
         }
       }
-      step += "1";
+      step += '1';
       return step;
     } else {
-      return "1";
+      return '1';
     }
   }
 
@@ -226,7 +226,7 @@ export class AppFormField implements OnInit, ControlValueAccessor {
     }
 
     if (!this.formControl) {
-      throw new Error("Missing attribute 'formControl' or 'formControlName' in <app-form-field> component.");
+      throw new Error('Missing attribute \'formControl\' or \'formControlName\' in <app-form-field> component.');
     }
   }
 

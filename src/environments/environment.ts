@@ -2,7 +2,7 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-import {Environment} from "./environment.class";
+import {Environment} from './environment.class';
 
 const pkg = require('../../package.json');
 
@@ -10,10 +10,10 @@ export const environment: Environment = Object.freeze({
   name: (pkg.name as string),
   version: (pkg.version as string),
   production: false,
-  baseUrl: "/",
-  defaultLocale: "fr",
-  defaultLatLongFormat: "DDMM",
-  apolloFetchPolicy: "cache-first",
+  baseUrl: '/',
+  defaultLocale: 'fr',
+  defaultLatLongFormat: 'DDMM',
+  apolloFetchPolicy: 'cache-first',
   mock: false,
 
   // FIXME: GraphQL subscription never unsubscribe...

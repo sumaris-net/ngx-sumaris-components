@@ -1,10 +1,11 @@
-import {AlertController} from "@ionic/angular";
-import {TranslateService} from "@ngx-translate/core";
+import {AlertController} from '@ionic/angular';
+import {TranslateService} from '@ngx-translate/core';
 
 export class Alerts {
 
   /**
    * Ask the user to save before leaving. If return undefined: user has cancelled
+   *
    * @param alertCtrl
    * @param translate
    * @param event
@@ -60,6 +61,7 @@ export class Alerts {
 
   /**
    * Ask the user to conform an action. If return undefined: user has cancelled
+   *
    * @param alertCtrl
    * @param translate
    * @param immediate is action has an immediate effect ?
@@ -78,6 +80,7 @@ export class Alerts {
 
   /**
    * Ask the user to confirm. If return undefined: user has cancelled
+   *
    * @pram messageKey i18n message key
    * @param alertCtrl
    * @param translate
@@ -88,7 +91,7 @@ export class Alerts {
     alertCtrl: AlertController,
     translate: TranslateService,
     event?: UIEvent): Promise<boolean|undefined> {
-    if (!alertCtrl || !translate) throw new Error("Missing required argument 'alertCtrl' or 'translate'");
+    if (!alertCtrl || !translate) throw new Error('Missing required argument \'alertCtrl\' or \'translate\'');
     let confirm = false;
     let cancel = false;
     const translations = translate.instant(['COMMON.BTN_YES_CONTINUE', 'COMMON.BTN_CANCEL', messageKey, 'CONFIRM.ALERT_HEADER']);
@@ -130,6 +133,7 @@ export class Alerts {
 
   /**
    * Ask the user to save before leaving. If return undefined: user has cancelled
+   *
    * @param alertCtrl
    * @param translate
    * @param event
@@ -252,7 +256,7 @@ export class Alerts {
     translate: TranslateService, opts?: {
       titleKey?: string;
     }) {
-    if (!messageKey || !alertCtrl || !translate) throw new Error("Missing a required argument ('messageKey', 'alertCtrl' or 'translate')");
+    if (!messageKey || !alertCtrl || !translate) throw new Error('Missing a required argument (\'messageKey\', \'alertCtrl\' or \'translate\')');
     const titleKey = opts && opts.titleKey || 'ERROR.ALERT_HEADER';
     const translations = translate.instant(['COMMON.BTN_OK', messageKey, titleKey]);
     const alert = await alertCtrl.create({

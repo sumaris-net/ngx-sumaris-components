@@ -1,10 +1,10 @@
-import {Injectable} from "@angular/core";
-import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {EntityUtils} from "../model/entity.model";
-import {LocalSettings} from "../model/settings.model";
-import {SharedValidators} from "../../../shared/validator/validators";
-import {NetworkService} from "../network.service";
-import {AppValidatorService} from "./base.validator.class";
+import {Injectable} from '@angular/core';
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {EntityUtils} from '../model/entity.model';
+import {LocalSettings} from '../model/settings.model';
+import {SharedValidators} from '../../../shared/validator/validators';
+import {NetworkService} from '../network.service';
+import {AppValidatorService} from './base.validator.class';
 
 @Injectable({providedIn: 'root'})
 export class LocalSettingsValidatorService extends AppValidatorService<LocalSettings> {
@@ -36,7 +36,7 @@ export class LocalSettingsValidatorService extends AppValidatorService<LocalSett
     );
   }
 
-  getPropertyFormGroup(data?: {key: string; value?: string;}): FormGroup {
+  getPropertyFormGroup(data?: {key: string; value?: string}): FormGroup {
     return this.formBuilder.group({
       key: [data && data.key || null, Validators.compose([Validators.required, Validators.max(50)])],
       value: [data && data.value || null, Validators.compose([Validators.required, Validators.max(100)])]

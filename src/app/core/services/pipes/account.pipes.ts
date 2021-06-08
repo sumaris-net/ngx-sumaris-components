@@ -1,5 +1,5 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {Account, accountToString} from "../model/account.model";
+import {Account, accountToString} from '../model/account.model';
 
 @Pipe({
   name: 'isLogin'

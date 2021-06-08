@@ -1,18 +1,18 @@
-import {Directive, Injector, Input} from "@angular/core";
-import {ValidatorService} from "@e-is/ngx-material-table";
-import {InMemoryEntitiesService} from "../../shared/services/memory-entity-service.class";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ModalController, Platform} from "@ionic/angular";
-import {Location} from "@angular/common";
-import {isEmptyArray} from "../../shared/functions";
-import {LocalSettingsService} from "../services/local-settings.service";
-import {AppTableDataSourceOptions, EntitiesTableDataSource} from "./entities-table-datasource.class";
-import {AppTable} from "./table.class";
-import {IEntity} from "../services/model/entity.model";
+import {Directive, Injector, Input} from '@angular/core';
+import {ValidatorService} from '@e-is/ngx-material-table';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ModalController, Platform} from '@ionic/angular';
+import {Location} from '@angular/common';
+import {LocalSettingsService} from '../services/local-settings.service';
+import {AppTableDataSourceOptions, EntitiesTableDataSource} from './entities-table-datasource.class';
+import {AppTable} from './table.class';
+import {IEntity} from '../services/model/entity.model';
+import {InMemoryEntitiesService} from '../../shared/services/memory-entity-service.class';
+import {isEmptyArray} from '../../shared/functions';
 
 // @dynamic
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export abstract class AppInMemoryTable<
   T extends IEntity<T, ID>,
   F = any,
@@ -61,7 +61,7 @@ export abstract class AppInMemoryTable<
     super.ngOnInit();
   }
 
-  setValue(value: T[], opts?: { emitEvent?: boolean; }) {
+  setValue(value: T[], opts?: { emitEvent?: boolean }) {
     // Reset previous error
     if (this.error) {
       this.error = null;

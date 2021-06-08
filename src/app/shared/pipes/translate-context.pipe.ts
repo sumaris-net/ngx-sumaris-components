@@ -1,5 +1,5 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {TranslateContextService} from "../services/translate-context.service";
+import {TranslateContextService} from '../services/translate-context.service';
 
 @Pipe({
     name: 'translateContext'

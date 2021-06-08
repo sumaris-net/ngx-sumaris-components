@@ -1,11 +1,11 @@
 // TODO: rename to CONFIG_OPTIONS_MAP
 // then declare a type like this :
 // > export declare type ConfigOptions = key of CONFIG_OPTIONS_MAP
-import {FormFieldDefinition} from "../../../shared/form/field.model";
-import {StatusIds} from "../model/model.enum";
-import {UserProfileLabels} from "../model/person.model";
-import {APP_LOCALES} from "../model/settings.model";
-import {AuthTokenType} from "../network.service";
+import {FormFieldDefinition} from '../../../shared/form/field.model';
+import {StatusIds} from '../model/model.enum';
+import {UserProfileLabels} from '../model/person.model';
+import {APP_LOCALES} from '../model/settings.model';
+import {AuthTokenType} from '../network.service';
 
 export const CORE_CONFIG_OPTIONS = Object.freeze({
     LOGO: <FormFieldDefinition>{
@@ -76,8 +76,8 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
       defaultValue: 'https://www.gravatar.com/avatar/{md5}'
     },
     DATA_NOT_SELF_ACCESS_ROLE: <FormFieldDefinition>{
-        key: "sumaris.auth.notSelfDataAccess.role",
-        label: "CONFIGURATION.OPTIONS.NOT_SELF_DATA_ACCESS_MIN_ROLE",
+        key: 'sumaris.auth.notSelfDataAccess.role',
+        label: 'CONFIGURATION.OPTIONS.NOT_SELF_DATA_ACCESS_MIN_ROLE',
         type: 'enum',
         values: Object.keys(UserProfileLabels).map(key => ({
             key: 'ROLE_' + key,

@@ -25,7 +25,7 @@ export class Base58 {
   public static encode(buffer: Uint8Array): string {
     if (buffer.length === 0) return '';
 
-    let i, j, digits = [0];
+    let i; let j; const digits = [0];
     for (i = 0; i < buffer.length; i++) {
       for (j = 0; j < digits.length; j++) digits[j] <<= 8;
       digits[digits.length - 1] += buffer[i];
@@ -53,11 +53,11 @@ export class Base58 {
   public static decode(string: string): Uint8Array {
     if (string.length === 0) return (new Uint8Array());
 
-    let input = string.split('').map(function(c){
+    const input = string.split('').map(function(c){
       return Base58.getAlphabetMap()[c];
     });
 
-    let i, j, bytes = [0];
+    let i; let j; const bytes = [0];
     for (i = 0; i < input.length; i++) {
       for (j = 0; j < bytes.length; j++) bytes[j] *= 58;
       bytes[bytes.length - 1] += input[i];

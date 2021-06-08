@@ -1,11 +1,11 @@
-import {BaseReferential} from "./referential.model";
-import {EntityClass} from "./entity.decorators";
+import {BaseReferential} from './referential.model';
+import {EntityClass} from './entity.decorators';
 
 // @dynamic
 @EntityClass({typename: 'DepartmentVO'})
 export class Department extends BaseReferential<Department> {
 
-  static ENTITY_NAME = "Department";
+  static ENTITY_NAME = 'Department';
   static fromObject: (source: any, opts?: any) => Department;
 
   logo: string;
@@ -30,5 +30,5 @@ export function departmentToString(obj: Department): string {
 }
 
 export function departmentsToString(data: Department[], separator?: string): string {
-  return (data || []).map(departmentToString).join(separator || ", ");
+  return (data || []).map(departmentToString).join(separator || ', ');
 }

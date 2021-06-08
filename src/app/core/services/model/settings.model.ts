@@ -1,10 +1,10 @@
-import {isNil} from "../../../shared/functions";
-import {Entity, EntityAsObjectOptions} from "./entity.model";
-import {LatLongPattern} from "../../../shared/material/latlong/latlong.utils";
-import {PropertiesMap, Property} from "../../../shared/types";
-import {InjectionToken} from "@angular/core";
-import {EntityClass} from "./entity.decorators";
-import {HistoryPageReference} from "./history.model";
+import {isNil} from '../../../shared/functions';
+import {Entity, EntityAsObjectOptions} from './entity.model';
+import {LatLongPattern} from '../../../shared/material/latlong/latlong.utils';
+import {PropertiesMap, Property} from '../../../shared/types';
+import {InjectionToken} from '@angular/core';
+import {EntityClass} from './entity.decorators';
+import {HistoryPageReference} from './history.model';
 
 export type UsageMode = 'DESK' | 'FIELD';
 

@@ -1,11 +1,11 @@
-import {BehaviorSubject, Observable} from "rxjs";
-import {EntityUtils, IEntity} from "../../core/services/model/entity.model";
-import {filter, map, mergeMap} from "rxjs/operators";
-import {isEmptyArray, isNotEmptyArray, isNotNil, toBoolean} from "../functions";
-import {EntitiesService, EntitiesServiceWatchOptions, FilterFn, FilterFnFactory, IEntitiesService, LoadResult} from "./entity-service.class";
-import {SortDirection} from "@angular/material/sort";
-import {EntityFilter} from "../../core/services/model/filter.model";
-import {Directive, OnDestroy} from "@angular/core";
+import {BehaviorSubject, Observable} from 'rxjs';
+import {filter, map, mergeMap} from 'rxjs/operators';
+import {isEmptyArray, isNotEmptyArray, isNotNil} from '../functions';
+import {EntitiesService, EntitiesServiceWatchOptions, FilterFn, FilterFnFactory, IEntitiesService, LoadResult} from './entity-service.class';
+import {SortDirection} from '@angular/material/sort';
+import {Directive} from '@angular/core';
+import {EntityUtils, IEntity} from '../../core/services/model/entity.model';
+import {EntityFilter} from '../../core/services/model/filter.model';
 
 export interface InMemoryEntitiesServiceOptions<T, F> {
   onSort?: (data: T[], sortBy?: string, sortDirection?: SortDirection) => T[];
@@ -21,7 +21,7 @@ export interface InMemoryEntitiesServiceOptions<T, F> {
 
 // @dynamic
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export class InMemoryEntitiesService<
   T extends IEntity<T, ID>,
   F = any,
@@ -81,7 +81,7 @@ export class InMemoryEntitiesService<
 
     this._sortByReplacement = {
       // Detect rankOrder on the entity class
-      'id': (Object.getOwnPropertyNames(new dataType()).findIndex(key => key === 'rankOrder') !== -1) ? 'rankOrder' : undefined,
+      id: (Object.getOwnPropertyNames(new dataType()).findIndex(key => key === 'rankOrder') !== -1) ? 'rankOrder' : undefined,
       ...options.sortByReplacement
     };
   }
@@ -92,7 +92,7 @@ export class InMemoryEntitiesService<
     this._onChange.unsubscribe();
   }
 
-  setValue(data: T[], opts?: { emitEvent?: boolean; }) {
+  setValue(data: T[], opts?: { emitEvent?: boolean }) {
     if (this.data !== data) {
       this._hiddenData = [];
       this.data = data;
@@ -118,7 +118,7 @@ export class InMemoryEntitiesService<
     size = size >= 0 ? size : -1;
 
     if (!this.data) {
-      console.warn("[memory-data-service] Waiting value to be set...");
+      console.warn('[memory-data-service] Waiting value to be set...');
     }
 
     return this._onChange
@@ -197,7 +197,7 @@ export class InMemoryEntitiesService<
   }
 
   async saveAll(data: T[], options?: any): Promise<T[]> {
-    if (!this.data) throw new Error("[memory-service] Could not save, because value not set");
+    if (!this.data) throw new Error('[memory-service] Could not save, because value not set');
 
     // Restore hidden data
     if (isNotEmptyArray(this._hiddenData))
@@ -214,7 +214,7 @@ export class InMemoryEntitiesService<
   }
 
   async deleteAll(dataToRemove: T[], options?: any): Promise<any> {
-    if (!this.data) throw new Error("[memory-service] Could not delete, because value not set");
+    if (!this.data) throw new Error('[memory-service] Could not delete, because value not set');
 
     // Remove deleted item, from data
     const updatedData = this.data.filter(entity => {

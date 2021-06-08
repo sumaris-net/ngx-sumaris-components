@@ -1,7 +1,7 @@
 import {Pipe, Injectable, PipeTransform} from '@angular/core';
-import {TranslateService} from "@ngx-translate/core";
-import {toDuration} from "../dates";
-import {isNilOrBlank, isNotNilOrBlank} from "../functions";
+import {TranslateService} from '@ngx-translate/core';
+import {toDuration} from '../dates';
+import {isNilOrBlank, isNotNilOrBlank} from '../functions';
 
 @Pipe({
   name: 'isNotNilOrBlank'

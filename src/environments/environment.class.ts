@@ -1,8 +1,8 @@
-import {FetchPolicy} from "@apollo/client/core";
-import {StorageConfig} from "@ionic/storage";
-import {InjectionToken} from "@angular/core";
+import {FetchPolicy} from '@apollo/client/core';
+import {StorageConfig} from '@ionic/storage';
+import {InjectionToken} from '@angular/core';
 
-export const ENVIRONMENT = new InjectionToken<Environment>("ENV");
+export const ENVIRONMENT = new InjectionToken<Environment>('ENV');
 
 export class Environment {
   name: string;
@@ -13,10 +13,10 @@ export class Environment {
   listenRemoteChanges?: boolean;
 
   // A peer to use at startup (useful on a web site deployment)
-  defaultPeer?: { host: string; port: number; useSsl?: boolean; path?: string; } | undefined | null;
+  defaultPeer?: { host: string; port: number; useSsl?: boolean; path?: string } | undefined | null;
 
   // A list of peers, to select as peer, in settings
-  defaultPeers?: { host: string; port: number; useSsl?: boolean; path?: string; }[];
+  defaultPeers?: { host: string; port: number; useSsl?: boolean; path?: string }[];
 
   // Min compatible version for the peer
   peerMinVersion?: string;

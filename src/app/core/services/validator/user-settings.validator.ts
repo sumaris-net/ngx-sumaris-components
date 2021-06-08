@@ -1,7 +1,7 @@
-import {Injectable} from "@angular/core";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {UserSettings} from "../model/settings.model";
-import {AppValidatorService} from "./base.validator.class";
+import {Injectable} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UserSettings} from '../model/settings.model';
+import {AppValidatorService} from './base.validator.class';
 
 @Injectable({providedIn: 'root'})
 export class UserSettingsValidatorService extends AppValidatorService<UserSettings> {

@@ -3,8 +3,8 @@ import {RouterModule} from '@angular/router';
 import {AuthForm} from './auth/form/form-auth';
 import {AuthModal} from './auth/modal/modal-auth';
 import {AboutModal} from './about/modal-about';
-import {RegisterConfirmPage} from "./register/confirm/confirm";
-import {AccountPage} from "./account/account";
+import {RegisterConfirmPage} from './register/confirm/confirm';
+import {AccountPage} from './account/account';
 import {SharedModule} from '../shared/shared.module';
 import {EntityMetadataComponent} from './form/entity-metadata.component';
 import {FormButtonsBarComponent} from './form/form-buttons-bar.component';
@@ -17,18 +17,18 @@ import {RegisterModal} from './register/modal/modal-register';
 import {AppGraphQLModule} from './graphql/graphql.module';
 // import ngx-translate and the http loader
 import {HttpClientModule} from '@angular/common/http';
-import {SelectPeerModal} from "./peer/select-peer.modal";
-import {SettingsPage} from "./settings/settings.page";
-import {CacheModule} from "ionic-cache";
-import {AppPropertiesForm} from "./form/properties.form";
-import {AppListForm} from "./form/list.form";
-import {PlatformService} from "./services/platform.service";
-import {IsNotOnFieldModePipe, IsOnFieldModePipe} from "./services/pipes/usage-mode.pipes";
-import {PersonToStringPipe} from "./services/pipes/person-to-string.pipe";
-import {AppInstallUpgradeCard} from "./install/install-upgrade-card.component";
-import {AccountToStringPipe, IsLoginAccountPipe} from "./services/pipes/account.pipes";
-import {DepartmentToStringPipe} from "./services/pipes/department-to-string.pipe";
-import {NgxJdenticonModule} from "ngx-jdenticon";
+import {SelectPeerModal} from './peer/select-peer.modal';
+import {SettingsPage} from './settings/settings.page';
+import {CacheModule} from 'ionic-cache';
+import {AppPropertiesForm} from './form/properties.form';
+import {AppListForm} from './form/list.form';
+import {PlatformService} from './services/platform.service';
+import {IsNotOnFieldModePipe, IsOnFieldModePipe} from './services/pipes/usage-mode.pipes';
+import {PersonToStringPipe} from './services/pipes/person-to-string.pipe';
+import {AppInstallUpgradeCard} from './install/install-upgrade-card.component';
+import {AccountToStringPipe, IsLoginAccountPipe} from './services/pipes/account.pipes';
+import {DepartmentToStringPipe} from './services/pipes/department-to-string.pipe';
+import {NgxJdenticonModule} from 'ngx-jdenticon';
 
 @NgModule({
   imports: [
@@ -106,7 +106,7 @@ import {NgxJdenticonModule} from "ngx-jdenticon";
 export class CoreModule {
 
   static forRoot(): ModuleWithProviders<CoreModule> {
-    console.info("[core] Creating module (root)");
+    console.info('[core] Creating module (root)');
     return {
       ngModule: CoreModule,
       providers: [ PlatformService ]

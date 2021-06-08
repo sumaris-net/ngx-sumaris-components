@@ -8,27 +8,27 @@ import {
   OnInit,
   Optional
 } from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {AlertController, ToastController} from "@ionic/angular";
+import {ActivatedRoute, Router} from '@angular/router';
+import {AlertController, ToastController} from '@ionic/angular';
 
 import {TranslateService} from '@ngx-translate/core';
 import {Subject} from 'rxjs';
-import {Moment} from "moment";
-import {AddToPageHistoryOptions, LocalSettingsService} from "../services/local-settings.service";
-import {filter} from "rxjs/operators";
-import {Entity} from "../services/model/entity.model";
-import {UsageMode} from "../services/model/settings.model";
-import {FormGroup} from "@angular/forms";
-import {AppTabEditor, AppTabEditorOptions} from "./editor.class";
-import {AppFormUtils} from "./form.utils";
-import {Alerts} from "../../shared/alerts";
-import {ErrorCodes, ServerErrorCodes} from "../services/errors";
-import {isInt, isNotEmptyArray, isNumber, toNumber} from "../../shared/functions";
-import {EntityServiceLoadOptions, IEntityService} from "../../shared/services/entity-service.class";
-import {isNil, isNilOrBlank, isNotNil, toBoolean} from "../../shared/functions";
-import {DateFormatPipe} from "../../shared/pipes/date-format.pipe";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {HistoryPageReference} from "../services/model/history.model";
+import {Moment} from 'moment';
+import {AddToPageHistoryOptions, LocalSettingsService} from '../services/local-settings.service';
+import {filter} from 'rxjs/operators';
+import {Entity} from '../services/model/entity.model';
+import {UsageMode} from '../services/model/settings.model';
+import {FormGroup} from '@angular/forms';
+import {AppTabEditor, AppTabEditorOptions} from './editor.class';
+import {AppFormUtils} from './form.utils';
+import {Alerts} from '../../shared/alerts';
+import {ErrorCodes, ServerErrorCodes} from '../services/errors';
+import {isInt, isNotEmptyArray, isNumber, toNumber} from '../../shared/functions';
+import {EntityServiceLoadOptions, IEntityService} from '../../shared/services/entity-service.class';
+import {isNil, isNilOrBlank, isNotNil, toBoolean} from '../../shared/functions';
+import {DateFormatPipe} from '../../shared/pipes/date-format.pipe';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {HistoryPageReference} from '../services/model/history.model';
 
 export class AppEditorOptions extends AppTabEditorOptions {
   autoLoad?: boolean;
@@ -51,7 +51,7 @@ export class AppEditorOptions extends AppTabEditorOptions {
 
 // @dynamic
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export abstract class AppEntityEditor<
   T extends Entity<T, ID>,
   S extends IEntityService<T, ID> = IEntityService<T, any>,
@@ -76,7 +76,7 @@ export abstract class AppEntityEditor<
   saving = false;
   hasRemoteListener = false;
   defaultBackHref: string;
-  historyIcon: {icon?: string; matIcon?: string; };
+  historyIcon: {icon?: string; matIcon?: string };
 
   $title = new Subject<string>();
   onUpdateView = new EventEmitter<T>();
@@ -104,14 +104,14 @@ export abstract class AppEntityEditor<
     return this.dataService;
   }
 
-  markAsSaving(opts?: { emitEvent?: boolean; }){
+  markAsSaving(opts?: { emitEvent?: boolean }){
     if (!this.saving) {
       this.saving = true;
       if (!opts || opts.emitEvent !== false) this.markForCheck();
     }
   }
 
-  markAsSaved(opts?: { emitEvent?: boolean; }){
+  markAsSaved(opts?: { emitEvent?: boolean }){
     if (this.saving) {
       this.saving = false;
       if (!opts || opts.emitEvent !== false) this.markForCheck();
@@ -196,16 +196,17 @@ export abstract class AppEntityEditor<
 
   /**
    * Load data from the snapshot route
+   *
    * @param route
    * @protected
    */
   protected loadFromRoute(): Promise<void> {
     const route = this.route.snapshot;
     if (!route || isNilOrBlank(this._pathIdAttribute)) {
-      throw new Error("Unable to load from route: missing 'route' or 'options.pathIdAttribute'.");
+      throw new Error('Unable to load from route: missing \'route\' or \'options.pathIdAttribute\'.');
     }
     let id = route.params[this._pathIdAttribute];
-    if (isNil(id) || id === "new") {
+    if (isNil(id) || id === 'new') {
       return this.load(undefined, route.params);
     } else {
       // Convert as number, if need
@@ -218,6 +219,7 @@ export abstract class AppEntityEditor<
 
   /**
    * Load data from id, using the dataService
+   *
    * @param id
    * @param opts
    */
@@ -227,7 +229,7 @@ export abstract class AppEntityEditor<
     updateTabAndRoute?: boolean;
     [key: string]: any;
   }) {
-    if (!this.dataService) throw new Error("Cannot load data: missing 'dataService'!");
+    if (!this.dataService) throw new Error('Cannot load data: missing \'dataService\'!');
 
     this.error = null;
 
@@ -334,7 +336,7 @@ export abstract class AppEntityEditor<
   /**
    * Enable or disable state
    */
-  updateViewState(data: T, opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  updateViewState(data: T, opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     if (this.isNewData || this.canUserWrite(data)) {
       this.enable(opts);
     }
@@ -420,11 +422,11 @@ export abstract class AppEntityEditor<
 
   async save(event?: Event, options?: any): Promise<boolean> {
     if (this.loading || this.saving) {
-      console.debug("[data-editor] Skip save: editor is busy (loading or saving)");
+      console.debug('[data-editor] Skip save: editor is busy (loading or saving)');
       return false;
     }
     if (!this.dirty) {
-      console.debug("[data-editor] Skip save: editor not dirty");
+      console.debug('[data-editor] Skip save: editor not dirty');
       return true;
     }
 
@@ -444,7 +446,7 @@ export abstract class AppEntityEditor<
     this.markAsSaving();
     this.error = undefined;
 
-    if (this.debug) console.debug("[data-editor] Saving data...");
+    if (this.debug) console.debug('[data-editor] Saving data...');
 
     try {
       // Get data
@@ -477,7 +479,7 @@ export abstract class AppEntityEditor<
       // Concurrent change on pod
       if (err.code === ServerErrorCodes.BAD_UPDATE_DATE && isNotNil(this.data.id)) {
         // Call a data reload (in background), to update the GraphQL cache, and allow to cancel changes
-        this.dataService.load(this.data.id, {fetchPolicy: "network-only"}).then(() => {
+        this.dataService.load(this.data.id, {fetchPolicy: 'network-only'}).then(() => {
           console.debug('[data-editor] Data cache reloaded. User can reload page');
         });
       }
@@ -524,7 +526,7 @@ export abstract class AppEntityEditor<
     const confirmation = await Alerts.askDeleteConfirmation(this.alertCtrl, this.translate);
     if (!confirmation) return;
 
-    console.debug("[data-editor] Asking to delete...");
+    console.debug('[data-editor] Asking to delete...');
 
     this.markAsSaving();
     this.error = undefined;
@@ -574,7 +576,7 @@ export abstract class AppEntityEditor<
   }
 
   setError(err: any) {
-    console.error("[data-editor] " + err && err.message || err, err);
+    console.error('[data-editor] ' + err && err.message || err, err);
     let userMessage = err && err.message && this.translate.instant(err.message) || err;
 
     // Add details error (if any) under the main message
@@ -582,7 +584,7 @@ export abstract class AppEntityEditor<
     if (detailMessage) {
       userMessage += `<br/><small class="hidden-xs hidden-sm" title="${detailMessage}">`;
       userMessage += detailMessage.length < 70 ? detailMessage : detailMessage.substring(0, 67) + '...';
-      userMessage += "</small>";
+      userMessage += '</small>';
     }
     this.error = userMessage;
   }
@@ -652,6 +654,7 @@ export abstract class AppEntityEditor<
 
   /**
    * Compute the title
+   *
    * @param data
    */
   protected async updateTitle(data?: T) {
@@ -684,7 +687,7 @@ export abstract class AppEntityEditor<
     };
   }
 
-  protected async removePageHistory(opts?: { emitEvent?: boolean; }) {
+  protected async removePageHistory(opts?: { emitEvent?: boolean }) {
     return this.settings.removePageHistory(this.router.url, opts);
   }
 

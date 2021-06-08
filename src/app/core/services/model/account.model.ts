@@ -1,7 +1,7 @@
-import {UserSettings} from "./settings.model";
-import {Person} from "./person.model";
-import {EntityAsObjectOptions} from "./entity.model";
-import {EntityClass} from "./entity.decorators";
+import {UserSettings} from './settings.model';
+import {Person} from './person.model';
+import {EntityAsObjectOptions} from './entity.model';
+import {EntityClass} from './entity.decorators';
 
 /**
  * A user account
@@ -10,7 +10,7 @@ import {EntityClass} from "./entity.decorators";
 @EntityClass({typename: 'AccountVO'})
 export class Account extends Person<Account> {
 
-  static fromObject: (source: any, opts?: any) => Account
+  static fromObject: (source: any, opts?: any) => Account;
 
   settings: UserSettings = null;
 
@@ -49,6 +49,6 @@ export class Account extends Person<Account> {
 
 export function accountToString(data: Account): string {
   return data &&
-    ((data.firstName && (data.firstName + " ") || "") +
-      (data.lastName || "")) || "";
+    ((data.firstName && (data.firstName + ' ') || '') +
+      (data.lastName || '')) || '';
 }

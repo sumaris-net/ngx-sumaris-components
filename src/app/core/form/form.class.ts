@@ -1,18 +1,18 @@
 import {Directive, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormGroup} from "@angular/forms";
+import {FormGroup} from '@angular/forms';
 import {Moment} from 'moment';
-import {DateAdapter} from "@angular/material/core";
+import {DateAdapter} from '@angular/material/core';
 import {Subscription} from 'rxjs';
-import {DateFormatPipe} from "../../shared/pipes/date-format.pipe";
-import {AppFormUtils, IAppForm} from "./form.utils";
-import {LocalSettingsService} from "../services/local-settings.service";
+import {DateFormatPipe} from '../../shared/pipes/date-format.pipe';
+import {AppFormUtils, IAppForm} from './form.utils';
+import {LocalSettingsService} from '../services/local-settings.service';
 import {
   MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions,
   MatAutocompleteFieldConfig
-} from "../../shared/material/autocomplete/material.autocomplete";
+} from '../../shared/material/autocomplete/material.autocomplete';
 
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export abstract class AppForm<T> implements IAppForm, OnInit, OnDestroy {
 
   private _subscription = new Subscription();
@@ -148,13 +148,13 @@ export abstract class AppForm<T> implements IAppForm, OnInit, OnDestroy {
     }
   }
 
-  setValue(data: T, opts?: {emitEvent?: boolean; onlySelf?: boolean; }) {
+  setValue(data: T, opts?: {emitEvent?: boolean; onlySelf?: boolean }) {
     if (!data) {
-      console.warn("[form] Trying to set an empty value to form. Skipping");
+      console.warn('[form] Trying to set an empty value to form. Skipping');
       return;
     }
 
-    if (this.debug) console.debug("[form] Updating form (using entity)", data);
+    if (this.debug) console.debug('[form] Updating form (using entity)', data);
 
     // Convert object to json, then apply it to form (e.g. convert 'undefined' into 'null')
     AppFormUtils.copyEntity2Form(data, this.form, {emitEvent: false, onlySelf: true, ...opts});
@@ -167,9 +167,9 @@ export abstract class AppForm<T> implements IAppForm, OnInit, OnDestroy {
     }
   }
 
-  reset(data?: T, opts?: {emitEvent?: boolean; onlySelf?: boolean; }) {
+  reset(data?: T, opts?: {emitEvent?: boolean; onlySelf?: boolean }) {
     if (data) {
-      if (this.debug) console.debug("[form] Resetting form (using entity)", data);
+      if (this.debug) console.debug('[form] Resetting form (using entity)', data);
 
       // Convert object to json, then apply it to form (e.g. convert 'undefined' into 'null')
       const json = AppFormUtils.getFormValueFromEntity(data, this.form);
@@ -186,17 +186,17 @@ export abstract class AppForm<T> implements IAppForm, OnInit, OnDestroy {
     }
   }
 
-  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     this.form.markAsPristine(opts);
     this.markForCheck();
   }
 
-  markAsUntouched(opts?: {onlySelf?: boolean; }) {
+  markAsUntouched(opts?: {onlySelf?: boolean }) {
     this.form.markAsUntouched(opts);
     this.markForCheck();
   }
 
-  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     // this.form.markAllAsTouched() // This is not working well (e.g. in TripForm)
     AppFormUtils.markAsTouched(this.form, opts);
     this.markForCheck();
@@ -231,7 +231,7 @@ export abstract class AppForm<T> implements IAppForm, OnInit, OnDestroy {
 
   protected markForCheck() {
     // Should be override by subclasses
-    console.warn("markForCheck() has been called, but is not overwritten by component " + this.constructor.name);
+    console.warn('markForCheck() has been called, but is not overwritten by component ' + this.constructor.name);
   }
 
 }

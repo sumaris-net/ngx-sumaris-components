@@ -1,6 +1,6 @@
 import {Pipe, Injectable, PipeTransform} from '@angular/core';
-import {TranslateService} from "@ngx-translate/core";
-import {toDuration} from "../dates";
+import {TranslateService} from '@ngx-translate/core';
+import {toDuration} from '../dates';
 
 @Pipe({
   name: 'duration'
@@ -18,7 +18,7 @@ export class DurationPipe implements PipeTransform {
 
   transform(value: number, args?: any): string {
     if (!value) return '';
-    const unit = args && args.unit || "hours";
+    const unit = args && args.unit || 'hours';
 
     // try with moment
     const duration = toDuration(value, unit);

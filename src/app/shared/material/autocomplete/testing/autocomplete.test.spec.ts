@@ -1,14 +1,14 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {AutocompleteTestPage} from "./autocomplete.test";
-import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
-import {AppModule} from "../../../../app.module";
-import {SplashScreen} from "@ionic-native/splash-screen";
-import {ReactiveFormsModule} from "@angular/forms";
+import {AutocompleteTestPage} from './autocomplete.test';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {AppModule} from '../../../../app.module';
+import {SplashScreen} from '@ionic-native/splash-screen';
+import {ReactiveFormsModule} from '@angular/forms';
 
 describe('AutocompleteTestPage', () => {
   let component: AutocompleteTestPage;
   let fixture: ComponentFixture<AutocompleteTestPage>;
-  let splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
+  const splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

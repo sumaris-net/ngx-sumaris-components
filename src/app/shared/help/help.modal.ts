@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, Injector, Input} from "@angular/core";
-import {ModalController} from "@ionic/angular";
-import {PlatformService} from "../../core/services/platform.service";
-import {LocalSettingsService} from "../../core/services/local-settings.service";
-import {TranslateService} from "@ngx-translate/core";
+import {ChangeDetectorRef, Component, Injector, Input} from '@angular/core';
+import {ModalController} from '@ionic/angular';
+import {PlatformService} from '../../core/services/platform.service';
+import {LocalSettingsService} from '../../core/services/local-settings.service';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
     selector: 'app-help-modal',

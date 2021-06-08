@@ -1,11 +1,11 @@
-import {isNil, isNotNil} from "../functions";
+import {isNil, isNotNil} from '../functions';
 
 export function rgbToHex(r: number, g: number, b: number): string {
-  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+  return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
 export function rgbArrayToHex(rgb: number[]): string {
-  return "#" + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
+  return '#' + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
 }
 
 export function hexToRgbArray(hex: string): number[] {
@@ -17,7 +17,7 @@ export function hexToRgbArray(hex: string): number[] {
   ] : null;
 }
 
-export function hexToRgb(hex: string): {r: number, g: number, b: number} {
+export function hexToRgb(hex: string): {r: number; g: number; b: number} {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? {
     r: parseInt(result[1], 16),
@@ -28,7 +28,7 @@ export function hexToRgb(hex: string): {r: number, g: number, b: number} {
 
 function componentToHex(c: number): string {
   const hex = c.toString(16);
-  return hex.length === 1 ? ("0" + hex) : hex;
+  return hex.length === 1 ? ('0' + hex) : hex;
 }
 
 // See mix in file ionic.functions.color.scss
@@ -37,10 +37,10 @@ export function mixHex(color1: string, color2: string, weight?: number) {
   weight = weight ? (weight / 100) : 0.5;
 
   const rgb1 = hexToRgbArray(color1);
-  if (!rgb1) throw Error("Invalid hex color:" + color1);
+  if (!rgb1) throw Error('Invalid hex color:' + color1);
 
   const rgb2 = hexToRgbArray(color2);
-  if (!rgb2) throw Error("Invalid hex color:" + color2);
+  if (!rgb2) throw Error('Invalid hex color:' + color2);
 
   const rgbAverage = rgb1.map((v, index) => Math.round((v * weight + rgb2[index] * (1 - weight))) );
   return rgbArrayToHex(rgbAverage);
@@ -63,7 +63,7 @@ export function getColorTint(color: string) {
  */
 export function getColorContrast(color: string, bw?: boolean) {
   const rgb = hexToRgbArray(color);
-  if (!rgb) throw Error("Invalid hex color:" + color);
+  if (!rgb) throw Error('Invalid hex color:' + color);
 
   if (bw === true) {
     // http://stackoverflow.com/a/3943023/112731

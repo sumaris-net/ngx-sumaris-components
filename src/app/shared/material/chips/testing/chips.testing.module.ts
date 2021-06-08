@@ -1,10 +1,10 @@
-import {NgModule} from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {RouterModule, Routes} from "@angular/router";
-import {TranslateModule} from "@ngx-translate/core";
-import {ChipsTestPage} from "./chips.test";
-import {MaterialChipsModule} from "../chips.module";
-import {SharedModule} from "../../../shared.module";
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {RouterModule, Routes} from '@angular/router';
+import {TranslateModule} from '@ngx-translate/core';
+import {ChipsTestPage} from './chips.test';
+import {MaterialChipsModule} from '../chips.module';
+import {SharedModule} from '../../../shared.module';
 
 const routes: Routes = [
   {

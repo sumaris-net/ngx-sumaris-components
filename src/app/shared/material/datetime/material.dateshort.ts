@@ -1,20 +1,20 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, forwardRef, Input, OnInit, Optional, Provider, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Platform} from '@ionic/angular';
-import {AbstractControl, ControlValueAccessor, FormBuilder, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR, ValidationErrors, Validators} from "@angular/forms";
-import {TranslateService} from "@ngx-translate/core";
-import {Moment} from "moment/moment";
+import {AbstractControl, ControlValueAccessor, FormBuilder, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR, ValidationErrors, Validators} from '@angular/forms';
+import {TranslateService} from '@ngx-translate/core';
+import {Moment} from 'moment/moment';
 import {DATE_ISO_PATTERN, DEFAULT_PLACEHOLDER_CHAR, KEYBOARD_HIDE_DELAY_MS} from '../../constants';
 import {SharedValidators} from '../../validator/validators';
-import {isNil, isNilOrBlank, sleep, toBoolean} from "../../functions";
-import {toDateISOString} from "../../dates";
-import {Keyboard} from "@ionic-native/keyboard/ngx";
-import {first} from "rxjs/operators";
-import {InputElement, setTabIndex} from "../../inputs";
-import {BehaviorSubject} from "rxjs";
-import {FloatLabelType} from "@angular/material/form-field";
-import {MatDatepicker} from "@angular/material/datepicker";
-import {DateAdapter} from "@angular/material/core";
-import {isFocusableElement} from "../../focusable";
+import {isNil, isNilOrBlank, sleep, toBoolean} from '../../functions';
+import {toDateISOString} from '../../dates';
+import {Keyboard} from '@ionic-native/keyboard/ngx';
+import {first} from 'rxjs/operators';
+import {InputElement, setTabIndex} from '../../inputs';
+import {BehaviorSubject} from 'rxjs';
+import {FloatLabelType} from '@angular/material/form-field';
+import {MatDatepicker} from '@angular/material/datepicker';
+import {DateAdapter} from '@angular/material/core';
+import {isFocusableElement} from '../../focusable';
 
 const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
@@ -61,7 +61,7 @@ export class MatDateShort implements OnInit, ControlValueAccessor, InputElement 
 
   @Input() placeholder: string;
 
-  @Input() floatLabel: FloatLabelType = "auto";
+  @Input() floatLabel: FloatLabelType = 'auto';
 
   @Input() readonly = false;
 
@@ -114,7 +114,7 @@ export class MatDateShort implements OnInit, ControlValueAccessor, InputElement 
   ngOnInit() {
 
     this.formControl = this.formControl || this.formControlName && this.formGroupDir && this.formGroupDir.form.get(this.formControlName) as FormControl;
-    if (!this.formControl) throw new Error("Missing mandatory attribute 'formControl' or 'formControlName' in <mat-date-time-field>.");
+    if (!this.formControl) throw new Error('Missing mandatory attribute \'formControl\' or \'formControlName\' in <mat-date-time-field>.');
 
     // Redirect errors from main control, into day sub control
     const $error = new BehaviorSubject<ValidationErrors>(null);

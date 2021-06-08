@@ -9,13 +9,13 @@ import {
   Inject
 } from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {Peer} from "../services/model/peer.model";
-import {Observable, Subject, Subscription} from "rxjs";
-import {fadeInAnimation} from "../../shared/material/material.animations";
-import {HttpClient} from "@angular/common/http";
-import {NetworkUtils, NodeInfo} from "../services/network.utils";
-import {VersionUtils} from "../../shared/version/versions";
-import {ENVIRONMENT} from "../../../environments/environment.class";
+import {Peer} from '../services/model/peer.model';
+import {Observable, Subject, Subscription} from 'rxjs';
+import {fadeInAnimation} from '../../shared/material/material.animations';
+import {HttpClient} from '@angular/common/http';
+import {NetworkUtils, NodeInfo} from '../services/network.utils';
+import {VersionUtils} from '../../shared/version/versions';
+import {ENVIRONMENT} from '../../../environments/environment.class';
 
 @Component({
   selector: 'select-peer-modal',
@@ -68,6 +68,7 @@ export class SelectPeerModal implements OnDestroy {
 
   /**
    *  Check the min pod version, defined by the app
+   *
    * @param peer
    */
   isCompatible(peer: Peer): boolean {
@@ -132,7 +133,7 @@ export class SelectPeerModal implements OnDestroy {
     } catch (err) {
       if (!this._subscription.closed)  {
         if (err && err.message) {
-          console.error("[select-peer] " + err.message, err);
+          console.error('[select-peer] ' + err.message, err);
         }
       }
       peer.status = 'DOWN';

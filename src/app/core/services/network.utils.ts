@@ -1,6 +1,6 @@
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {HttpUtils} from "../../shared/http/http.utils";
-import {Peer} from "./model/peer.model";
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpUtils} from '../../shared/http/http.utils';
+import {Peer} from './model/peer.model';
 
 export interface NodeInfo {
   softwareName: string;
@@ -22,7 +22,7 @@ export async function getNodeInfo(
   };
 }): Promise<NodeInfo> {
 
-  if (!peer) throw Error("Missing argument 'peer'.");
+  if (!peer) throw Error('Missing argument \'peer\'.');
 
   let peerUrl = (peer instanceof Peer) ? peer.url : (peer as string);
   // Remove trailing slash

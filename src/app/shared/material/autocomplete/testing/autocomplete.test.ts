@@ -1,10 +1,10 @@
-import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {SharedValidators} from "../../../validator/validators";
-import {MatAutocompleteConfigHolder} from "../material.autocomplete";
-import {isNotNil, suggestFromArray} from "../../../functions";
-import {BehaviorSubject} from "rxjs";
-import {LoadResult} from "../../../services/entity-service.class";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {SharedValidators} from '../../../validator/validators';
+import {MatAutocompleteConfigHolder} from '../material.autocomplete';
+import {isNotNil, suggestFromArray} from '../../../functions';
+import {BehaviorSubject} from 'rxjs';
+import {LoadResult} from '../../../services/entity-service.class';
 import Timer = NodeJS.Timer;
 
 export class Entity {
@@ -133,7 +133,7 @@ export class AutocompleteTestPage implements OnInit {
 
   doSubmit(event) {
 
-    console.debug("Validate form: ", this.form.value);
+    console.debug('Validate form: ', this.form.value);
   }
 
   compareWithFn(o1: Entity, o2: Entity): boolean {
@@ -160,7 +160,7 @@ export class AutocompleteTestPage implements OnInit {
   }
 
   updateFilter(fieldName: string) {
-    const filter: { searchAttribute?: string; } = this.autocompleteFields.get(fieldName).filter || {};
+    const filter: { searchAttribute?: string } = this.autocompleteFields.get(fieldName).filter || {};
     filter.searchAttribute = (!filter || filter.searchAttribute !== 'name') ? 'name' : 'label';
   }
 

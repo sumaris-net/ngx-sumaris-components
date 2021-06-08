@@ -1,4 +1,4 @@
-import {isNilOrBlank} from "../functions";
+import {isNilOrBlank} from '../functions';
 
 export const IMAGE_DEFAULTS = {
   MAX_HEIGHT: 480,
@@ -32,7 +32,7 @@ export class Base64ImageReader {
     if (isNilOrBlank(path)) throw new Error('Illegal argument: missing path');
 
     // Create the temporary image element
-    const img = document.createElement("img");
+    const img = document.createElement('img');
 
     // Need to avoid CORS error
     // (see https://stackoverflow.com/questions/22710627/tainted-canvases-may-not-be-exported)
@@ -41,7 +41,7 @@ export class Base64ImageReader {
     try {
       return await new Promise<string>((resolve, reject) => {
         img.addEventListener('load', this.createImageOnLoadResizeFn(resolve, reject, opts), false);
-        img.addEventListener("error", reject);
+        img.addEventListener('error', reject);
         img.src = path;
       });
     }
@@ -57,7 +57,7 @@ export class Base64ImageReader {
     if (!file) throw new Error('Illegal argument: missing file');
 
     // Create the temporary image element
-    const img = document.createElement("img");
+    const img = document.createElement('img');
 
     // Need to avoid CORS error
     // (see https://stackoverflow.com/questions/22710627/tainted-canvases-may-not-be-exported)
@@ -81,14 +81,14 @@ export class Base64ImageReader {
   /* -- protected methods -- */
 
   protected createImageOnLoadResizeFn(resolve, reject, opts?: Base64ImageResizeOptions) {
-    return function (event) {
+    return function(event) {
       const
-        maxWidth = (opts && opts.thumbnail ? IMAGE_DEFAULTS.THUMB_MAX_WIDTH : (opts && opts.maxWidth || IMAGE_DEFAULTS.MAX_WIDTH)),
-        maxHeight = (opts && opts.thumbnail ? IMAGE_DEFAULTS.THUMB_MAX_HEIGHT : (opts && opts.maxHeight || IMAGE_DEFAULTS.MAX_HEIGHT));
-      let width = event.target.width,
-        height = event.target.height;
+        maxWidth = (opts && opts.thumbnail ? IMAGE_DEFAULTS.THUMB_MAX_WIDTH : (opts && opts.maxWidth || IMAGE_DEFAULTS.MAX_WIDTH));
+        const maxHeight = (opts && opts.thumbnail ? IMAGE_DEFAULTS.THUMB_MAX_HEIGHT : (opts && opts.maxHeight || IMAGE_DEFAULTS.MAX_HEIGHT));
+      let width = event.target.width;
+        let height = event.target.height;
 
-      const canvas = document.createElement("canvas");
+      const canvas = document.createElement('canvas');
       let ctx;
 
       try {
@@ -108,7 +108,7 @@ export class Base64ImageReader {
           }
           canvas.width = maxWidth;
           canvas.height = maxHeight;
-          ctx = canvas.getContext("2d");
+          ctx = canvas.getContext('2d');
           const xoffset = Math.trunc((maxWidth - width) / 2 + 0.5);
           const yoffset = Math.trunc((maxHeight - height) / 2 + 0.5);
           ctx.drawImage(event.target,
@@ -140,7 +140,7 @@ export class Base64ImageReader {
 
           canvas.width = width;
           canvas.height = height;
-          ctx = canvas.getContext("2d");
+          ctx = canvas.getContext('2d');
 
           // Resize the whole image
           ctx.drawImage(event.target, 0, 0, canvas.width, canvas.height);

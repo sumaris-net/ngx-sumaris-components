@@ -1,11 +1,11 @@
 import {Inject, Injectable} from '@angular/core';
 import {EventManager} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
-import {DOCUMENT} from "@angular/common";
+import {DOCUMENT} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {HotkeysDialogComponent} from './dialog/hotkeys-dialog.component';
-import {isNotNilOrBlank} from "../functions";
-import {ModalController} from "@ionic/angular";
+import {isNotNilOrBlank} from '../functions';
+import {ModalController} from '@ionic/angular';
 
 interface Options {
   element: any;
@@ -32,7 +32,7 @@ export class Hotkeys {
               private dialog: MatDialog,
               @Inject(DOCUMENT) private document: any,
               private modalController: ModalController) {
-    if (this._debug) console.debug("[hotkeys] Starting hotkeys service... Press Shift+? to get help modal.");
+    if (this._debug) console.debug('[hotkeys] Starting hotkeys service... Press Shift+? to get help modal.');
 
     this.addShortcut({keys: 'shift.?'})
       .subscribe(() => this.openHelpModal());

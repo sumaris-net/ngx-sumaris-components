@@ -1,9 +1,9 @@
-import {Moment} from "moment";
-import {ReferentialAsObjectOptions} from "./referential.model";
-import {Entity} from "./entity.model";
-import {Department, departmentToString} from "./department.model";
-import {fromDateISOString, toDateISOString} from "../../../shared/dates";
-import {EntityClass} from "./entity.decorators";
+import {Moment} from 'moment';
+import {ReferentialAsObjectOptions} from './referential.model';
+import {Entity} from './entity.model';
+import {Department, departmentToString} from './department.model';
+import {fromDateISOString, toDateISOString} from '../../../shared/dates';
+import {EntityClass} from './entity.decorators';
 
 
 export type UserProfileLabel = 'ADMIN' | 'USER' | 'SUPERVISOR' | 'GUEST';
@@ -109,5 +109,5 @@ export function personToString(obj: Person): string {
 }
 
 export function personsToString(data: Person[], separator?: string): string {
-  return (data || []).map(personToString).join(separator || ", ");
+  return (data || []).map(personToString).join(separator || ', ');
 }

@@ -1,5 +1,5 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {isNotNil} from "../functions";
+import {isNotNil} from '../functions';
 
 @Pipe({
     name: 'mapGet'

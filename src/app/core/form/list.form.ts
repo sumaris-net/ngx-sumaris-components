@@ -8,31 +8,31 @@ import {
   OnInit,
   Optional,
   Output
-} from "@angular/core";
-import {AbstractControl, FormArray, FormBuilder, FormGroup, FormGroupDirective, Validators} from "@angular/forms";
-import {referentialToString} from "../services/model/referential.model";
-import {isNil} from "../../shared/functions";
-import {DateAdapter} from "@angular/material/core";
-import {Moment} from "moment";
-import {LocalSettingsService} from "../services/local-settings.service";
-import {AppForm} from "./form.class";
-import {AppFormUtils, FormArrayHelper, FormArrayHelperOptions} from "./form.utils";
-import {SelectionModel} from "@angular/cdk/collections";
-import {Observable} from "rxjs";
-import {Color} from "@ionic/core";
+} from '@angular/core';
+import {AbstractControl, FormArray, FormBuilder, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {referentialToString} from '../services/model/referential.model';
+import {isNil} from '../../shared/functions';
+import {DateAdapter} from '@angular/material/core';
+import {Moment} from 'moment';
+import {LocalSettingsService} from '../services/local-settings.service';
+import {AppForm} from './form.class';
+import {AppFormUtils, FormArrayHelper, FormArrayHelperOptions} from './form.utils';
+import {SelectionModel} from '@angular/cdk/collections';
+import {Observable} from 'rxjs';
+import {Color} from '@ionic/core';
 
 export declare interface ItemButton<T = any> {
   title?: string;
   click: (event: UIEvent, item: T, index: number) => void;
   icon: string;
   color?: Color;
-  disabled?: Observable<boolean>
+  disabled?: Observable<boolean>;
 }
 
 export declare type AppListFormOptions<T> = FormArrayHelperOptions & {
   allowMultipleSelection?: boolean;
   buttons?: ItemButton<T>[];
-}
+};
 
 @Component({
   selector: 'app-list-form',
@@ -130,10 +130,10 @@ export class AppListForm<T = any> extends AppForm<T[]> implements OnInit {
     const form = (this.formArray && this.formArray.parent as FormGroup || this.formGroupDir && this.formGroupDir.form || this.formBuilder.group({}));
     this.setForm(form);
 
-    this.formArray = this.formArray || this.formArrayName && form.get(this.formArrayName) as FormArray
+    this.formArray = this.formArray || this.formArrayName && form.get(this.formArrayName) as FormArray;
     this.formArrayName = this.formArrayName || this.formArray && Object.keys(form.controls).find(key => form.get(key) === this.formArray) || 'properties';
     if (!this.formArray) {
-      console.warn(`Missing array control '${this.formArrayName}'. Will create it!`)
+      console.warn(`Missing array control '${this.formArrayName}'. Will create it!`);
       this.formArray = this.formBuilder.array([]);
       this.form.addControl(this.formArrayName, this.formArray);
     }

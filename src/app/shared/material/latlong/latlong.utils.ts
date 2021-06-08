@@ -18,11 +18,11 @@ const DEFAULT_OPTIONS = <LatLongFormatOptions>{
   maxDecimals: DEFAULT_MAX_DECIMALS,
   placeholderChar: DEFAULT_PLACEHOLDER_CHAR
 };
-const DEFAULT_LATITUDE_OPTIONS: LatLongFormatOptions & { longitude: boolean; } = {
+const DEFAULT_LATITUDE_OPTIONS: LatLongFormatOptions & { longitude: boolean } = {
   ...DEFAULT_OPTIONS,
   longitude: false
 };
-const DEFAULT_LONGITUDE_OPTIONS: LatLongFormatOptions & { longitude: boolean; } =  {
+const DEFAULT_LONGITUDE_OPTIONS: LatLongFormatOptions & { longitude: boolean } =  {
   ...DEFAULT_OPTIONS,
   longitude: true
 };
@@ -31,9 +31,9 @@ export  function formatLatitude(value: number | null, opts?: LatLongFormatOption
 
   switch(opts.pattern) {
     case 'DDMMSS':
-      return formatToDDMMSS(value, { ...DEFAULT_LATITUDE_OPTIONS, ...opts })
+      return formatToDDMMSS(value, { ...DEFAULT_LATITUDE_OPTIONS, ...opts });
     case 'DDMM':
-      return formatToDDMM(value, { ...DEFAULT_LATITUDE_OPTIONS, ...opts })
+      return formatToDDMM(value, { ...DEFAULT_LATITUDE_OPTIONS, ...opts });
     case 'DD':
     default:
       return formatToDD(value, { ...DEFAULT_LATITUDE_OPTIONS, ...opts });
@@ -45,16 +45,16 @@ export function formatLongitude(value: number | null, opts?: LatLongFormatOption
 
   switch(opts.pattern) {
     case 'DDMMSS':
-      return formatToDDMMSS(value, { ...DEFAULT_LONGITUDE_OPTIONS, ...opts })
+      return formatToDDMMSS(value, { ...DEFAULT_LONGITUDE_OPTIONS, ...opts });
     case 'DDMM':
-      return formatToDDMM(value, { ...DEFAULT_LONGITUDE_OPTIONS, ...opts })
+      return formatToDDMM(value, { ...DEFAULT_LONGITUDE_OPTIONS, ...opts });
     case 'DD':
     default:
       return formatToDD(value, { ...DEFAULT_LONGITUDE_OPTIONS, ...opts });
   }
 }
 
-function formatToDD(value: number, opts: LatLongFormatOptions & {longitude: boolean;}): string {
+function formatToDD(value: number, opts: LatLongFormatOptions & {longitude: boolean}): string {
   // opts.pattern === DD
   let negative = value < 0;
   if (negative) value *= -1;
@@ -106,7 +106,7 @@ function formatToDD(value: number, opts: LatLongFormatOptions & {longitude: bool
   return (opts.hideSign ? '' : sign) + degrees + '°';
 }
 
-function formatToDDMMSS(value: number, opts: LatLongFormatOptions & {longitude: boolean;}): string {
+function formatToDDMMSS(value: number, opts: LatLongFormatOptions & {longitude: boolean}): string {
   let negative = value < 0;
   if (negative) value *= -1;
 
@@ -183,7 +183,7 @@ function formatToDDMMSS(value: number, opts: LatLongFormatOptions & {longitude: 
   return output;
 }
 
-function formatToDDMM(value: number, opts: LatLongFormatOptions & {longitude: boolean;}): string {
+function formatToDDMM(value: number, opts: LatLongFormatOptions & {longitude: boolean}): string {
   let negative = value < 0;
   if (negative) value *= -1;
 
@@ -213,7 +213,7 @@ function formatToDDMM(value: number, opts: LatLongFormatOptions & {longitude: bo
   const sign = opts.longitude ? (negative ? 'W' : 'E') : (negative ? 'S' : 'N');
 
   // Add placeholderChar
-  let prefix = ''
+  let prefix = '';
   if (opts.placeholderChar) {
     if (opts.longitude && degrees < 100) {
       prefix += opts.placeholderChar;
@@ -252,12 +252,12 @@ function formatToDDMM(value: number, opts: LatLongFormatOptions & {longitude: bo
 // 10°4'21" W = -10.0725000
 export function parseLatitudeOrLongitude(input: string, pattern: string, maxDecimals?: number, placeholderChar?: string): number | null {
   // Remove all placeholder (= trim on each parts)
-  const inputFix = input.trim().replace(new RegExp("[ +" + (placeholderChar || DEFAULT_PLACEHOLDER_CHAR) + ']+', "g"), '');
+  const inputFix = input.trim().replace(new RegExp('[ +' + (placeholderChar || DEFAULT_PLACEHOLDER_CHAR) + ']+', 'g'), '');
   //DEBUG console.debug("Parsing lat= " + inputFix);
   const parts = inputFix.split(/[^-\d\w.,]+/);
   let degrees = parseFloat(parts[0].replace(/,/g, '.'));
   if (isNaN(degrees)) {
-    console.debug("parseLatitudeOrLongitude " + input + " -> Invalid degrees (NaN). Parts found:", parts);
+    console.debug('parseLatitudeOrLongitude ' + input + ' -> Invalid degrees (NaN). Parts found:', parts);
     return NaN;
   }
 
@@ -266,7 +266,7 @@ export function parseLatitudeOrLongitude(input: string, pattern: string, maxDeci
   const minutes = (pattern === 'DDMMSS' || pattern === 'DDMM') && parts[1] && parseFloat(parts[1].replace(/,/g, '.')) || 0;
   const seconds = (pattern === 'DDMMSS') && parts[2] && parseFloat(parts[2].replace(/,/g, '.')) || 0;
   const direction = ((pattern === 'DDMMSS') && parts[3]) || ((pattern === 'DDMM') && parts[2]) || undefined;
-  const sign = (direction && (direction === "s" || direction === "S" || direction === "w" || direction === "W")) ? -1 : 1;
+  const sign = (direction && (direction === 's' || direction === 'S' || direction === 'w' || direction === 'W')) ? -1 : 1;
 
   degrees = sign * (degrees + minutes / 60 + seconds / (60 * 60));
 

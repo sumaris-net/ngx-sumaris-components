@@ -1,5 +1,5 @@
-import {ElementRef, EventEmitter} from "@angular/core";
-import {Subject} from "rxjs";
+import {ElementRef, EventEmitter} from '@angular/core';
+import {Subject} from 'rxjs';
 
 export class MemoryUtils {
 
@@ -11,18 +11,18 @@ export class MemoryUtils {
    if (!object || (opts && opts.depth >= 5)) return;
 
    if (object instanceof ElementRef) {
-     if (opts && opts.debug) console.debug("Force closing event emitter: " + (opts && opts.path) );
+     if (opts && opts.debug) console.debug('Force closing event emitter: ' + (opts && opts.path) );
      object.nativeElement.remove();
      return;
    }
 
    if (object instanceof EventEmitter && !object.closed) {
-     if (opts && opts.debug) console.debug("Force closing event emitter: " + (opts && opts.path) );
+     if (opts && opts.debug) console.debug('Force closing event emitter: ' + (opts && opts.path) );
      object.complete();
      return;
    }
    if (object instanceof Subject && !object.closed) {
-     if (opts && opts.debug) console.debug("Force closing subject: " + (opts && opts.path) );
+     if (opts && opts.debug) console.debug('Force closing subject: ' + (opts && opts.path) );
      object.complete();
      return;
    }
@@ -45,7 +45,7 @@ export class MemoryUtils {
        // Recursive call
        MemoryUtils.cleanup(object[key], {
          ...opts,
-         path: (opts && opts.path || '') + "/" + key,
+         path: (opts && opts.path || '') + '/' + key,
          depth: (opts && opts.depth || 0) + 1
        });
      }

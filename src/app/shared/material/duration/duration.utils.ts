@@ -6,15 +6,15 @@ export  function formatDuration(value: number | null): string {
   const hour = Math.floor(value);
   const minute = Math.round((value - hour) * 60);
   return [
-    hour.toString().padStart(3, "0"),
-    minute.toString().padStart(2, "0")
+    hour.toString().padStart(3, '0'),
+    minute.toString().padStart(2, '0')
   ].join(':');
 }
 
 // 111:11  = 111.18 (with maxDecimals=2)
 export function parseDuration(input: string, maxDecimals?: number, placeholderChar?: string): number | null {
 
-  var duration = input || '';
+  let duration = input || '';
   // Make to remove placeholder chars
   while (duration.indexOf(placeholderChar) !== -1) {
     duration = duration.replace(placeholderChar, '');

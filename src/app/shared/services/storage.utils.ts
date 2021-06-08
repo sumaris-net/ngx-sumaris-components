@@ -1,10 +1,11 @@
-import {isEmptyArray} from "../functions";
-import {chainPromises} from "../observables";
+import {isEmptyArray} from '../functions';
+import {chainPromises} from '../observables';
 
 export class StorageUtils {
 
   /**
    * Copy one storage content, into anthoer
+   *
    * @param from
    * @param to
    */
@@ -12,7 +13,7 @@ export class StorageUtils {
       keys: string[];
       deleteAfterCopy?: boolean;
     }) {
-    if (!from || !to || from === to) throw new Error("Invalid 'from' or 'to' arguments. Must be not null storage");
+    if (!from || !to || from === to) throw new Error('Invalid \'from\' or \'to\' arguments. Must be not null storage');
 
     options = {deleteAfterCopy: false, ...options};
 

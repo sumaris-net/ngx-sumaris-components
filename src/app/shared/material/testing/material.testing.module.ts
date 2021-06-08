@@ -1,16 +1,16 @@
-import {NgModule} from "@angular/core";
-import {RouterModule, Routes} from "@angular/router";
-import {AutocompleteTestPage} from "../autocomplete/testing/autocomplete.test";
-import {LatLongTestPage} from "../latlong/testing/latlong.test";
-import {MaterialTestingPage} from "./material.testing.page";
-import {SharedMaterialModule} from "../material.module";
-import {IonicModule} from "@ionic/angular";
-import {CommonModule} from "@angular/common";
-import {ReactiveFormsModule} from "@angular/forms";
-import {SwipeTestPage} from "../swipe/testing/swipe.test";
-import {TranslateModule} from "@ngx-translate/core";
-import {DateTimeTestPage} from "../datetime/testing/mat-date-time.test";
-import {ChipsTestPage} from "../chips/testing/chips.test";
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {AutocompleteTestPage} from '../autocomplete/testing/autocomplete.test';
+import {LatLongTestPage} from '../latlong/testing/latlong.test';
+import {MaterialTestingPage} from './material.testing.page';
+import {SharedMaterialModule} from '../material.module';
+import {IonicModule} from '@ionic/angular';
+import {CommonModule} from '@angular/common';
+import {ReactiveFormsModule} from '@angular/forms';
+import {SwipeTestPage} from '../swipe/testing/swipe.test';
+import {TranslateModule} from '@ngx-translate/core';
+import {DateTimeTestPage} from '../datetime/testing/mat-date-time.test';
+import {ChipsTestPage} from '../chips/testing/chips.test';
 
 
 const routes: Routes = [

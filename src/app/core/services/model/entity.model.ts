@@ -1,9 +1,9 @@
-import {Moment} from "moment";
-import {isEmptyArray, isNil, isNilOrBlank, isNotNil, joinPropertiesPath} from "../../../shared/functions";
-import {FilterFn} from "../../../shared/services/entity-service.class";
-import {ObjectMap, ObjectMapEntry, PropertiesArray, PropertiesMap} from "../../../shared/types";
-import {StoreObject} from "@apollo/client/core";
-import {fromDateISOString, toDateISOString} from "../../../shared/dates";
+import {Moment} from 'moment';
+import {isEmptyArray, isNil, isNilOrBlank, isNotNil, joinPropertiesPath} from '../../../shared/functions';
+import {FilterFn} from '../../../shared/services/entity-service.class';
+import {ObjectMap, ObjectMapEntry, PropertiesArray, PropertiesMap} from '../../../shared/types';
+import {StoreObject} from '@apollo/client/core';
+import {fromDateISOString, toDateISOString} from '../../../shared/dates';
 
 
 export declare interface Cloneable<T> {
@@ -131,7 +131,7 @@ export abstract class EntityUtils {
     }
     const key = path.substring(0, i);
     if (isNil(obj[key])) return undefined;
-    if (obj[key] && typeof obj[key] === "object") {
+    if (obj[key] && typeof obj[key] === 'object') {
       return EntityUtils.getPropertyByPath(obj[key], path.substring(i + 1));
     }
     throw new Error(`Invalid form path: '${key}' is not an valid object.`);
@@ -147,12 +147,10 @@ export abstract class EntityUtils {
   static getMapAsArray<T = any>(source?: ObjectMap<T>): ObjectMapEntry<T>[] {
     if (source instanceof Array) return source;
     return Object.getOwnPropertyNames(source || {})
-      .map(key => {
-        return {
+      .map(key => ({
           key,
           value: source[key]
-        };
-      });
+        }));
   }
 
   static getPropertyArrayAsObject(source?: PropertiesArray): PropertiesMap {
@@ -276,6 +274,7 @@ export abstract class EntityUtils {
    * Transform a batch entity tree into a array list. This method keep links parent/children.
    *
    * Method used to find batch without id (e.g. before local storage)
+   *
    * @param source
    */
   static treeToArray<T extends ITreeItemEntity<any>>(source: T): T[] {

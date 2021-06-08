@@ -1,11 +1,11 @@
-import {ApolloClient, ApolloLink, NextLink, Operation} from "@apollo/client/core";
-import * as uuidv4Imported from "uuid/v4";
+import {ApolloClient, ApolloLink, NextLink, Operation} from '@apollo/client/core';
+import * as uuidv4Imported from 'uuid/v4';
 const uuidv4 = uuidv4Imported;
-import {EventEmitter} from "@angular/core";
-import {debounceTime, filter, switchMap} from "rxjs/operators";
-import {BehaviorSubject, Observable} from "rxjs";
-import {getMainDefinition} from "@apollo/client/utilities";
-import {PersistentStorage} from "apollo3-cache-persist/lib/types";
+import {EventEmitter} from '@angular/core';
+import {debounceTime, filter, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {getMainDefinition} from '@apollo/client/utilities';
+import {PersistentStorage} from 'apollo3-cache-persist/lib/types';
 
 declare let window: any;
 const _global = typeof global !== 'undefined' ? global : (typeof window !== 'undefined' ? window : {});
@@ -15,7 +15,7 @@ export const NativeWebSocket = _global.WebSocket || _global.MozWebSocket;
  * AppWebSocket class.
  * With a hack on default Websocket, to avoid the use of protocol
  */
-export const AppWebSocket = function (url: string, protocols?: string | string[]) {
+export const AppWebSocket = function(url: string, protocols?: string | string[]) {
   return new NativeWebSocket(url/*no protocols*/);
 } as any;
 AppWebSocket.CLOSED = NativeWebSocket.CLOSED;
@@ -42,7 +42,7 @@ export interface TrackedQuery {
   contextJSON: string;
 }
 
-export const TRACKED_QUERIES_STORAGE_KEY = "apollo-tracker-persist";
+export const TRACKED_QUERIES_STORAGE_KEY = 'apollo-tracker-persist';
 
 export function createTrackerLink(opts: {
   storage?: PersistentStorage;
@@ -67,7 +67,7 @@ export function createTrackerLink(opts: {
       const trackedQueries = Object.getOwnPropertyNames(trackedQueriesById)
         .map(key => trackedQueriesById[key])
         .filter(value => value !== undefined);
-      if (opts.debug) console.debug("[apollo-tracker-link] Saving tracked queries to storage", trackedQueries);
+      if (opts.debug) console.debug('[apollo-tracker-link] Saving tracked queries to storage', trackedQueries);
       return opts.storage.setItem(TRACKED_QUERIES_STORAGE_KEY, JSON.stringify(trackedQueries));
     });
 
@@ -127,7 +127,7 @@ export async function restoreTrackedQueries(opts: {
   const list = JSON.parse(await opts.storage.getItem(TRACKED_QUERIES_STORAGE_KEY)) as TrackedQuery[];
 
   if (!list) return;
-  if (opts.debug) console.debug("[apollo-tracker-link] Restoring tracked queries", list);
+  if (opts.debug) console.debug('[apollo-tracker-link] Restoring tracked queries', list);
 
   const promises = (list || []).map(trackedQuery => {
     const context = JSON.parse(trackedQuery.contextJSON);

@@ -1,5 +1,5 @@
-import {PredefinedColors} from "@ionic/core";
-import {isNil, isNotNil} from "../functions";
+import {PredefinedColors} from '@ionic/core';
+import {isNil, isNotNil} from '../functions';
 
 export declare type ColorName = PredefinedColors |
   'white'
@@ -12,17 +12,17 @@ export declare type ColorName = PredefinedColors |
  * Define here theme colors
  */
 const rgbArrayMap = {
-  'white': [255, 255, 255],
-  'primary': [20, 67, 145], // ok
-  'secondary': [117, 196, 253], // ok
-  'tertiary': [91, 94, 244], // ok
-  'danger': [245, 61, 61], // ok
-  'light': [244, 245, 248], // ok
-  'medium': [152, 154, 162], // ok
-  'dark': [34, 36, 40], // ok
-  'red': [255, 0, 0],
-  'green': [0, 255, 0],
-  'blue': [0, 0, 255]
+  white: [255, 255, 255],
+  primary: [20, 67, 145], // ok
+  secondary: [117, 196, 253], // ok
+  tertiary: [91, 94, 244], // ok
+  danger: [245, 61, 61], // ok
+  light: [244, 245, 248], // ok
+  medium: [152, 154, 162], // ok
+  dark: [34, 36, 40], // ok
+  red: [255, 0, 0],
+  green: [0, 255, 0],
+  blue: [0, 0, 255]
 };
 
 // Fill a map of Color objects
@@ -57,7 +57,7 @@ export class Color {
         'custom');
   }
 
-  static transparent = function () {
+  static transparent = function() {
     return new Color([0,0,0], 0, 'translucent');
   };
 
@@ -142,7 +142,7 @@ export class ColorScale {
       }) as string[],
       options
     );
-  }
+  };
 
   static default() {
     return ColorScale.custom(25);
@@ -194,7 +194,7 @@ export class ColorScale {
       const start = index * this._rangeSize;
       const end = start + this._rangeSize;
       return {
-        color: color,
+        color,
         label: (end < this._max) ? `${start.toLocaleString()} - ${end.toLocaleString()}` : ` >= ${start}`
       };
     });
@@ -226,22 +226,21 @@ function state2side(state) {
 const SCALE_OPTIONS_DEFAULT = {
   startColor: rgbArrayMap.red,
   startStates: [0, 2, 3], // R=keep, V=keep, B=increase
-  startStepsFn: (defaultStateSize: number) => {
-    return [
+  startStepsFn: (defaultStateSize: number) => [
       Math.round((rgbArrayMap.red[0] - 50) / defaultStateSize),
       Math.round((255 - rgbArrayMap.red[1]) / defaultStateSize),
       Math.round((255 - rgbArrayMap.red[2]) / defaultStateSize)
-    ];
-  }
+    ]
 };
 
 /**
  * Internal function, that create a colors scale, using iteration
+ *
  * @param count
  * @param opacity
  * @param startColor
  * @param startState
- * @returns {Array}
+ * @returns
  */
 function linearColorGradientWithIntermediate(count: number,
                                              options?: ColorGradientOptions): any[] {
@@ -325,13 +324,9 @@ function linearColorGradient(count: number,
   // Output as rgb(r,g,b) string
   if (options.format === 'rgb') {
     if (options.opacity >= 1) {
-      return result.map(color => {
-        return "rgb(" + color.join(',') + ")";
-      });
+      return result.map(color => 'rgb(' + color.join(',') + ')');
     } else {
-      return result.map(color => {
-        return "rgba(" + color.concat(options.opacity).join(',') + ")";
-      });
+      return result.map(color => 'rgba(' + color.concat(options.opacity).join(',') + ')');
     }
   }
 

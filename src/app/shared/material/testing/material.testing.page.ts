@@ -1,6 +1,6 @@
-import {Component, Inject, InjectionToken, Optional} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {TranslateService} from "@ngx-translate/core";
+import {Component, Inject, InjectionToken, Optional} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
 
 export declare interface TestingPage {
   label: string;

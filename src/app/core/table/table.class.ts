@@ -1,58 +1,34 @@
-import {
-  AfterViewInit,
-  Directive,
-  EventEmitter,
-  Injector,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from "@angular/core";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatSort, MatSortable, SortDirection} from "@angular/material/sort";
-import {MatTable} from "@angular/material/table";
+import {AfterViewInit, Directive, EventEmitter, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort, MatSortable, SortDirection} from '@angular/material/sort';
+import {MatTable} from '@angular/material/table';
 import {BehaviorSubject, EMPTY, merge, Observable, of, Subject, Subscription} from 'rxjs';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  mergeMap,
-  startWith,
-  switchMap,
-  tap
-} from "rxjs/operators";
-import {TableElement} from "@e-is/ngx-material-table";
-import {EntitiesTableDataSource} from "./entities-table-datasource.class";
-import {SelectionModel} from "@angular/cdk/collections";
-import {IEntity} from "../services/model/entity.model";
-import {AlertController, ModalController, Platform, ToastController} from "@ionic/angular";
-import {ActivatedRoute, Router} from "@angular/router";
+import {catchError, debounceTime, distinctUntilChanged, filter, mergeMap, startWith, switchMap, tap} from 'rxjs/operators';
+import {TableElement} from '@e-is/ngx-material-table';
+import {EntitiesTableDataSource} from './entities-table-datasource.class';
+import {SelectionModel} from '@angular/cdk/collections';
+import {IEntity} from '../services/model/entity.model';
+import {AlertController, ModalController, Platform, ToastController} from '@ionic/angular';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ColumnItem, TableSelectColumnsComponent} from './table-select-columns.component';
 import {Location} from '@angular/common';
-import {ErrorCodes} from "../services/errors";
-import {AppFormUtils, IAppForm} from "../form/form.utils";
-import {isEmptyArray, isNil, isNotNil, toBoolean} from "../../shared/functions";
-import {LocalSettingsService} from "../services/local-settings.service";
-import {TranslateService} from "@ngx-translate/core";
-import {PlatformService} from "../services/platform.service";
-import {ShowToastOptions, Toasts} from "../../shared/toasts";
-import {Alerts} from "../../shared/alerts";
-import {CompletableEvent, createPromiseEventEmitter, emitPromiseEvent} from "../../shared/events";
-import {Environment} from "../../../environments/environment.class";
-import {
-  MatAutocompleteConfigHolder,
-  MatAutocompleteFieldAddOptions,
-  MatAutocompleteFieldConfig
-} from "../../shared/material/autocomplete/material.autocomplete";
-import {firstFalsePromise} from "../../shared/observables";
-import {CompleteEvent} from "apollo-link-serialize/build/dist/TestUtils";
+import {ErrorCodes} from '../services/errors';
+import {AppFormUtils, IAppForm} from '../form/form.utils';
+import {LocalSettingsService} from '../services/local-settings.service';
+import {TranslateService} from '@ngx-translate/core';
+import {PlatformService} from '../services/platform.service';
+import {Environment} from '../../../environments/environment.class';
+import {MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions, MatAutocompleteFieldConfig} from '../../shared/material/autocomplete/material.autocomplete';
+import {CompletableEvent, createPromiseEventEmitter, emitPromiseEvent} from '../../shared/events';
+import {isEmptyArray, isNil, isNotNil, toBoolean} from '../../shared/functions';
+import {firstFalsePromise} from '../../shared/observables';
+import {ShowToastOptions, Toasts} from '../../shared/toasts';
+import {Alerts} from '../../shared/alerts';
 
-export const SETTINGS_DISPLAY_COLUMNS = "displayColumns";
-export const SETTINGS_SORTED_COLUMN = "sortedColumn";
-export const SETTINGS_FILTER = "filter";
-export const SETTINGS_PAGE_SIZE = "pageSize";
+export const SETTINGS_DISPLAY_COLUMNS = 'displayColumns';
+export const SETTINGS_SORTED_COLUMN = 'sortedColumn';
+export const SETTINGS_FILTER = 'filter';
+export const SETTINGS_PAGE_SIZE = 'pageSize';
 export const DEFAULT_PAGE_SIZE = 20;
 export const DEFAULT_PAGE_SIZE_OPTIONS = [20, 50, 100, 200, 500];
 export const RESERVED_START_COLUMNS = ['select', 'id'];
@@ -81,7 +57,7 @@ export type SaveActionType = 'delete' | 'sort' | 'filter';
 
 // @dynamic
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export abstract class AppTable<
   T extends IEntity<T, ID>,
   F = any,
@@ -94,7 +70,7 @@ export abstract class AppTable<
   private _dataSourceSubscription: Subscription;
 
   private _cellValueChangesDefs: {
-    [key: string]: CellValueChangeListener
+    [key: string]: CellValueChangeListener;
   } = {};
 
   protected _enabled = true;
@@ -174,7 +150,7 @@ export abstract class AppTable<
   @Output() onConfirmEditCreateRow = new EventEmitter<TableElement<T>>();
   @Output() onCancelOrDeleteRow = new EventEmitter<TableElement<T>>();
   @Output() onBeforeDeleteRows = createPromiseEventEmitter<boolean, {rows: TableElement<T>[]}>();
-  @Output() onBeforeSave = createPromiseEventEmitter<{confirmed: boolean; save: boolean}, {action: SaveActionType, valid: boolean}>();
+  @Output() onBeforeSave = createPromiseEventEmitter<{confirmed: boolean; save: boolean}, {action: SaveActionType; valid: boolean}>();
   @Output() onAfterDeletedRows = new EventEmitter<TableElement<T>[]>();
 
   @Output() onSort = new EventEmitter<any>();
@@ -199,12 +175,12 @@ export abstract class AppTable<
     return this.editedRow && this.editedRow.editing ? (this.editedRow.validator && this.editedRow.validator.pending) : false;
   }
 
-  disable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  disable(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     if (this.sort) this.sort.disabled = true;
     this._enabled = false;
   }
 
-  enable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  enable(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     if (this.sort) this.sort.disabled = false;
     this._enabled = true;
   }
@@ -225,7 +201,7 @@ export abstract class AppTable<
     return !this._enabled;
   }
 
-  markAsDirty(opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+  markAsDirty(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     if (this._dirty !== true) {
       this._dirty = true;
       if (!opts || opts.emitEvent !== false) {
@@ -234,7 +210,7 @@ export abstract class AppTable<
     }
   }
 
-  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     if (this._dirty !== false) {
       this._dirty = false;
       if (!opts || opts.emitEvent !== false) {
@@ -243,7 +219,7 @@ export abstract class AppTable<
     }
   }
 
-  markAsUntouched(opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+  markAsUntouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     if (this._dirty !== false || this.editedRow) {
       this._dirty = false;
       this.editedRow = null;
@@ -253,7 +229,7 @@ export abstract class AppTable<
     }
   }
 
-  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     if (this.editedRow && this.editedRow.editing) {
       this.editedRow.validator.markAllAsTouched();
       //AppFormUtils.markAsTouched(this.editedRow.validator, opts);
@@ -357,7 +333,7 @@ export abstract class AppTable<
     this.saveBeforeFilter = toBoolean(this.saveBeforeFilter, !this.readOnly); // force to false when readonly
 
     // Check ask user confirmation is possible
-    if (this.confirmBeforeDelete && !this.alertCtrl) throw Error("Missing 'alertCtrl' or 'injector' in component's constructor.");
+    if (this.confirmBeforeDelete && !this.alertCtrl) throw Error('Missing \'alertCtrl\' or \'injector\' in component\'s constructor.');
 
     // Defined unique id for settings for the page
     this.settingsId = this.settingsId || this.generateTableId();
@@ -386,10 +362,10 @@ export abstract class AppTable<
                 return of(undefined);
               }
               if (!this._dataSource) {
-                if (this.debug) console.debug("[table] Skipping data load: no dataSource defined");
+                if (this.debug) console.debug('[table] Skipping data load: no dataSource defined');
                 return of(undefined);
               }
-              if (this.debug) console.debug("[table] Calling dataSource.watchAll()...");
+              if (this.debug) console.debug('[table] Calling dataSource.watchAll()...');
               return this._dataSource.watchAll(
                 this.pageOffset,
                 this.pageSize,
@@ -507,14 +483,14 @@ export abstract class AppTable<
   }
 
   setDatasource(datasource: EntitiesTableDataSource<T, F, ID>) {
-    if (this._dataSource) throw new Error("[table] dataSource already set !");
+    if (this._dataSource) throw new Error('[table] dataSource already set !');
     if (datasource && this._dataSource !== datasource) {
       this._dataSource = datasource;
       if (this._initialized) this.listenDatasource(datasource);
     }
   }
 
-  setFilter(filter: F, opts?: { emitEvent: boolean; }) {
+  setFilter(filter: F, opts?: { emitEvent: boolean }) {
     opts = opts || {emitEvent: true};
 
     if (this.saveBeforeFilter) {
@@ -544,7 +520,7 @@ export abstract class AppTable<
 
   /* -- internal method -- */
 
-  protected applyFilter(filter: F, opts: { emitEvent: boolean; }) {
+  protected applyFilter(filter: F, opts: { emitEvent: boolean }) {
     if (this.debug) console.debug('[table] Applying filter', filter);
     this._filter = filter;
     if (opts && opts.emitEvent) {
@@ -557,12 +533,12 @@ export abstract class AppTable<
 
 
   protected listenDatasource(dataSource: EntitiesTableDataSource<T, F, ID>) {
-    if (!dataSource) throw new Error("[table] dataSource not set !");
+    if (!dataSource) throw new Error('[table] dataSource not set !');
 
     // Cleaning previous subscription on datasource
     if (isNotNil(this._dataSourceSubscription)) {
       //if (this.debug)
-      console.debug("[table] Many call to listenDatasource(): Cleaning previous subscriptions...");
+      console.debug('[table] Many call to listenDatasource(): Cleaning previous subscriptions...');
       this._dataSourceSubscription.unsubscribe();
       this._subscription.remove(this._dataSourceSubscription);
     }
@@ -593,6 +569,7 @@ export abstract class AppTable<
 
   /**
    * Confirm the creation of the given row, or if not specified the currently edited row
+   *
    * @param event
    * @param row
    */
@@ -610,7 +587,7 @@ export abstract class AppTable<
           }
           else {
             if (this.debug) {
-              console.warn("[table] Row not valid: unable to confirm", row);
+              console.warn('[table] Row not valid: unable to confirm', row);
               AppFormUtils.logFormErrors(row.validator, '[table] ');
             }
           }
@@ -663,7 +640,7 @@ export abstract class AppTable<
   }
 
   addRow(event?: any, insertAt?: number): boolean {
-    /*if (this.debug) */console.debug("[table] Asking for new row...");
+    /*if (this.debug) */console.debug('[table] Asking for new row...');
     if (!this._enabled) return false;
 
     // Use modal if inline edition is disabled
@@ -692,13 +669,13 @@ export abstract class AppTable<
       throw {code: ErrorCodes.TABLE_INVALID_ROW_ERROR, message: 'ERROR.TABLE_INVALID_ROW_ERROR'};
     }
 
-    if (this.debug) console.debug("[table] Calling dataSource.save()...");
+    if (this.debug) console.debug('[table] Calling dataSource.save()...');
     try {
       const isOK = await this._dataSource.save();
       if (isOK) this._dirty = false;
       return isOK;
     } catch (err) {
-      if (this.debug) console.debug("[table] dataSource.save() return an error:", err);
+      if (this.debug) console.debug('[table] dataSource.save() return an error:', err);
       this.error = err && err.message || err;
       this.markForCheck();
       throw err;
@@ -761,7 +738,7 @@ export abstract class AppTable<
       return;
     }
 
-    if (this.debug) console.debug("[table] Delete selection...");
+    if (this.debug) console.debug('[table] Delete selection...');
 
     const rowsToDelete = rows.slice()
       // Reverse row order
@@ -815,7 +792,7 @@ export abstract class AppTable<
     // Open the detail page (if not inline editing)
     if (!this.inlineEdition) {
       if (this._dirty && this.debug) {
-        console.warn("[table] Opening row details, but table has unsaved changes!");
+        console.warn('[table] Opening row details, but table has unsaved changes!');
       }
 
       if (event) {
@@ -825,7 +802,7 @@ export abstract class AppTable<
 
       // No ID defined: unable to open details
       if (isNil(row.currentData.id)) {
-        console.warn("[table] Opening row details, but missing currentData.id!");
+        console.warn('[table] Opening row details, but missing currentData.id!');
         //return false;
       }
 
@@ -902,7 +879,7 @@ export abstract class AppTable<
       }
       catch (err) {
         if (err === 'CANCELLED') return false; // User cancel
-        console.error("Error while checking if can delete rows", err);
+        console.error('Error while checking if can delete rows', err);
         throw err;
       }
     }
@@ -923,13 +900,13 @@ export abstract class AppTable<
 
     let save: boolean;
     switch (saveAction) {
-      case "delete":
+      case 'delete':
         save = this.saveBeforeDelete;
         break;
-      case "filter":
+      case 'filter':
         save = this.saveBeforeFilter;
         break;
-      case "sort":
+      case 'sort':
         save = this.saveBeforeSort;
         break;
       default:
@@ -951,7 +928,7 @@ export abstract class AppTable<
         }
         catch (err) {
           if (err === 'CANCELLED') return false; // User cancel
-          console.error("Error while checking if can delete rows", err);
+          console.error('Error while checking if can delete rows', err);
           throw err;
         }
 
@@ -1004,14 +981,12 @@ export abstract class AppTable<
       .concat(hiddenColumns)
       .filter(name => !RESERVED_START_COLUMNS.includes(name) && !RESERVED_END_COLUMNS.includes(name)
         && !this.excludesColumns.includes(name))
-      .map(name => {
-        return {
+      .map(name => ({
           name,
           label: this.getI18nColumnName(name),
           visible: this.displayedColumns.indexOf(name) !== -1,
           canHide: this.getRequiredColumns().indexOf(name) === -1
-        };
-      });
+        }));
   }
 
   // can be overridden to add more required columns
@@ -1070,6 +1045,7 @@ export abstract class AppTable<
 
   /**
    * Recompute display columns
+   *
    * @protected
    */
   protected updateColumns() {
@@ -1090,11 +1066,11 @@ export abstract class AppTable<
   }
 
   protected getI18nColumnName(columnName: string) {
-    return this.i18nColumnPrefix + columnName.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
+    return this.i18nColumnPrefix + columnName.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
   }
 
   protected generateTableId() {
-    const id = this.location.path(true).replace(/[?].*$/g, '').replace(/\/[\d]+/g, '_id') + "_" + this.constructor.name;
+    const id = this.location.path(true).replace(/[?].*$/g, '').replace(/\/[\d]+/g, '_id') + '_' + this.constructor.name;
     //if (this.debug) console.debug("[table] id = " + id);
     return id;
   }
@@ -1118,7 +1094,7 @@ export abstract class AppTable<
     this._cellValueChangesDefs[name] = this._cellValueChangesDefs[name] || {
       eventEmitter: new EventEmitter<any>(),
       subscription: null,
-      formPath: formPath,
+      formPath,
       emitInitialValue
     };
 
@@ -1132,7 +1108,7 @@ export abstract class AppTable<
   protected startCellValueChanges(name: string, row: TableElement<T>) {
     const def = this._cellValueChangesDefs[name];
     if (!def) {
-      console.warn("[table] Listener with name {" + name + "} not registered! Please call registerCellValueChanges() before;");
+      console.warn('[table] Listener with name {' + name + '} not registered! Please call registerCellValueChanges() before;');
       return;
     }
     // Stop previous subscription
@@ -1167,13 +1143,13 @@ export abstract class AppTable<
   protected stopCellValueChanges(name: string) {
     const def = this._cellValueChangesDefs[name];
     if (def && def.subscription) {
-      if (this.debug) console.debug("[table] Stop value changes on row path {" + def.formPath + "}");
+      if (this.debug) console.debug('[table] Stop value changes on row path {' + def.formPath + '}');
       def.subscription.unsubscribe();
       def.subscription = null;
     }
   }
 
-  protected setShowColumn(columnName: string, show: boolean, opts?: { emitEvent?: boolean; }) {
+  protected setShowColumn(columnName: string, show: boolean, opts?: { emitEvent?: boolean }) {
     if (!this.excludesColumns.includes(columnName) !== show) {
       if (!show) {
         this.excludesColumns.push(columnName);
@@ -1221,7 +1197,7 @@ export abstract class AppTable<
   }
 
   protected async showToast(opts: ShowToastOptions) {
-    if (!this.toastController) throw new Error("Missing toastController in component's constructor");
+    if (!this.toastController) throw new Error('Missing toastController in component\'s constructor');
     return Toasts.show(this.toastController, this.translate, opts);
   }
 

@@ -1,10 +1,10 @@
-import {Injectable, Optional} from "@angular/core";
-import {NativeAudio} from "@ionic-native/native-audio/ngx";
-import {Vibration} from "@ionic-native/vibration/ngx";
-import {Platform} from "@ionic/angular";
+import {Injectable, Optional} from '@angular/core';
+import {NativeAudio} from '@ionic-native/native-audio/ngx';
+import {Vibration} from '@ionic-native/vibration/ngx';
+import {Platform} from '@ionic/angular';
 import {AudioManagement} from '@ionic-native/audio-management/ngx';
-import {Subject} from "rxjs";
-import {isNil, toBoolean} from "../functions";
+import {Subject} from 'rxjs';
+import {isNil, toBoolean} from '../functions';
 
 export type AudioType = 'html5' | 'native';
 export interface Sound {
@@ -87,7 +87,7 @@ export class AudioProvider {
     this._preloadedSounds[sound.id] = sound;
   }
 
-  async play(id: string, opts?: {vibrate?: boolean, vibrationTimes?: number|number[]}) {
+  async play(id: string, opts?: {vibrate?: boolean; vibrationTimes?: number|number[]}) {
 
     // Make sure provider is ready
     if (!this._started) await this.ready();

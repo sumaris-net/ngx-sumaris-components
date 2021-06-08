@@ -1,10 +1,10 @@
-import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {BehaviorSubject} from "rxjs";
-import {SharedValidators} from "../../../validator/validators";
-import {MatAutocompleteConfigHolder} from "../../autocomplete/material.autocomplete";
-import {isNotNil, suggestFromArray} from "../../../functions";
-import {LoadResult} from "../../../services/entity-service.class";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {BehaviorSubject} from 'rxjs';
+import {SharedValidators} from '../../../validator/validators';
+import {MatAutocompleteConfigHolder} from '../../autocomplete/material.autocomplete';
+import {isNotNil, suggestFromArray} from '../../../functions';
+import {LoadResult} from '../../../services/entity-service.class';
 
 export class Entity {
   id: number;
@@ -107,7 +107,7 @@ export class ChipsTestPage implements OnInit {
 
   doSubmit(event) {
 
-    console.debug("Validate form: ", this.form.value);
+    console.debug('Validate form: ', this.form.value);
   }
 
   compareWithFn(o1: Entity, o2: Entity): boolean {

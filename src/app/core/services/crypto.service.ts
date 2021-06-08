@@ -1,6 +1,6 @@
-import {Injectable} from "@angular/core";
-import {box, sign, verify, hash} from "tweetnacl";
-import {Base58} from "./base58";
+import {Injectable} from '@angular/core';
+import {box, sign, verify, hash} from 'tweetnacl';
+import {Base58} from './base58';
 
 const scrypt = require('scrypt-async');
 const sha256 =  require('hash.js/lib/hash/sha/256');
@@ -65,6 +65,7 @@ export class CryptoService {
 
   /**
    * Generate sign keypair, sugin scrypt, from a salt and a password
+   *
    * @param salt
    * @param password
    * @param scryptParams
@@ -78,7 +79,7 @@ export class CryptoService {
         p: scryptParams && scryptParams.p || nacl.constants.SCRYPT_PARAMS.DEFAULT.p,
         dkLen: nacl.constants.SEED_LENGTH,
         encoding: 'base64'
-      }, function (derivedKey) {
+      }, function(derivedKey) {
         resolve(derivedKey);
       });
     })
@@ -93,8 +94,8 @@ export class CryptoService {
   }
 
   /**
-  * Sign a message, from a key pair
-  */
+   * Sign a message, from a key pair
+   */
   public sign(message: string, keypair: KeyPair): Promise<string> {
     return new Promise((resolve) => {
       const m = nacl.util.decodeUTF8(message);
@@ -107,8 +108,8 @@ export class CryptoService {
   }
 
   /**
-  * Sign a message, from a key pair
-  */
+   * Sign a message, from a key pair
+   */
   public verify(message: string, signature: string, pubkey: string): Promise<boolean> {
     return new Promise((resolve) => {
       const m = nacl.util.decodeUTF8(message);

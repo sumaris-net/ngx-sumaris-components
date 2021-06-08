@@ -1,14 +1,14 @@
 
-import { TranslateService } from "@ngx-translate/core";
-import {MatPaginatorIntl} from "@angular/material/paginator";
-import {Injectable} from "@angular/core";
+import { TranslateService } from '@ngx-translate/core';
+import {MatPaginatorIntl} from '@angular/material/paginator';
+import {Injectable} from '@angular/core';
 
 @Injectable({providedIn: 'root'})
 export class MatPaginatorI18n extends MatPaginatorIntl {
   itemsPerPageLabel = 'Items per page';
   nextPageLabel     = 'Next page';
   previousPageLabel = 'Previous page';
-  getRangeLabel = function (page, pageSize, length) {
+  getRangeLabel = function(page, pageSize, length) {
     const of = this.translate ? this.translate.instant('COMMON.PAGINATOR.OF') : 'of';
     if (length === 0 || pageSize === 0) {
       return '0 ' + of + ' ' + length;

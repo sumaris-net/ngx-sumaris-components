@@ -1,8 +1,8 @@
 import {Injectable, NgModule} from '@angular/core';
 import {NoPreloading, PreloadAllModules, RouterModule} from '@angular/router';
 import {ActivatedRouteSnapshot, ExtraOptions, RouteReuseStrategy} from '@angular/router';
-import {IonicRouteStrategy} from "@ionic/angular";
-import {QuicklinkModule, QuicklinkStrategy} from "ngx-quicklink";
+import {IonicRouteStrategy} from '@ionic/angular';
+import {QuicklinkModule, QuicklinkStrategy} from 'ngx-quicklink';
 
 export const SHARED_ROUTE_OPTIONS: ExtraOptions = {
   enableTracing: false,

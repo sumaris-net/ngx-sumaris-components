@@ -1,5 +1,5 @@
-import {Observable, of, Subject, Subscription} from "rxjs";
-import {Apollo, QueryRef} from "apollo-angular";
+import {Observable, of, Subject, Subscription} from 'rxjs';
+import {Apollo, QueryRef} from 'apollo-angular';
 import {
   ApolloCache,
   ApolloClient,
@@ -11,39 +11,39 @@ import {
   OperationVariables,
   TypePolicies,
   WatchQueryFetchPolicy
-} from "@apollo/client/core";
-import {ErrorCodes, ServerErrorCodes, ServiceError} from "../services/errors";
-import {catchError, distinctUntilChanged, filter, first, map, mergeMap, throttleTime} from "rxjs/operators";
+} from '@apollo/client/core';
+import {ErrorCodes, ServerErrorCodes, ServiceError} from '../services/errors';
+import {catchError, distinctUntilChanged, filter, first, map, mergeMap, throttleTime} from 'rxjs/operators';
 
-import {Inject, Injectable, InjectionToken, Optional} from "@angular/core";
-import {ConnectionType, NetworkService} from "../services/network.service";
-import {WebSocketLink} from "@apollo/client/link/ws";
+import {Inject, Injectable, InjectionToken, Optional} from '@angular/core';
+import {ConnectionType, NetworkService} from '../services/network.service';
+import {WebSocketLink} from '@apollo/client/link/ws';
 import {
   AppWebSocket,
   createTrackerLink,
   isMutationOperation,
   isSubscriptionOperation,
   restoreTrackedQueries
-} from "./graphql.utils";
-import {Storage} from "@ionic/storage";
+} from './graphql.utils';
+import {Storage} from '@ionic/storage';
 import {RetryLink} from '@apollo/client/link/retry';
 import QueueLink from 'apollo-link-queue';
 import SerializingLink from 'apollo-link-serialize';
 import loggerLink from 'apollo-link-logger';
-import {Platform} from "@ionic/angular";
-import {EntityUtils, IEntity} from "../services/model/entity.model";
-import {isNil, isNotNil, toNumber} from "../../shared/functions";
-import {Resolvers} from "@apollo/client/core/types";
-import {HttpHeaders} from "@angular/common/http";
-import {EmptyObject} from "apollo-angular/types";
-import {HttpLink, Options} from "apollo-angular/http";
-import {IonicStorageWrapper, persistCache} from "apollo3-cache-persist";
-import {PersistentStorage} from "apollo3-cache-persist/lib/types";
-import {MutationBaseOptions} from "@apollo/client/core/watchQueryOptions";
-import {Cache} from "@apollo/client/cache/core/types/Cache";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {CryptoService} from "../services/crypto.service";
-import {ConnectionParamsOptions} from "subscriptions-transport-ws/dist/client";
+import {Platform} from '@ionic/angular';
+import {EntityUtils, IEntity} from '../services/model/entity.model';
+import {isNil, isNotNil, toNumber} from '../../shared/functions';
+import {Resolvers} from '@apollo/client/core/types';
+import {HttpHeaders} from '@angular/common/http';
+import {EmptyObject} from 'apollo-angular/types';
+import {HttpLink, Options} from 'apollo-angular/http';
+import {IonicStorageWrapper, persistCache} from 'apollo3-cache-persist';
+import {PersistentStorage} from 'apollo3-cache-persist/lib/types';
+import {MutationBaseOptions} from '@apollo/client/core/watchQueryOptions';
+import {Cache} from '@apollo/client/cache/core/types/Cache';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {CryptoService} from '../services/crypto.service';
+import {ConnectionParamsOptions} from 'subscriptions-transport-ws/dist/client';
 
 export interface WatchQueryOptions<V> {
   query: any;
@@ -124,7 +124,7 @@ export class GraphqlService {
     this.network.on('start', () => this.restart());
 
     // Clear cache
-    this.network.on("resetCache", async () => {
+    this.network.on('resetCache', async () => {
       await this.ready();
       await this.clearCache();
     });
@@ -157,7 +157,7 @@ export class GraphqlService {
     if (this._startPromise) return this._startPromise;
     if (this._started) return Promise.resolve();
 
-    console.info("[graphql] Starting graphql...");
+    console.info('[graphql] Starting graphql...');
 
     // Waiting for network service
     this._startPromise = this.network.ready()
@@ -169,7 +169,7 @@ export class GraphqlService {
         // Emit event
         this.onStart.next();
 
-        console.info("[graphql] Starting graphql [OK]");
+        console.info('[graphql] Starting graphql [OK]');
       })
       .catch((err) => {
         console.error(err && err.message || err, err);
@@ -180,10 +180,10 @@ export class GraphqlService {
 
   setAuthToken(token: string) {
     if (token) {
-      console.debug("[graphql] Apply token authentication to headers");
+      console.debug('[graphql] Apply token authentication to headers');
       this.connectionParams.authToken = token;
     } else {
-      console.debug("[graphql] Remove token authentication from headers");
+      console.debug('[graphql] Remove token authentication from headers');
       delete this.connectionParams.authToken;
       // Clear cache
       this.clearCache();
@@ -192,10 +192,10 @@ export class GraphqlService {
 
   setAuthBasic(basic: string) {
     if (basic) {
-      console.debug("[graphql] Apply basic authentication to headers");
+      console.debug('[graphql] Apply basic authentication to headers');
       this.connectionParams.authBasic = basic;
     } else {
-      console.debug("[graphql] Remove basic authentication from headers");
+      console.debug('[graphql] Remove basic authentication from headers');
       delete this.connectionParams.authBasic;
       // Clear cache
       this.clearCache();
@@ -205,6 +205,7 @@ export class GraphqlService {
   /**
    * Allow to add a field resolver
    *  (see doc: https://www.apollographql.com/docs/react/data/local-state/#handling-client-fields-with-resolvers)
+   *
    * @param resolvers
    */
   async addResolver(resolvers: Resolvers | Resolvers[]) {
@@ -216,10 +217,10 @@ export class GraphqlService {
   }
 
   async query<T, V = EmptyObject>(opts: {
-    query: any,
-    variables?: V,
-    error?: ServiceError,
-    fetchPolicy?: FetchPolicy
+    query: any;
+    variables?: V;
+    error?: ServiceError;
+    fetchPolicy?: FetchPolicy;
   }): Promise<T> {
     let res;
     try {
@@ -287,7 +288,7 @@ export class GraphqlService {
         opts.context = opts.context || {};
         const optimisticResponseFn = (opts.offlineResponse as ((context: any) => Promise<T>));
         opts.optimisticResponse = await optimisticResponseFn(opts.context);
-        if (this._debug) console.debug("[graphql] [offline] Using an optimistic response: ", opts.optimisticResponse);
+        if (this._debug) console.debug('[graphql] [offline] Using an optimistic response: ', opts.optimisticResponse);
       }
       else {
         opts.optimisticResponse = opts.offlineResponse as T;
@@ -321,9 +322,9 @@ export class GraphqlService {
   }
 
   subscribe<T, V = EmptyObject>(opts: {
-    query: any,
-    variables: V,
-    error?: ServiceError
+    query: any;
+    variables: V;
+    error?: ServiceError;
   }): Observable<T> {
 
     return this.apollo.subscribe<T>({
@@ -398,7 +399,7 @@ export class GraphqlService {
     } catch (err) {
       // continue
       // read in cache is not guaranteed to return a result. see https://github.com/apollographql/react-apollo/issues/1776#issuecomment-372237940
-      if (this._debug) console.error("[graphql] Error while updating cache: ", err);
+      if (this._debug) console.error('[graphql] Error while updating cache: ', err);
     }
   }
 
@@ -466,12 +467,13 @@ export class GraphqlService {
     } catch (err) {
       // continue
       // read in cache is not guaranteed to return a result. see https://github.com/apollographql/react-apollo/issues/1776#issuecomment-372237940
-      if (this._debug) console.warn("[graphql] Error while updating cache: ", err);
+      if (this._debug) console.warn('[graphql] Error while updating cache: ', err);
     }
   }
 
   /**
    * Remove from cache, and return if removed or not
+   *
    * @param cache
    * @param opts
    */
@@ -525,13 +527,14 @@ export class GraphqlService {
     } catch (err) {
       // continue
       // read in cache is not guaranteed to return a result. see https://github.com/apollographql/react-apollo/issues/1776#issuecomment-372237940
-      if (this._debug) console.warn("[graphql] Error while removing from cache: ", err);
+      if (this._debug) console.warn('[graphql] Error while removing from cache: ', err);
       return false;
     }
   }
 
   /**
    * Remove ids from cache, and return the number of items removed
+   *
    * @param cache
    * @param opts
    */
@@ -539,7 +542,7 @@ export class GraphqlService {
                                                            opts: Cache.ReadQueryOptions<V, any> & {
                                                              arrayFieldName: string;
                                                              totalFieldName?: string;
-                                                             ids: ID[]
+                                                             ids: ID[];
                                                            }): number {
 
     cache = cache || this.apollo.client.cache;
@@ -552,9 +555,7 @@ export class GraphqlService {
         // Copy because immutable
         data = { ...data };
 
-        const deletedIndexes = data[opts.arrayFieldName].reduce((res, item, index) => {
-          return opts.ids.includes(item['id']) ? res.concat(index) : res;
-        }, []);
+        const deletedIndexes = data[opts.arrayFieldName].reduce((res, item, index) => opts.ids.includes(item['id']) ? res.concat(index) : res, []);
 
         if (deletedIndexes.length <= 0) return 0; // Skip (nothing removed)
 
@@ -606,7 +607,7 @@ export class GraphqlService {
     } catch (err) {
       // continue
       // read in cache is not guaranteed to return a result. see https://github.com/apollographql/react-apollo/issues/1776#issuecomment-372237940
-      if (this._debug) console.warn("[graphql] Error while removing from cache: ", err);
+      if (this._debug) console.warn('[graphql] Error while removing from cache: ', err);
       return 0;
     }
   }
@@ -616,8 +617,8 @@ export class GraphqlService {
                      opts: Cache.ReadQueryOptions<V, any> & {
                        arrayFieldName: string;
                        totalFieldName?: string;
-                       data: T,
-                       equalsFn?: (d1: T, d2: T) => boolean
+                       data: T;
+                       equalsFn?: (d1: T, d2: T) => boolean;
                      }) {
     cache = cache || this.apollo.client.cache;
     opts.arrayFieldName = opts.arrayFieldName || 'data';
@@ -660,7 +661,7 @@ export class GraphqlService {
     } catch (err) {
       // continue
       // read in cache is not guaranteed to return a result. see https://github.com/apollographql/react-apollo/issues/1776#issuecomment-372237940
-      if (this._debug) console.warn("[graphql] Error while updating cache: ", err);
+      if (this._debug) console.warn('[graphql] Error while updating cache: ', err);
     }
   }
 
@@ -668,7 +669,7 @@ export class GraphqlService {
     client = (client || this.apollo.client) as ApolloClient<any>;
     if (client) {
       const now = this._debug && Date.now();
-      console.info("[graphql] Clearing Apollo client's cache... ");
+      console.info('[graphql] Clearing Apollo client\'s cache... ');
       await client.cache.reset();
       if (this._debug) console.debug(`[graphql] Apollo client's cache cleared, in ${Date.now() - now}ms`);
     }
@@ -686,12 +687,12 @@ export class GraphqlService {
     const enableTrackMutationQueries = !mobile;
 
     const peer = this.network.peer;
-    if (!peer) throw Error("[graphql] Missing peer. Unable to start graphql service");
+    if (!peer) throw Error('[graphql] Missing peer. Unable to start graphql service');
 
     const uri = peer.url + '/graphql';
-    const wsUri = String.prototype.replace.call(uri, /^http(s)?:/, "ws$1:") + '/websocket';
-    console.info("[graphql] Base uri: " + uri);
-    console.info("[graphql] Subscription uri: " + wsUri);
+    const wsUri = String.prototype.replace.call(uri, /^http(s)?:/, 'ws$1:') + '/websocket';
+    console.info('[graphql] Base uri: ' + uri);
+    console.info('[graphql] Subscription uri: ' + wsUri);
 
     this.httpParams = this.httpParams || {};
     this.httpParams.uri = uri;
@@ -712,7 +713,7 @@ export class GraphqlService {
 
     let client = this.apollo.client;
     if (!client) {
-      console.debug("[apollo] Creating GraphQL client...");
+      console.debug('[apollo] Creating GraphQL client...');
 
       // Websocket link
       const wsLink = new WebSocketLink(this.wsParams);
@@ -755,11 +756,11 @@ export class GraphqlService {
 
       // Add cache persistence
       if (this.environment.persistCache) {
-        console.debug("[graphql] Starting persistence cache...");
+        console.debug('[graphql] Starting persistence cache...');
         await persistCache({
           cache,
           storage,
-          trigger: this.platform.is("android") ? "background" : "write",
+          trigger: this.platform.is('android') ? 'background' : 'write',
           debounce: 1000,
           debug: true
         });
@@ -782,12 +783,12 @@ export class GraphqlService {
           .subscribe(type => {
             // Network is offline: start buffering into queue
             if (type === 'none') {
-              console.info("[graphql] offline mode: enable mutations buffer");
+              console.info('[graphql] offline mode: enable mutations buffer');
               queueLink.close();
             }
             // Network is online
             else {
-              console.info("[graphql] online mode: disable mutations buffer");
+              console.info('[graphql] online mode: disable mutations buffer');
               queueLink.open();
             }
           }));
@@ -874,7 +875,7 @@ export class GraphqlService {
     client = (client || this.apollo.client) as ApolloClient<any>;
     if (!client) return;
 
-    console.info("[graphql] Resetting apollo client...");
+    console.info('[graphql] Resetting apollo client...');
     client.stop();
     await Promise.all([
       client.clearStore(),
@@ -901,9 +902,9 @@ export class GraphqlService {
       || this.toAppError(err.originalError)
       || (err.graphQLErrors && err.graphQLErrors[0])
       || err;
-    console.error("[graphql] " + (error && error.message || error), error.stack || '');
+    console.error('[graphql] ' + (error && error.message || error), error.stack || '');
     if (error && error.code === ErrorCodes.UNKNOWN_NETWORK_ERROR && err.networkError && err.networkError.message) {
-      console.error("[graphql] original error: " + err.networkError.message);
+      console.error('[graphql] original error: ' + err.networkError.message);
       this.onNetworkError.next(error);
     }
     if ((!error || !error.code) && defaultError) {
@@ -939,17 +940,17 @@ export class GraphqlService {
     // Default, switch on error code
     switch (errorCode) {
       case ServerErrorCodes.UNAUTHORIZED:
-        return "ERROR.UNAUTHORIZED";
+        return 'ERROR.UNAUTHORIZED';
       case ServerErrorCodes.FORBIDDEN:
-        return "ERROR.FORBIDDEN";
+        return 'ERROR.FORBIDDEN';
       case ErrorCodes.UNKNOWN_NETWORK_ERROR:
-        return "ERROR.UNKNOWN_NETWORK_ERROR";
+        return 'ERROR.UNKNOWN_NETWORK_ERROR';
       case ServerErrorCodes.BAD_UPDATE_DATE:
-        return "ERROR.BAD_UPDATE_DATE";
+        return 'ERROR.BAD_UPDATE_DATE';
       case ServerErrorCodes.DATA_LOCKED:
-        return "ERROR.DATA_LOCKED";
+        return 'ERROR.DATA_LOCKED';
       case ServerErrorCodes.BAD_APP_VERSION:
-        return "ERROR.BAD_APP_VERSION";
+        return 'ERROR.BAD_APP_VERSION';
     }
 
     return undefined;
@@ -958,12 +959,12 @@ export class GraphqlService {
   private toAppError(err: any): any | undefined {
     let error = err;
     const message = err && err.message || err;
-    if (typeof message === "string" && message.trim().indexOf('{"code":') === 0) {
+    if (typeof message === 'string' && message.trim().indexOf('{"code":') === 0) {
       try {
         error = JSON.parse(err.message);
       }
       catch (parseError) {
-        console.error("Unable to parse error as JSON: ", parseError);
+        console.error('Unable to parse error as JSON: ', parseError);
       }
     }
     if (error && error.code) {
@@ -975,7 +976,7 @@ export class GraphqlService {
 
   private async getApollo(): Promise<Apollo> {
     if (!this._started) {
-      console.debug("[graphql] Waiting apollo client... ");
+      console.debug('[graphql] Waiting apollo client... ');
       await this.onStart.toPromise();
     }
     return this.apollo;

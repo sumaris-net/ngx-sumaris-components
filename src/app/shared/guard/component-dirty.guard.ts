@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {TranslateService} from '@ngx-translate/core';
 import {AlertController} from '@ionic/angular';
-import {Alerts} from "../alerts";
+import {Alerts} from '../alerts';
 
 export interface CanLeave {
   dirty: boolean;

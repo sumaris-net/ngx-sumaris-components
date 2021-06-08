@@ -24,8 +24,8 @@ import {
   FormGroupDirective,
   NG_VALUE_ACCESSOR,
   Validators
-} from "@angular/forms";
-import {TranslateService} from "@ngx-translate/core";
+} from '@angular/forms';
+import {TranslateService} from '@ngx-translate/core';
 import {SharedValidators} from '../../validator/validators';
 import {
   DEFAULT_MAX_DECIMALS,
@@ -37,26 +37,26 @@ import {
   parseLatitudeOrLongitude
 } from './latlong.utils';
 import {DEFAULT_PLACEHOLDER_CHAR} from '../../constants';
-import {filter} from "rxjs/operators";
-import {isNil, isNotNil, isNotNilOrBlank} from "../../functions";
-import {getCaretPosition, moveInputCaretToSeparator, selectInputContent, selectInputRange} from "../../inputs";
-import {merge, Subscription} from "rxjs";
-import {TextMaskConfig} from "angular2-text-mask";
+import {filter} from 'rxjs/operators';
+import {isNil, isNotNil, isNotNilOrBlank} from '../../functions';
+import {getCaretPosition, moveInputCaretToSeparator, selectInputContent, selectInputRange} from '../../inputs';
+import {merge, Subscription} from 'rxjs';
+import {TextMaskConfig} from 'angular2-text-mask';
 
 const MASKS: {
-  [key: string] : {
-    [pattern: string]: Array<string|RegExp>
-  }
+  [key: string]: {
+    [pattern: string]: Array<string|RegExp>;
+  };
 } = {
-  'latitude': {
-    'DDMMSS': [' ', /\d/, /\d/, '°', ' ', /\d/, /\d/, '\'', ' ', /\d/, /\d/, '.', /\d/, /\d/, '"'],
-    'DDMM': [' ', /\d/, /\d/, '°', ' ', /\d/, /\d/, '.', /\d/, /\d/, /\d/, '\''],
-    'DD': [/[+-]/, ' ', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '°']
+  latitude: {
+    DDMMSS: [' ', /\d/, /\d/, '°', ' ', /\d/, /\d/, '\'', ' ', /\d/, /\d/, '.', /\d/, /\d/, '"'],
+    DDMM: [' ', /\d/, /\d/, '°', ' ', /\d/, /\d/, '.', /\d/, /\d/, /\d/, '\''],
+    DD: [/[+-]/, ' ', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '°']
   },
-  'longitude': {
-    'DDMMSS': [/\d/, /\d/, /\d/, '°', ' ', /\d/, /\d/, '\'', ' ', /\d/, /\d/, '.', /\d/, /\d/, '"'],
-    'DDMM': [/\d/, /\d/, /\d/, '°', ' ', /\d/, /\d/, '.', /\d/, /\d/, /\d/, '\''],
-    'DD': [/[+-]/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '°']
+  longitude: {
+    DDMMSS: [/\d/, /\d/, /\d/, '°', ' ', /\d/, /\d/, '\'', ' ', /\d/, /\d/, '.', /\d/, /\d/, '"'],
+    DDMM: [/\d/, /\d/, /\d/, '°', ' ', /\d/, /\d/, '.', /\d/, /\d/, /\d/, '\''],
+    DD: [/[+-]/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '°']
   }
 };
 
@@ -91,7 +91,7 @@ export class MatLatLongField implements OnInit, AfterViewInit, OnDestroy, Contro
   mask: Array<string | RegExp> | ((raw: string) => Array<string | RegExp>) | false;
   value: number;
   inputPlaceholder: string;
-  showSignControl : boolean;
+  showSignControl: boolean;
 
   @Input() mobile: boolean;
 
@@ -107,7 +107,7 @@ export class MatLatLongField implements OnInit, AfterViewInit, OnDestroy, Contro
 
   @Input() type: 'latitude' | 'longitude';
 
-  @Input("latLongPattern") pattern: LatLongPattern;
+  @Input('latLongPattern') pattern: LatLongPattern;
 
   @Input() defaultSign: '-' | '+';
 
@@ -150,14 +150,14 @@ export class MatLatLongField implements OnInit, AfterViewInit, OnDestroy, Contro
     this.pattern = this.pattern || 'DDMM';
     this.mask = MASKS[this.type] && MASKS[this.type][this.pattern];
     if (!this.mask) {
-      console.error("Invalid attribute value. Expected: type: 'latitude|longitude' and latlongPattern: 'DD|DDMM|DDMMSS'");
+      console.error('Invalid attribute value. Expected: type: \'latitude|longitude\' and latlongPattern: \'DD|DDMM|DDMMSS\'');
       this.type = 'latitude';
       this.pattern = 'DDMM';
       this.mask = MASKS[this.type][this.pattern];
     }
     if (this.maxDecimals) {
       if (this.maxDecimals < 0) {
-        console.error("Invalid attribute 'maxDecimals'. Must a positive value.");
+        console.error('Invalid attribute \'maxDecimals\'. Must a positive value.');
         this.maxDecimals = DEFAULT_MAX_DECIMALS;
       }
       // Remove max decimals in the DDMMSS format
@@ -192,7 +192,7 @@ export class MatLatLongField implements OnInit, AfterViewInit, OnDestroy, Contro
     );
 
     this.formControl = this.formControl || this.formControlName && this.formGroupDir && this.formGroupDir.form.get(this.formControlName) as FormControl;
-    if (!this.formControl) throw new Error("Missing mandatory attribute 'formControl' or 'formControlName' in <mat-latlong-field>.");
+    if (!this.formControl) throw new Error('Missing mandatory attribute \'formControl\' or \'formControlName\' in <mat-latlong-field>.');
 
     const existingValidators = this.formControl.validator;
     if (existingValidators) {
@@ -241,7 +241,7 @@ export class MatLatLongField implements OnInit, AfterViewInit, OnDestroy, Contro
   writeValue(obj: any): void {
     if (this.writing) return;
 
-    this.value = (typeof obj === "string") ? parseFloat(obj.replace(/,/g, '.')) : obj;
+    this.value = (typeof obj === 'string') ? parseFloat(obj.replace(/,/g, '.')) : obj;
     this.writing = true;
     const strValue = this.formatFn(
       this.value,
@@ -342,7 +342,7 @@ export class MatLatLongField implements OnInit, AfterViewInit, OnDestroy, Contro
         const defaultSign = this.defaultSign === '-' ? -1 : 1;
 
         if (this.pattern === 'DD') {
-          let valueStr = this.formatFn(defaultSign, {...this.formatFnOptions, placeholderChar: this.placeholderChar})
+          let valueStr = this.formatFn(defaultSign, {...this.formatFnOptions, placeholderChar: this.placeholderChar});
           valueStr = valueStr && valueStr.replace('1', this.placeholderChar);
 
           // Wait end of focus animation (label should move to top)

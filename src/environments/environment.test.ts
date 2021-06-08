@@ -4,7 +4,7 @@
 
 // Environment to use only with unit tests
 
-import {Environment} from "./environment.class";
+import {Environment} from './environment.class';
 
 const pkg = require('../../package.json');
 
@@ -12,10 +12,10 @@ export const environment: Environment = Object.freeze({
   name: (pkg.name as string),
   version: (pkg.version as string),
   production: false,
-  baseUrl: "/",
-  defaultLocale: "fr",
-  defaultLatLongFormat: "DDMM",
-  apolloFetchPolicy: "cache-first",
+  baseUrl: '/',
+  defaultLocale: 'fr',
+  defaultLatLongFormat: 'DDMM',
+  apolloFetchPolicy: 'cache-first',
   mock: false,
 
   // FIXME: GraphQL subscription never unsubscribe...

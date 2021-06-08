@@ -1,4 +1,4 @@
-import {EventEmitter} from "@angular/core";
+import {EventEmitter} from '@angular/core';
 
 export interface PromiseEventPayload<T = any> {
   success: (T) => void;
@@ -36,6 +36,6 @@ export function emitPromiseEvent<T = any, D = void>(emitter: EventEmitter<Promis
 }
 
 export interface CompletableEvent extends Event {
-  target: EventTarget & { complete?: () => void; }
+  target: EventTarget & { complete?: () => void };
 }
 

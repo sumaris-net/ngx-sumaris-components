@@ -1,16 +1,15 @@
 import {TableDataSource, TableElement, ValidatorService} from '@e-is/ngx-material-table';
-import {BehaviorSubject, Observable, Subject} from "rxjs";
-import {Entity, IEntity} from "../services/model/entity.model";
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {Entity, IEntity} from '../services/model/entity.model';
 import {ErrorCodes} from '../services/errors';
-import {catchError, map, takeUntil} from "rxjs/operators";
-import {Directive, OnDestroy} from "@angular/core";
-import {EntitiesServiceWatchOptions, IEntitiesService, LoadResult} from "../../shared/services/entity-service.class";
-import {SortDirection} from "@angular/material/sort";
-import {CollectionViewer} from "@angular/cdk/collections";
-import {firstNotNilPromise} from "../../shared/observables";
-import {isNotEmptyArray, isNotNil, toBoolean} from "../../shared/functions";
-import {TableDataSourceOptions} from "@e-is/ngx-material-table/src/app/ngx-material-table/table-data-source";
-import {IEntityFilter} from "../services/model/filter.model";
+import {catchError, map, takeUntil} from 'rxjs/operators';
+import {Directive, OnDestroy} from '@angular/core';
+import {SortDirection} from '@angular/material/sort';
+import {CollectionViewer} from '@angular/cdk/collections';
+import {TableDataSourceOptions} from '@e-is/ngx-material-table/src/app/ngx-material-table/table-data-source';
+import {EntitiesServiceWatchOptions, IEntitiesService, LoadResult} from '../../shared/services/entity-service.class';
+import {firstNotNilPromise} from '../../shared/observables';
+import {isNotEmptyArray, isNotNil, toBoolean} from '../../shared/functions';
 
 
 export declare interface AppTableDataServiceOptions<O extends EntitiesServiceWatchOptions = EntitiesServiceWatchOptions> extends EntitiesServiceWatchOptions {
@@ -33,7 +32,7 @@ export class AppTableDataSourceOptions<
 
 // @dynamic
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export class EntitiesTableDataSource<
   T extends IEntity<T, ID>,
   F = any,
@@ -72,6 +71,7 @@ export class EntitiesTableDataSource<
 
   /**
    * Creates a new TableDataSource instance, that can be used as datasource of `@angular/cdk` data-table.
+   *
    * @param dataService A service to load and save data
    * @param dataType Type of data contained by the Table. If not specified, then `data` with at least one element must be specified.
    * @param environment
@@ -133,11 +133,11 @@ export class EntitiesTableDataSource<
 
   async save(): Promise<boolean> {
     if (toBoolean(this.serviceOptions.readOnly, false)) {
-      console.error("[table-datasource] Enable to save, because serviceOptions.readOnly=true");
+      console.error('[table-datasource] Enable to save, because serviceOptions.readOnly=true');
       return false;
     }
     if (this._saving) {
-      console.error("[table-datasource] Trying to save twice. Should never occur !");
+      console.error('[table-datasource] Trying to save twice. Should never occur !');
       return false;
     }
 
@@ -250,13 +250,13 @@ export class EntitiesTableDataSource<
   }
 
   startEdit(row: TableElement<T>) {
-    if (this._debug) console.debug("[table-datasource] Start to edit row", row);
+    if (this._debug) console.debug('[table-datasource] Start to edit row', row);
     row.startEdit();
     this._editingRowCount++;
   }
 
   cancelOrDelete(row: TableElement<T>) {
-    if (this._debug) console.debug("[table-datasource] Cancelling or deleting row", row);
+    if (this._debug) console.debug('[table-datasource] Cancelling or deleting row', row);
     row.cancelOrDelete();
     this._editingRowCount--;
   }
@@ -359,17 +359,17 @@ export class EntitiesTableDataSource<
 
     if (!row.validator || !row.validator.hasError) return;
 
-    let errorsMessage = "";
+    let errorsMessage = '';
     Object.getOwnPropertyNames(row.validator.controls)
       .forEach(key => {
         const control = row.validator.controls[key];
         if (control.invalid) {
-          errorsMessage += "'" + key + "' (" + (control.errors ? Object.getOwnPropertyNames(control.errors) : 'unknown error') + "),";
+          errorsMessage += '\'' + key + '\' (' + (control.errors ? Object.getOwnPropertyNames(control.errors) : 'unknown error') + '),';
         }
       });
 
     if (errorsMessage.length) {
-      console.error("[table-datasource] Row (id=" + row.id + ") has errors: " + errorsMessage.slice(0, -1));
+      console.error('[table-datasource] Row (id=' + row.id + ') has errors: ' + errorsMessage.slice(0, -1));
     }
   }
 }

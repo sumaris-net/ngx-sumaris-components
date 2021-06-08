@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/core';
+import {AfterViewInit, Directive, ElementRef, HostListener, Input, Renderer2} from '@angular/core';
 
 type TimepickerDirectionY = 'top' | 'center' | 'bottom';
 type TimepickerDirectionX = 'start' | 'center' | 'end';

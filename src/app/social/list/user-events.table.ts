@@ -7,24 +7,24 @@ import {
   Input,
   OnDestroy,
   OnInit
-} from "@angular/core";
-import {TableElement} from "@e-is/ngx-material-table";
-import {UserEventFilter, UserEventService, UserEventWatchOptions} from "../services/user-event.service";
-import {AccountService} from "../../core/services/account.service";
-import {UserEvent, UserEventAction, UserEventTypes} from "../services/model/user-event.model";
-import {LocalSettingsService} from "../../core/services/local-settings.service";
-import {toBoolean} from "../../shared/functions";
-import {Moment} from "moment";
-import {AppTable, RESERVED_END_COLUMNS, RESERVED_START_COLUMNS} from "../../core/table/table.class";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ModalController, Platform} from "@ionic/angular";
-import {Location} from "@angular/common";
-import {EntitiesTableDataSource} from "../../core/table/entities-table-datasource.class";
-import {SortDirection} from "@angular/material/sort";
-import {EntitiesStorage} from "../../core/services/storage/entities-storage.service";
-import {PredefinedColors} from "@ionic/core";
-import {IEntity} from "../../core/services/model/entity.model";
-import {ENVIRONMENT} from "../../../environments/environment.class";
+} from '@angular/core';
+import {TableElement} from '@e-is/ngx-material-table';
+import {UserEventFilter, UserEventService, UserEventWatchOptions} from '../services/user-event.service';
+import {AccountService} from '../../core/services/account.service';
+import {UserEvent, UserEventAction, UserEventTypes} from '../services/model/user-event.model';
+import {LocalSettingsService} from '../../core/services/local-settings.service';
+import {toBoolean} from '../../shared/functions';
+import {Moment} from 'moment';
+import {AppTable, RESERVED_END_COLUMNS, RESERVED_START_COLUMNS} from '../../core/table/table.class';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ModalController, Platform} from '@ionic/angular';
+import {Location} from '@angular/common';
+import {EntitiesTableDataSource} from '../../core/table/entities-table-datasource.class';
+import {SortDirection} from '@angular/material/sort';
+import {EntitiesStorage} from '../../core/services/storage/entities-storage.service';
+import {PredefinedColors} from '@ionic/core';
+import {IEntity} from '../../core/services/model/entity.model';
+import {ENVIRONMENT} from '../../../environments/environment.class';
 
 
 export interface UserEventDetail<T extends IEntity<T>> {
@@ -56,8 +56,8 @@ export interface UserEventIcon{
   color?: PredefinedColors;
 }
 const ICONS_MAP: {[key: string]: UserEventIcon } = {
-  "DEBUG_DATA": {matIcon: "bug_report"},
-  "INBOX_MESSAGE": {matIcon: "mail"},
+  DEBUG_DATA: {matIcon: 'bug_report'},
+  INBOX_MESSAGE: {matIcon: 'mail'},
 };
 
 // TODO: refactor with a registration done by data service:

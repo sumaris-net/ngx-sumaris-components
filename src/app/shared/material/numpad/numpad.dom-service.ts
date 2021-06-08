@@ -10,8 +10,8 @@ import {
   Type
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
-import {MatNumpadContainerComponent} from "./numpad.container";
-import {MatNumpadConfig} from "./numpad.model";
+import {MatNumpadContainerComponent} from './numpad.container';
+import {MatNumpadConfig} from './numpad.model';
 
 @Injectable({
     providedIn: 'root'

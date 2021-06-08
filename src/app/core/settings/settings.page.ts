@@ -7,21 +7,21 @@ import {referentialToString} from '../services/model/referential.model';
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {AppForm} from '../form/form.class';
 import {Moment} from 'moment';
-import {DateAdapter} from "@angular/material/core";
+import {DateAdapter} from '@angular/material/core';
 import {AppFormUtils, FormArrayHelper} from '../form/form.utils';
-import {TranslateService} from "@ngx-translate/core";
-import {ValidatorService} from "@e-is/ngx-material-table";
-import {LocalSettingsValidatorService} from "../services/validator/local-settings.validator";
-import {PlatformService} from "../services/platform.service";
-import {NetworkService} from "../services/network.service";
-import {isNil, isNilOrBlank, toBoolean} from "../../shared/functions";
-import {LocalSettingsService} from "../services/local-settings.service";
-import {FormFieldDefinition, FormFieldDefinitionMap} from "../../shared/form/field.model";
-import {merge} from "rxjs";
-import {AlertController} from "@ionic/angular";
-import {Alerts} from "../../shared/alerts";
-import {Property} from "../../shared/types";
-import {ActivatedRoute, Router} from "@angular/router";
+import {TranslateService} from '@ngx-translate/core';
+import {ValidatorService} from '@e-is/ngx-material-table';
+import {LocalSettingsValidatorService} from '../services/validator/local-settings.validator';
+import {PlatformService} from '../services/platform.service';
+import {NetworkService} from '../services/network.service';
+import {isNil, isNilOrBlank, toBoolean} from '../../shared/functions';
+import {LocalSettingsService} from '../services/local-settings.service';
+import {FormFieldDefinition, FormFieldDefinitionMap} from '../../shared/form/field.model';
+import {merge} from 'rxjs';
+import {AlertController} from '@ionic/angular';
+import {Alerts} from '../../shared/alerts';
+import {Property} from '../../shared/types';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'page-settings',
@@ -137,7 +137,7 @@ export class SettingsPage extends AppForm<LocalSettings> implements OnInit, OnDe
   async load() {
 
     this.loading = true;
-    console.debug("[settings] Loading settings...");
+    console.debug('[settings] Loading settings...');
 
     const data = this.settings.settings;
 
@@ -190,7 +190,7 @@ export class SettingsPage extends AppForm<LocalSettings> implements OnInit, OnDe
       AppFormUtils.logFormErrors(this.form);
     }
 
-    console.debug("[settings] Saving local settings...");
+    console.debug('[settings] Saving local settings...');
 
     this.saving = true;
     this.error = undefined;
@@ -230,7 +230,7 @@ export class SettingsPage extends AppForm<LocalSettings> implements OnInit, OnDe
   }
 
 
-  setAccountInheritance(enable: boolean, opts?: { emitEvent?: boolean; }) {
+  setAccountInheritance(enable: boolean, opts?: { emitEvent?: boolean }) {
     // Make sure to update the value in control
     this.form.controls['accountInheritance'].setValue(enable, opts);
     if (this.data.accountInheritance !== enable) {
@@ -272,8 +272,8 @@ export class SettingsPage extends AppForm<LocalSettings> implements OnInit, OnDe
   }
 
   async showSelectPeerModal(opts?: {
-    allowSelectDownPeer?: boolean,
-    canCancel?: boolean
+    allowSelectDownPeer?: boolean;
+    canCancel?: boolean;
   }) {
     const peer = await this.network.showSelectPeerModal(opts);
     if (peer && peer.url) {

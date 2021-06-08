@@ -23,19 +23,19 @@ import {
   FormGroupDirective,
   NG_VALUE_ACCESSOR,
   Validators
-} from "@angular/forms";
-import {TranslateService} from "@ngx-translate/core";
-import {isMoment, Moment} from "moment";
+} from '@angular/forms';
+import {TranslateService} from '@ngx-translate/core';
+import {isMoment, Moment} from 'moment';
 import {DEFAULT_PLACEHOLDER_CHAR, KEYBOARD_HIDE_DELAY_MS} from '../../constants';
 import {SharedValidators} from '../../validator/validators';
-import {Keyboard} from "@ionic-native/keyboard/ngx";
-import {filter, first} from "rxjs/operators";
-import {InputElement, setTabIndex} from "../../inputs";
-import {isFocusableElement} from "../../focusable";
-import {merge, Subscription} from "rxjs";
-import {MatDatepicker, MatDatepickerInputEvent} from "@angular/material/datepicker";
-import {isNil, isNilOrBlank, sleep, toBoolean} from "../../functions";
-import {fromDateISOString, toDateISOString} from "../../dates";
+import {Keyboard} from '@ionic-native/keyboard/ngx';
+import {filter, first} from 'rxjs/operators';
+import {InputElement, setTabIndex} from '../../inputs';
+import {isFocusableElement} from '../../focusable';
+import {merge, Subscription} from 'rxjs';
+import {MatDatepicker, MatDatepickerInputEvent} from '@angular/material/datepicker';
+import {isNil, isNilOrBlank, sleep, toBoolean} from '../../functions';
+import {fromDateISOString, toDateISOString} from '../../dates';
 
 const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
@@ -93,7 +93,7 @@ export class MatDateTime implements OnInit, OnDestroy, ControlValueAccessor, Inp
 
   @Input() placeholder: string;
 
-  @Input() floatLabel: FloatLabelType = "auto";
+  @Input() floatLabel: FloatLabelType = 'auto';
 
   @Input() readonly = false;
 
@@ -147,7 +147,7 @@ export class MatDateTime implements OnInit, OnDestroy, ControlValueAccessor, Inp
     this.waitHideKeyboardDelay = this.mobile && KEYBOARD_HIDE_DELAY_MS || 0;
 
     this.formControl = this.formControl || this.formControlName && this.formGroupDir && this.formGroupDir.form.get(this.formControlName) as FormControl;
-    if (!this.formControl) throw new Error("Missing mandatory attribute 'formControl' or 'formControlName' in <mat-date-time-field>.");
+    if (!this.formControl) throw new Error('Missing mandatory attribute \'formControl\' or \'formControlName\' in <mat-date-time-field>.');
 
     this.required = toBoolean(this.required, this.formControl.validator === Validators.required);
 
@@ -322,7 +322,7 @@ export class MatDateTime implements OnInit, OnDestroy, ControlValueAccessor, Inp
   onDatePickerChange(event: MatDatepickerInputEvent<Moment>): void {
     // Make sure event is valid
     if (!event || (event.value !== null && !isMoment(event.value))) {
-      console.warn("Invalid MatDatepicker event. Skipping", event);
+      console.warn('Invalid MatDatepicker event. Skipping', event);
       return; // Skip
     }
 

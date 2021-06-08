@@ -1,16 +1,16 @@
-import {GraphqlService, MutateQueryOptions, WatchQueryOptions} from "../graphql/graphql.service";
-import {Page} from "../../shared/services/entity-service.class";
-import {EmptyObject} from "apollo-angular/types";
-import {Observable} from "rxjs";
-import {FetchResult} from "@apollo/client/link/core";
-import {EntityUtils} from "./model/entity.model";
-import {ApolloCache} from "@apollo/client/core";
-import {changeCaseToUnderscore, isNotEmptyArray, toBoolean} from "../../shared/functions";
-import {environment} from "../../../environments/environment";
-import {Directive, Optional} from "@angular/core";
-import {QueryRef} from "apollo-angular";
-import {PureQueryOptions} from "@apollo/client/core/types";
-import {DocumentNode} from "graphql";
+import {GraphqlService, MutateQueryOptions, WatchQueryOptions} from '../graphql/graphql.service';
+import {Page} from '../../shared/services/entity-service.class';
+import {EmptyObject} from 'apollo-angular/types';
+import {Observable} from 'rxjs';
+import {FetchResult} from '@apollo/client/link/core';
+import {EntityUtils} from './model/entity.model';
+import {ApolloCache} from '@apollo/client/core';
+import {changeCaseToUnderscore, isNotEmptyArray, toBoolean} from '../../shared/functions';
+import {environment} from '../../../environments/environment';
+import {Directive, Optional} from '@angular/core';
+import {QueryRef} from 'apollo-angular';
+import {PureQueryOptions} from '@apollo/client/core/types';
+import {DocumentNode} from 'graphql';
 
 const sha256 =  require('hash.js/lib/hash/sha/256');
 
@@ -63,7 +63,7 @@ export class BaseGraphqlServiceOptions {
 }
 
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export abstract class BaseGraphqlService<T = any, F = any, ID = any> {
 
   protected _debug: boolean;
@@ -117,7 +117,7 @@ export abstract class BaseGraphqlService<T = any, F = any, ID = any> {
       this.registerNewMutableWatchQuery({
         id: queryId,
         query: opts.query,
-        queryRef: queryRef,
+        queryRef,
         variables: opts.variables,
         arrayFieldName: opts.arrayFieldName,
         insertFilterFn: opts.insertFilterFn,
@@ -196,7 +196,7 @@ export abstract class BaseGraphqlService<T = any, F = any, ID = any> {
     .reduce((res, count) => res + count, 0);
   }
 
-  async refetchMutableQuery(opts: FindMutableWatchQueriesOptions & { variables?: any; }): Promise<void> {
+  async refetchMutableQuery(opts: FindMutableWatchQueriesOptions & { variables?: any }): Promise<void> {
     // Retrieve queries to refetch
     const queries = this.findMutableWatchQueries(opts);
 
@@ -210,7 +210,7 @@ export abstract class BaseGraphqlService<T = any, F = any, ID = any> {
       }));
     }
     catch (err) {
-      console.error(this._logPrefix + "Error while refetching mutable watch queries", err);
+      console.error(this._logPrefix + 'Error while refetching mutable watch queries', err);
     }
   }
 
@@ -228,9 +228,7 @@ export abstract class BaseGraphqlService<T = any, F = any, ID = any> {
       return this._mutableWatchQueries.filter(q => q.id.startsWith(opts.queryName + '|'));
     }
     if (opts.queryNames) {
-      return opts.queryNames.reduce((res, queryName) => {
-        return res.concat(this._mutableWatchQueries.filter(q => q.id.startsWith(queryName + '|')));
-      }, []);
+      return opts.queryNames.reduce((res, queryName) => res.concat(this._mutableWatchQueries.filter(q => q.id.startsWith(queryName + '|'))), []);
     }
 
     // Search by query
@@ -238,11 +236,9 @@ export abstract class BaseGraphqlService<T = any, F = any, ID = any> {
       return this._mutableWatchQueries.filter(q => q.query === opts.query);
     }
     if (opts.queries) {
-      return opts.queries.reduce((res, query) => {
-        return res.concat(this._mutableWatchQueries.filter(q => q.query === query));
-      }, []);
+      return opts.queries.reduce((res, query) => res.concat(this._mutableWatchQueries.filter(q => q.query === query)), []);
     }
-    throw Error("Invalid options: only one property must be set");
+    throw Error('Invalid options: only one property must be set');
   }
 
   protected registerNewMutableWatchQuery(mutableQuery: MutableWatchQueryDescription<any>) {

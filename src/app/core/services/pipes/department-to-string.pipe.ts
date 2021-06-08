@@ -1,5 +1,5 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {Department, departmentsToString, departmentToString} from "../model/department.model";
+import {Department, departmentsToString, departmentToString} from '../model/department.model';
 
 @Pipe({
   name: 'departmentToString'

@@ -1,8 +1,8 @@
-import {DEFAULT_KEYMAP, MatNumpadEvent, MatNumpadKeymap, MatNumpadRef} from "./numpad.model";
-import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {NumpadDirective} from "./numpad.directive";
-import {MatNumpadContainerComponent} from "./numpad.container";
-import {MatNumpadDomService} from "./numpad.dom-service";
+import {DEFAULT_KEYMAP, MatNumpadEvent, MatNumpadKeymap, MatNumpadRef} from './numpad.model';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {NumpadDirective} from './numpad.directive';
+import {MatNumpadContainerComponent} from './numpad.container';
+import {MatNumpadDomService} from './numpad.dom-service';
 
 @Component({
   selector: 'mat-numpad',

@@ -1,21 +1,21 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
-import {AppTable, DEFAULT_PAGE_SIZE, RESERVED_END_COLUMNS, RESERVED_START_COLUMNS} from "../table.class";
-import {Referential} from "../../services/model/referential.model";
-import {ActivatedRoute, Router} from "@angular/router";
-import {IonInfiniteScroll, ModalController, Platform} from "@ionic/angular";
-import {Location} from "@angular/common";
-import {LocalSettingsService} from "../../services/local-settings.service";
-import {EntitiesTableDataSource} from "../entities-table-datasource.class";
-import {InMemoryEntitiesService} from "../../../shared/services/memory-entity-service.class";
-import {AppValidatorService} from "../../services/validator/base.validator.class";
-import {AbstractControl, FormBuilder, FormGroup} from "@angular/forms";
-import {isNil, isNotNil} from "../../../shared/functions";
-import {fromUnixMsTimestamp} from "../../../shared/dates";
-import {ReferentialFilter} from "../../services/testing/referential-filter.model";
-import {debounceTime, filter, tap} from "rxjs/operators";
-import {MatExpansionPanel} from "@angular/material/expansion";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AppTable, DEFAULT_PAGE_SIZE, RESERVED_END_COLUMNS, RESERVED_START_COLUMNS} from '../table.class';
+import {Referential} from '../../services/model/referential.model';
+import {ActivatedRoute, Router} from '@angular/router';
+import {IonInfiniteScroll, ModalController, Platform} from '@ionic/angular';
+import {Location} from '@angular/common';
+import {LocalSettingsService} from '../../services/local-settings.service';
+import {EntitiesTableDataSource} from '../entities-table-datasource.class';
+import {InMemoryEntitiesService} from '../../../shared/services/memory-entity-service.class';
+import {AppValidatorService} from '../../services/validator/base.validator.class';
+import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
+import {isNil, isNotNil} from '../../../shared/functions';
+import {fromUnixMsTimestamp} from '../../../shared/dates';
+import {ReferentialFilter} from '../../services/testing/referential-filter.model';
+import {debounceTime, filter, tap} from 'rxjs/operators';
+import {MatExpansionPanel} from '@angular/material/expansion';
 import Timeout = NodeJS.Timeout;
-import {ReferentialValidatorService} from "../../services/testing/referential.validator";
+import {ReferentialValidatorService} from '../../services/testing/referential.validator';
 
 
 @Component({
@@ -88,7 +88,7 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
     this.saveBeforeFilter = true;
 
     this.filterForm = formBuilder.group({
-      'searchText': [null]
+      searchText: [null]
     });
   }
 
@@ -149,7 +149,7 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
 
   protected restoreFilter() {
     const json = this.settings.getPageSettings(this.settingsId, 'filter');
-    console.debug("[table-test] Restoring filter from settings...", json);
+    console.debug('[table-test] Restoring filter from settings...', json);
 
     if (json) {
       const filter = ReferentialFilter.fromObject(json);
@@ -161,7 +161,7 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
   }
 
   toggleTimer() {
-    if (isNotNil(this.timer)) this.stopTimer()
+    if (isNotNil(this.timer)) this.stopTimer();
     else this.startTimer();
   }
 
@@ -180,8 +180,8 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
     }
   }
 
-  loadMore(event?: CustomEvent & { target?: EventTarget & { complete?: () => void; }}) {
-    console.debug("[table-test] Loading more...", event);
+  loadMore(event?: CustomEvent & { target?: EventTarget & { complete?: () => void }}) {
+    console.debug('[table-test] Loading more...', event);
 
     setTimeout(() => {
       this.data = [

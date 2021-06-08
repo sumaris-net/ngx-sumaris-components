@@ -6,15 +6,15 @@ import {
   FormGroup,
   ValidationErrors,
   ValidatorFn
-} from "@angular/forms";
-import {isMoment} from "moment";
-import {Entity} from "../services/model/entity.model";
-import {timer} from "rxjs";
-import {filter, first} from "rxjs/operators";
-import {SharedFormArrayValidators} from "../../shared/validator/validators";
-import {isNil, nullIfUndefined, round, sleep, toBoolean} from "../../shared/functions";
-import {filterNumberInput, selectInputContent} from "../../shared/inputs";
-import {toDateISOString} from "../../shared/dates";
+} from '@angular/forms';
+import {isMoment} from 'moment';
+import {Entity} from '../services/model/entity.model';
+import {timer} from 'rxjs';
+import {filter, first} from 'rxjs/operators';
+import {SharedFormArrayValidators} from '../../shared/validator/validators';
+import {isNil, nullIfUndefined, round, sleep, toBoolean} from '../../shared/functions';
+import {filterNumberInput, selectInputContent} from '../../shared/inputs';
+import {toDateISOString} from '../../shared/dates';
 
 export declare type IAppFormFactory = () => IAppForm;
 
@@ -28,13 +28,13 @@ export interface IAppForm  {
   enabled: boolean;
   disabled: boolean;
 
-  disable(opts?: {onlySelf?: boolean, emitEvent?: boolean; });
-  enable(opts?: {onlySelf?: boolean, emitEvent?: boolean; });
+  disable(opts?: {onlySelf?: boolean; emitEvent?: boolean });
+  enable(opts?: {onlySelf?: boolean; emitEvent?: boolean });
 
-  markAsPristine(opts?: {onlySelf?: boolean, emitEvent?: boolean; });
-  markAsUntouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; });
-  markAsTouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; });
-  markAsDirty(opts?: {onlySelf?: boolean, emitEvent?: boolean; });
+  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean });
+  markAsUntouched(opts?: {onlySelf?: boolean; emitEvent?: boolean });
+  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean });
+  markAsDirty(opts?: {onlySelf?: boolean; emitEvent?: boolean });
 }
 
 /**
@@ -52,13 +52,13 @@ export class AppNullForm implements IAppForm {
     return !this.enabled;
   }
 
-  disable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){}
-  enable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){}
+  disable(opts?: {onlySelf?: boolean; emitEvent?: boolean }){}
+  enable(opts?: {onlySelf?: boolean; emitEvent?: boolean }){}
 
-  markAsPristine(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){}
-  markAsUntouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){}
-  markAsTouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){}
-  markAsDirty(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){}
+  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean }){}
+  markAsUntouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }){}
+  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }){}
+  markAsDirty(opts?: {onlySelf?: boolean; emitEvent?: boolean }){}
 }
 
 export class AppFormHolder<F extends IAppForm = IAppForm> implements IAppForm {
@@ -75,7 +75,7 @@ export class AppFormHolder<F extends IAppForm = IAppForm> implements IAppForm {
     const content = this.getter();
     if (!content) {
       if (opts && opts.maxTimeoutMs && opts.startTime && (Date.now() >= opts.startTime + opts.maxTimeoutMs)) {
-        throw new Error("Timeout exception. Cannot get form instance");
+        throw new Error('Timeout exception. Cannot get form instance');
       }
       await sleep(opts && opts.checkTimeMs || 100);
       return this.waitDelegate({startTime: Date.now(), ...opts}); // Loop
@@ -108,22 +108,22 @@ export class AppFormHolder<F extends IAppForm = IAppForm> implements IAppForm {
   get pending(): boolean {
     return this.delegate.pending;
   }
-  disable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  disable(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     return this.delegate.disable(opts);
   }
-  enable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  enable(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     return this.delegate.enable(opts);
   }
-  markAsPristine(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     return this.delegate.markAsPristine(opts);
   }
-  markAsUntouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  markAsUntouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     return this.delegate.markAsUntouched(opts);
   }
-  markAsTouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     return this.delegate.markAsTouched(opts);
   }
-  markAsDirty(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  markAsDirty(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     return this.delegate.markAsDirty(opts);
   }
 }
@@ -161,6 +161,7 @@ export class AppFormUtils {
 
 /**
  * Fill an entity using the given form value
+ *
  * @param source a source form group
  * @param target an entity to fill
  */
@@ -180,16 +181,18 @@ export function copyForm2Entity(source: FormGroup, target: any): Object {
 
 /**
  * Fill a form using a source entity
+ *
  * @param target
  * @param source
  */
-export function copyEntity2Form(source: any, target: FormGroup, opts?: { emitEvent?: boolean; onlySelf?: boolean; }) {
+export function copyEntity2Form(source: any, target: FormGroup, opts?: { emitEvent?: boolean; onlySelf?: boolean }) {
   const json = getFormValueFromEntity(source, target);
   target.patchValue(json, opts);
 }
 
 /**
  * Transform an entity into a simple object, compatible with the given form
+ *
  * @param source an entity (or subentity)
  * @param form
  */
@@ -245,7 +248,7 @@ export function getFormValueFromEntity(source: any, form: FormGroup): { [key: st
 
 export function logFormErrors(control: AbstractControl, logPrefix?: string, path?: string) {
   if (control.valid) return;
-  logPrefix = logPrefix || "";
+  logPrefix = logPrefix || '';
   // Form group
   if (control instanceof FormGroup) {
     if (!path) console.warn(`${logPrefix} Form errors:`);
@@ -348,7 +351,7 @@ export function getControlFromPath(form: FormGroup, path: string): AbstractContr
 }
 
 
-export function disableControls(form: FormGroup, paths: string[], opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+export function disableControls(form: FormGroup, paths: string[], opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
   (paths || []).forEach(path => {
     const control = AppFormUtils.getControlFromPath(form, path);
     if (control) control.disable(opts);
@@ -361,7 +364,7 @@ export function addValueInArray(arrayControl: FormArray,
                                 equals: (v1: any, v2: any) => boolean,
                                 isEmpty: (value: any) => boolean,
                                 value: any,
-                                options?: { emitEvent: boolean; }): boolean {
+                                options?: { emitEvent: boolean }): boolean {
   options = options || {emitEvent: true};
 
   let hasChanged = false;
@@ -454,7 +457,7 @@ export function clearValueInArray(arrayControl: FormArray,
   return true;
 }
 
-export function markAsTouched(control: AbstractControl, opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+export function markAsTouched(control: AbstractControl, opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
   if (!control) return;
   if (control instanceof FormGroup) {
     markFormGroupAsTouched(control, { ...opts, onlySelf: true}); // recursive call
@@ -469,7 +472,7 @@ export function markAsTouched(control: AbstractControl, opts?: {onlySelf?: boole
   }
 }
 
-export function markFormGroupAsTouched(form: FormGroup, opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+export function markFormGroupAsTouched(form: FormGroup, opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
   if (!form) return;
   form.markAsTouched(opts);
   Object.keys(form.controls)
@@ -478,7 +481,7 @@ export function markFormGroupAsTouched(form: FormGroup, opts?: {onlySelf?: boole
     .forEach(control => markControlAsTouched(control, opts));
 }
 
-export function markControlAsTouched(control: AbstractControl, opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+export function markControlAsTouched(control: AbstractControl, opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
   if (!control) return;
   if (control instanceof FormGroup) {
     markAsTouched(control, { ...opts, onlySelf: true}); // recursive call
@@ -492,7 +495,7 @@ export function markControlAsTouched(control: AbstractControl, opts?: {onlySelf?
   }
 }
 
-export function updateValueAndValidity(form: FormGroup, opts?: {onlySelf?: boolean; emitEvent?: boolean; }) {
+export function updateValueAndValidity(form: FormGroup, opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
   if (!form) return;
   form.updateValueAndValidity(opts);
   Object.keys(form.controls)
@@ -508,7 +511,7 @@ export function updateValueAndValidity(form: FormGroup, opts?: {onlySelf?: boole
     });
 }
 
-export function markAsUntouched(form: FormGroup, opts?: {onlySelf?: boolean; }) {
+export function markAsUntouched(form: FormGroup, opts?: {onlySelf?: boolean }) {
   if (!form) return;
   form.markAsUntouched(opts);
   Object.getOwnPropertyNames(form.controls)
@@ -527,7 +530,7 @@ export function markAsUntouched(form: FormGroup, opts?: {onlySelf?: boolean; }) 
 /**
  * Wait end of async validation
  */
-export function waitWhilePending<T extends {pending: boolean; }>(form: T, opts?: {
+export function waitWhilePending<T extends {pending: boolean }>(form: T, opts?: {
   checkPeriod?: number;
   timeout?: number;
 }): Promise<any> {
@@ -549,29 +552,29 @@ export function waitWhilePending<T extends {pending: boolean; }>(form: T, opts?:
     ).toPromise();
 }
 
-export function isControlHasInput(controls: { [key:string]: AbstractControl}, controlName: string): boolean {
+export function isControlHasInput(controls: { [key: string]: AbstractControl}, controlName: string): boolean {
   // true if the control has a value and its 'calculated' control has the value 'false'
   return controls[controlName].value && !toBoolean(controls[controlName + AppFormUtils.calculatedSuffix].value, false);
 }
 
-export function setCalculatedValue(controls: { [key:string]: AbstractControl}, controlName: string, value: number | undefined) {
+export function setCalculatedValue(controls: { [key: string]: AbstractControl}, controlName: string, value: number | undefined) {
   // set value to control
   controls[controlName].setValue(round(value));
   // set 'calculated' control to 'true'
   controls[controlName + AppFormUtils.calculatedSuffix].setValue(true);
 }
 
-export function resetCalculatedValue(controls: { [key:string]: AbstractControl}, controlName: string) {
+export function resetCalculatedValue(controls: { [key: string]: AbstractControl}, controlName: string) {
   if (!AppFormUtils.isControlHasInput(controls, controlName)) {
     // set undefined only if control already calculated
     AppFormUtils.setCalculatedValue(controls, controlName, undefined);
   }
 }
 
-export declare type FormArrayHelperOptions = {
+export interface FormArrayHelperOptions {
   allowEmptyArray: boolean;
   validators?: ValidatorFn[];
-}
+};
 
 export class FormArrayHelper<T = Entity<any>> {
 

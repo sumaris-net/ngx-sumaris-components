@@ -1,5 +1,5 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {formatLatitude, formatLongitude} from "../material/latlong/latlong.utils";
+import {formatLatitude, formatLongitude} from '../material/latlong/latlong.utils';
 
 
 @Pipe({

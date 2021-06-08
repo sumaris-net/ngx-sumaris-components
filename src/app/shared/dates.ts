@@ -1,6 +1,6 @@
-import {Duration, isMoment, Moment} from "moment";
-import * as momentImported from "moment";
-import {DATE_ISO_PATTERN} from "./constants";
+import {Duration, isMoment, Moment} from 'moment';
+import * as momentImported from 'moment';
+import {DATE_ISO_PATTERN} from './constants';
 const moment = momentImported;
 
 
@@ -24,7 +24,7 @@ export function toDateISOString(value: any): string | undefined {
   if (!value) return undefined;
 
   // Already a valid ISO date time string (without timezone): use it
-  if (typeof value === "string"
+  if (typeof value === 'string'
     && value.indexOf('+') === -1
     && value.lastIndexOf('Z') === value.length - 1) {
 
@@ -73,11 +73,11 @@ export function toDuration(value: number, unit?: moment.unitOfTime.DurationConst
 
   // fix 990+ ms
   if (duration.milliseconds() >= 990) {
-    duration.add(1000 - duration.milliseconds(), "ms");
+    duration.add(1000 - duration.milliseconds(), 'ms');
   }
   // fix 59 s
   if (duration.seconds() >= 59) {
-    duration.add(60 - duration.seconds(), "s");
+    duration.add(60 - duration.seconds(), 's');
   }
 
   return duration;

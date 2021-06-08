@@ -1,7 +1,7 @@
-import { Environment } from "./environment.class";
-const pkg = require('../../package.json')
+import { Environment } from './environment.class';
+const pkg = require('../../package.json');
 
-/* tslint:disable */
+/* eslint-disable */
 export const environment: Environment = Object.freeze({
   name: (pkg.name as string),
   version: (pkg.version as string),
@@ -52,4 +52,4 @@ export const environment: Environment = Object.freeze({
     driverOrder: ['sqlite', 'indexeddb', 'websql', 'localstorage']
   }
 });
-/* tslint:enable */
+/* eslint-enable */

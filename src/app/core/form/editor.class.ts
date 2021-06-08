@@ -1,18 +1,18 @@
 import {Directive, Input, OnDestroy, OnInit, Optional, ViewChild} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {MatTabChangeEvent, MatTabGroup} from "@angular/material/tabs";
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {MatTabChangeEvent, MatTabGroup} from '@angular/material/tabs';
 import {AlertController, IonContent, ToastController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
 import {Subscription, TeardownLogic} from 'rxjs';
 import {AppTable} from '../table/table.class';
 import {AppForm} from './form.class';
 import {FormButtonsBarToken} from './form-buttons-bar.component';
-import {AppFormHolder, AppFormUtils, IAppForm, IAppFormFactory} from "./form.utils";
-import {ShowToastOptions, Toasts} from "../../shared/toasts";
-import {HammerSwipeEvent} from "../../shared/gesture/hammer.utils";
-import {ToolbarToken} from "../../shared/toolbar/toolbar";
-import {isNotNil, toNumber} from "../../shared/functions";
-import {CanLeave} from "../../shared/guard/component-dirty.guard";
+import {AppFormHolder, AppFormUtils, IAppForm, IAppFormFactory} from './form.utils';
+import {ShowToastOptions, Toasts} from '../../shared/toasts';
+import {HammerSwipeEvent} from '../../shared/gesture/hammer.utils';
+import {ToolbarToken} from '../../shared/toolbar/toolbar';
+import {isNotNil, toNumber} from '../../shared/functions';
+import {CanLeave} from '../../shared/guard/component-dirty.guard';
 
 export interface IAppEditor
   extends CanLeave, IAppForm {
@@ -39,7 +39,7 @@ export class AppTabEditorOptions {
 }
 
 @Directive()
-// tslint:disable-next-line:directive-class-suffix
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAppEditor, OnInit, OnDestroy {
 
   private _children: IAppForm[];
@@ -183,7 +183,7 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
   addChildForm(form: IAppForm | IAppFormFactory): AppTabEditor<T, ID, O> {
     if (!form) throw new Error('Trying to register an undefined child form');
     this._children = this._children || [];
-    if (typeof form === "function") {
+    if (typeof form === 'function') {
       this._children.push(new AppFormHolder(form));
     }
     else {
@@ -197,19 +197,19 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
     return this;
   }
 
-  disable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  disable(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     this._enabled = false;
     this._children && this._children.forEach(c => c.disable(opts));
     if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
   }
 
-  enable(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  enable(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     this._enabled = true;
     this._children && this._children.forEach(c => c.enable(opts));
     if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
   }
 
-  markAsPristine(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  markAsPristine(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     this.error = null;
     this.submitted = false;
     this._dirty = false;
@@ -217,7 +217,7 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
     if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
   }
 
-  markAsUntouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  markAsUntouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     // TODO: check if need to pass opts or not ?
     //this._children && this._children.forEach(c => c.markAsUntouched(opts));
     this._children && this._children.forEach(c => c.markAsUntouched());
@@ -225,24 +225,24 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
     if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
   }
 
-  markAsTouched(opts?: {onlySelf?: boolean, emitEvent?: boolean; }) {
+  markAsTouched(opts?: {onlySelf?: boolean; emitEvent?: boolean }) {
     this._children && this._children.forEach(c => c.markAsTouched(opts));
     if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
   }
 
-  markAsDirty(opts?: {onlySelf?: boolean, emitEvent?: boolean; }){
+  markAsDirty(opts?: {onlySelf?: boolean; emitEvent?: boolean }){
     this._dirty = true;
     if (!this.loading && (!opts || opts.emitEvent !== false)) this.markForCheck();
   }
 
-  markAsLoading(opts?: { emitEvent?: boolean; }){
+  markAsLoading(opts?: { emitEvent?: boolean }){
     if (!this.loading) {
       this.loading = true;
       if (!opts || opts.emitEvent !== false) this.markForCheck();
     }
   }
 
-  markAsLoaded(opts?: { emitEvent?: boolean; }){
+  markAsLoaded(opts?: { emitEvent?: boolean }){
     if (this.loading) {
       this.loading = false;
       if (!opts || opts.emitEvent !== false) this.markForCheck();
@@ -295,21 +295,21 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
     let selectTabIndex = this.selectedTabIndex;
     switch (event.type) {
       // Open next tab
-      case "swipeleft":
+      case 'swipeleft':
         const isLast = selectTabIndex >= (this.tabCount - 1);
         selectTabIndex = isLast ? 0 : selectTabIndex + 1;
         break;
 
 
       // Open previous tab
-      case "swiperight":
+      case 'swiperight':
         const isFirst = selectTabIndex <= 0;
         selectTabIndex = isFirst ? this.tabCount : selectTabIndex - 1;
         break;
 
       // Other case
       default:
-        console.error("[tab-page] Unknown swipe action: " + event.type);
+        console.error('[tab-page] Unknown swipe action: ' + event.type);
         return false;
     }
 
@@ -332,10 +332,11 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
 
   /**
    * Unload the page (remove all data). Useful when reusing angular cache a cancelled page
+   *
    * @param opts
    */
-  async unload(opts?: {emitEvent?: boolean; }) {
-    console.debug("[tab-page] Unloading data...");
+  async unload(opts?: {emitEvent?: boolean }) {
+    console.debug('[tab-page] Unloading data...');
     this.loading = true;
     this.selectedTabIndex = 0;
     this._children.forEach(f => {
@@ -478,7 +479,7 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
     }
   }
 
-  setSelectedTabIndex(value: number, opts?: {emitEvent?: boolean; realignInkBar?: boolean; }) {
+  setSelectedTabIndex(value: number, opts?: {emitEvent?: boolean; realignInkBar?: boolean }) {
     // Fix value
     if (value < 0) {
       value = 0;
@@ -575,12 +576,12 @@ export abstract class AppTabEditor<T = any, ID = number, O = any> implements IAp
   }
 
   protected async showToast(opts: ShowToastOptions) {
-    if (!this.toastController) throw new Error("Missing toastController in component's constructor");
+    if (!this.toastController) throw new Error('Missing toastController in component\'s constructor');
     await Toasts.show(this.toastController, this.translate, opts);
   }
 
   protected logFormErrors() {
-    if (this.debug) console.debug("[root-editor-form] Page not valid. Checking where (forms, tables)...");
+    if (this.debug) console.debug('[root-editor-form] Page not valid. Checking where (forms, tables)...');
     this._children.forEach(c => {
       // If form
       if (c instanceof AppTabEditor) {

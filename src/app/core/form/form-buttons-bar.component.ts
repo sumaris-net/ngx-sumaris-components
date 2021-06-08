@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
-import {Hotkeys} from "../../shared/hotkeys/hotkeys.service";
-import {Subscription} from "rxjs";
-import {filter} from "rxjs/operators";
-import {ToolbarToken} from "../../shared/toolbar/toolbar";
+import {Hotkeys} from '../../shared/hotkeys/hotkeys.service';
+import {Subscription} from 'rxjs';
+import {filter} from 'rxjs/operators';
+import {ToolbarToken} from '../../shared/toolbar/toolbar';
 
 export abstract class FormButtonsBarToken {
   abstract onCancel: EventEmitter<Event>;

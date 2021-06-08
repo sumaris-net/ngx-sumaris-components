@@ -1,6 +1,6 @@
 import {Component, ViewChild} from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {AccountService} from "../../services/account.service";
+import {AccountService} from '../../services/account.service';
 import {RegisterForm} from '../form/form-register';
 
 @Component({
@@ -30,7 +30,7 @@ export class RegisterModal {
     }
 
     this.sending = true;
-    let data = this.form.value;
+    const data = this.form.value;
 
     this.form.disable();
 

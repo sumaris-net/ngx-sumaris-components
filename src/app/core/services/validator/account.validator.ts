@@ -1,12 +1,12 @@
-import {Injectable} from "@angular/core";
-import {FormBuilder, ValidatorFn, Validators} from "@angular/forms";
-import {Account} from "../model/account.model";
-import {getMainProfile} from "../model/person.model";
-import {StatusIds} from "../model/model.enum";
-import {AccountService} from "../account.service";
-import {SharedValidators} from "../../../shared/validator/validators";
-import {FormFieldDefinition} from "../../../shared/form/field.model";
-import {AppValidatorService} from "./base.validator.class";
+import {Injectable} from '@angular/core';
+import {FormBuilder, ValidatorFn, Validators} from '@angular/forms';
+import {Account} from '../model/account.model';
+import {getMainProfile} from '../model/person.model';
+import {StatusIds} from '../model/model.enum';
+import {AccountService} from '../account.service';
+import {SharedValidators} from '../../../shared/validator/validators';
+import {FormFieldDefinition} from '../../../shared/form/field.model';
+import {AppValidatorService} from './base.validator.class';
 
 @Injectable({providedIn: 'root'})
 export class AccountValidatorService extends AppValidatorService<Account> {

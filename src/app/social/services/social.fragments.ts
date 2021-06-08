@@ -1,4 +1,4 @@
-import {gql} from "@apollo/client/core";
+import {gql} from '@apollo/client/core';
 
 export const SocialFragments = {
   userEvent: gql`fragment UserEventFragment on UserEventVO {

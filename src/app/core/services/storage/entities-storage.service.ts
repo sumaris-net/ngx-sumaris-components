@@ -1,14 +1,14 @@
-import {concat, defer, merge, Observable, Subject, Subscription, timer} from "rxjs";
-import {EventEmitter, Inject, Injectable, InjectionToken, Optional} from "@angular/core";
-import {Storage} from "@ionic/storage";
-import {Platform} from "@ionic/angular";
-import {catchError, first, switchMap, throttleTime} from "rxjs/operators";
-import {Entity, IEntity} from "../model/entity.model";
-import {isEmptyArray, isNilOrBlank} from "../../../shared/functions";
-import {LoadResult} from "../../../shared/services/entity-service.class";
-import {ENTITIES_STORAGE_KEY_PREFIX, EntityStorageLoadOptions, EntityStore, EntityStoreTypePolicy} from "./entity-store.class";
-import {ProgressBarService} from "../../../shared/services/progress-bar.service";
-import {ENVIRONMENT} from "../../../../environments/environment.class";
+import {concat, defer, merge, Observable, Subject, Subscription, timer} from 'rxjs';
+import {EventEmitter, Inject, Injectable, InjectionToken, Optional} from '@angular/core';
+import {Storage} from '@ionic/storage';
+import {Platform} from '@ionic/angular';
+import {catchError, first, switchMap, throttleTime} from 'rxjs/operators';
+import {Entity, IEntity} from '../model/entity.model';
+import {isEmptyArray, isNilOrBlank} from '../../../shared/functions';
+import {LoadResult} from '../../../shared/services/entity-service.class';
+import {ENTITIES_STORAGE_KEY_PREFIX, EntityStorageLoadOptions, EntityStore, EntityStoreTypePolicy} from './entity-store.class';
+import {ProgressBarService} from '../../../shared/services/progress-bar.service';
+import {ENVIRONMENT} from '../../../../environments/environment.class';
 
 
 export interface EntitiesStorageTypePolicies {
@@ -20,8 +20,8 @@ export const APP_LOCAL_STORAGE_TYPE_POLICIES = new InjectionToken<EntitiesStorag
 @Injectable({providedIn: 'root'})
 export class EntitiesStorage {
 
-  public static TRASH_PREFIX = "Trash#";
-  public static REMOTE_PREFIX = "Remote#";
+  public static TRASH_PREFIX = 'Trash#';
+  public static REMOTE_PREFIX = 'Remote#';
 
   private readonly _debug: boolean;
   private readonly _typePolicies: EntitiesStorageTypePolicies;
@@ -213,7 +213,7 @@ export class EntitiesStorage {
   }): Promise<T> {
     await this.ready();
 
-    if (!opts || isNilOrBlank(opts.entityName)) throw new Error("Missing argument 'opts' or 'entityName'");
+    if (!opts || isNilOrBlank(opts.entityName)) throw new Error('Missing argument \'opts\' or \'entityName\'');
     //if (id >= 0) throw new Error('Invalid id a local entity (not a negative number): ' + id);
 
     try {
@@ -246,7 +246,7 @@ export class EntitiesStorage {
   }): Promise<T[]> {
     await this.ready();
 
-    if (!opts || isNilOrBlank(opts.entityName)) throw new Error("Missing argument 'opts' or 'opts.entityName'");
+    if (!opts || isNilOrBlank(opts.entityName)) throw new Error('Missing argument \'opts\' or \'opts.entityName\'');
 
     try {
       this.progressBarService.increase();
@@ -292,7 +292,7 @@ export class EntitiesStorage {
   }): Promise<T> {
     await this.ready();
 
-    if (!opts || isNilOrBlank(opts.entityName)) throw new Error("Missing argument 'opts' or 'entityName'");
+    if (!opts || isNilOrBlank(opts.entityName)) throw new Error('Missing argument \'opts\' or \'entityName\'');
 
     return this.deleteById(id, {
       ...opts,
@@ -332,7 +332,7 @@ export class EntitiesStorage {
   }): Promise<T[]> {
     await this.ready();
 
-    if (!opts || isNilOrBlank(opts.entityName)) throw new Error("Missing argument 'opts.entityName'");
+    if (!opts || isNilOrBlank(opts.entityName)) throw new Error('Missing argument \'opts.entityName\'');
 
     const entityStore = this.getEntityStore<T>(opts.entityName, {create: false});
     if (!entityStore) return undefined;
@@ -467,7 +467,7 @@ export class EntitiesStorage {
   }
 
   protected detectEntityName(entityOrName: string | Entity<any, any>): string {
-    if (!entityOrName) throw Error("Unable to detect entityName of object: " + entityOrName);
+    if (!entityOrName) throw Error('Unable to detect entityName of object: ' + entityOrName);
     if (typeof entityOrName === 'string') return entityOrName;
     if (entityOrName.__typename) {
       return entityOrName.__typename;
@@ -481,7 +481,7 @@ export class EntitiesStorage {
     if (!entityNames) return;
 
     const now = this._debug && Date.now();
-    if (this._debug) console.info("[entities-storage] Restoring entities...");
+    if (this._debug) console.info('[entities-storage] Restoring entities...');
     const entitiesCount = (await Promise.all<number>(
       entityNames
         .map(name => this.getEntityStore<any>(name))
@@ -496,7 +496,7 @@ export class EntitiesStorage {
 
     // Saving progress: report this save later
     if (this._saving) {
-      if (this._debug) console.debug("[entities-storage] Previous persist not finished. Waiting...");
+      if (this._debug) console.debug('[entities-storage] Previous persist not finished. Waiting...');
       this._$save.emit();
       return;
     }
@@ -507,12 +507,11 @@ export class EntitiesStorage {
     const entityNames = this._stores && Object.keys(this._stores) || [];
 
     const now = Date.now();
-    if (this._debug) console.debug("[entities-storage] Persisting...");
+    if (this._debug) console.debug('[entities-storage] Persisting...');
 
     let currentEntityName;
     return concat(
-      ...entityNames.map(entityName => {
-          return defer(() => {
+      ...entityNames.map(entityName => defer(() => {
             currentEntityName = entityName;
             const entityStore = this.getEntityStore(entityName, {create: false});
 
@@ -527,8 +526,7 @@ export class EntitiesStorage {
                   entityNames.splice(entityNames.findIndex(e => e === entityName), 1);
                 }
               });
-          });
-        }),
+          })),
         defer(() =>  {
           currentEntityName = undefined;
           return isEmptyArray(entityNames) ?

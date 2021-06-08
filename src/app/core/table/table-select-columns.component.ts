@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, Input, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
-import {toBoolean} from "../../shared/functions";
+import {toBoolean} from '../../shared/functions';
 
 export declare interface ColumnItem {
   name?: string;

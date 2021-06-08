@@ -22,16 +22,16 @@ import {
   NG_VALUE_ACCESSOR,
   ValidationErrors,
   Validators
-} from "@angular/forms";
-import {TranslateService} from "@ngx-translate/core";
-import {Moment} from "moment";
+} from '@angular/forms';
+import {TranslateService} from '@ngx-translate/core';
+import {Moment} from 'moment';
 import {DEFAULT_PLACEHOLDER_CHAR} from '../../constants';
-import {isNil, toBoolean} from "../../functions";
-import {InputElement, moveInputCaretToSeparator, setTabIndex} from "../../inputs";
-import {isFocusableElement} from "../../focusable";
-import {DEFAULT_MAX_DECIMALS, formatDuration, parseDuration} from "./duration.utils";
-import {BehaviorSubject, Subscription} from "rxjs";
-import {filter} from "rxjs/operators";
+import {isNil, toBoolean} from '../../functions';
+import {InputElement, moveInputCaretToSeparator, setTabIndex} from '../../inputs';
+import {isFocusableElement} from '../../focusable';
+import {DEFAULT_MAX_DECIMALS, formatDuration, parseDuration} from './duration.utils';
+import {BehaviorSubject, Subscription} from 'rxjs';
+import {filter} from 'rxjs/operators';
 
 const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
@@ -74,7 +74,7 @@ export class MatDuration implements OnInit, OnDestroy, ControlValueAccessor, Inp
 
   @Input() placeholder: string;
 
-  @Input() floatLabel: FloatLabelType = "auto";
+  @Input() floatLabel: FloatLabelType = 'auto';
 
   @Input() readonly = false;
 
@@ -119,7 +119,7 @@ export class MatDuration implements OnInit, OnDestroy, ControlValueAccessor, Inp
 
     if (this.maxDecimals) {
       if (this.maxDecimals < 0) {
-        console.error("Invalid attribute 'maxDecimals'. Must a positive value.");
+        console.error('Invalid attribute \'maxDecimals\'. Must a positive value.');
         this.maxDecimals = DEFAULT_MAX_DECIMALS;
       }
       else if (this.maxDecimals < DEFAULT_MAX_DECIMALS) {
@@ -129,7 +129,7 @@ export class MatDuration implements OnInit, OnDestroy, ControlValueAccessor, Inp
     }
 
     this.formControl = this.formControl || this.formControlName && this.formGroupDir && this.formGroupDir.form.get(this.formControlName) as FormControl;
-    if (!this.formControl) throw new Error("Missing mandatory attribute 'formControl' or 'formControlName' in <mat-date-time-field>.");
+    if (!this.formControl) throw new Error('Missing mandatory attribute \'formControl\' or \'formControlName\' in <mat-date-time-field>.');
 
     this.required = toBoolean(this.required, this.formControl.validator === Validators.required);
 
@@ -242,7 +242,7 @@ export class MatDuration implements OnInit, OnDestroy, ControlValueAccessor, Inp
 
     this._value = parseDuration(value || '', this.maxDecimals, this.placeholderChar);
 
-    console.debug("[mat-duration] Setting duration: ", this._value);
+    console.debug('[mat-duration] Setting duration: ', this._value);
     this.formControl.patchValue(this._value, {emitEvent: false});
     //this.formControl.updateValueAndValidity();
     this.writing = false;

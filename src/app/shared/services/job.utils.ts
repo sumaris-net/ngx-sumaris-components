@@ -1,6 +1,6 @@
-import {BehaviorSubject, defer, Observable, Subject} from "rxjs";
-import {isNil, isNotNil} from "../functions";
-import {LoadResult, LoadResultByPageFn} from "./entity-service.class";
+import {BehaviorSubject, defer, Observable, Subject} from 'rxjs';
+import {isNil, isNotNil} from '../functions';
+import {LoadResult, LoadResultByPageFn} from './entity-service.class';
 
 export type CallableWithProgressionFn<O extends CallableWithProgressionOptions> = (progression: BehaviorSubject<number>, opts?: O) => Promise<void>;
 export interface CallableWithProgressionOptions {
@@ -35,14 +35,14 @@ export class JobUtils {
     loadPageFn: LoadResultByPageFn<T>,
     progression: BehaviorSubject<number>,
     opts?: {
-      maxProgression?: number,
+      maxProgression?: number;
       onPageLoaded?: (pageResult: LoadResult<T>) => any;
       logPrefix?: string;
       fetchSize?: number;
     }): Promise<LoadResult<T>> {
 
     const maxProgression = opts && opts.maxProgression || undefined;
-    let total, loopCount, progressionStep, loopDataCount: number;
+    let total; let loopCount; let progressionStep; let loopDataCount: number;
     const fetchSize = opts && opts.fetchSize || 1000;
     let offset = 0;
     let data: T[] = [];

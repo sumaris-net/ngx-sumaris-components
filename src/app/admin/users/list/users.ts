@@ -1,23 +1,23 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Injector, OnInit} from "@angular/core";
-import {Person, UserProfileLabels} from "../../../core/services/model/person.model";
-import {DefaultStatusList, referentialToString} from "../../../core/services/model/referential.model";
-import {PersonService} from "../../services/person.service";
-import {PersonValidatorService} from "../../services/validator/person.validator";
-import {ModalController} from "@ionic/angular";
-import {ActivatedRoute, Router} from "@angular/router";
-import {AccountService} from "../../../core/services/account.service";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Injector, OnInit} from '@angular/core';
+import {Person, UserProfileLabels} from '../../../core/services/model/person.model';
+import {DefaultStatusList, referentialToString} from '../../../core/services/model/referential.model';
+import {PersonService} from '../../services/person.service';
+import {PersonValidatorService} from '../../services/validator/person.validator';
+import {ModalController} from '@ionic/angular';
+import {ActivatedRoute, Router} from '@angular/router';
+import {AccountService} from '../../../core/services/account.service';
 import {Location} from '@angular/common';
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {AppTable, RESERVED_END_COLUMNS, RESERVED_START_COLUMNS} from "../../../core/table/table.class";
-import {ValidatorService} from "@e-is/ngx-material-table";
-import {FormFieldDefinition} from "../../../shared/form/field.model";
-import {PlatformService} from "../../../core/services/platform.service";
-import {LocalSettingsService} from "../../../core/services/local-settings.service";
-import {debounceTime, filter, tap} from "rxjs/operators";
-import {EntitiesTableDataSource} from "../../../core/table/entities-table-datasource.class";
-import {isNotNil} from "../../../shared/functions";
-import {ENVIRONMENT} from "../../../../environments/environment.class";
-import {PersonFilter} from "../../services/filter/person.filter";
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {AppTable, RESERVED_END_COLUMNS, RESERVED_START_COLUMNS} from '../../../core/table/table.class';
+import {ValidatorService} from '@e-is/ngx-material-table';
+import {FormFieldDefinition} from '../../../shared/form/field.model';
+import {PlatformService} from '../../../core/services/platform.service';
+import {LocalSettingsService} from '../../../core/services/local-settings.service';
+import {debounceTime, filter, tap} from 'rxjs/operators';
+import {EntitiesTableDataSource} from '../../../core/table/entities-table-datasource.class';
+import {isNotNil} from '../../../shared/functions';
+import {ENVIRONMENT} from '../../../../environments/environment.class';
+import {PersonFilter} from '../../services/filter/person.filter';
 
 @Component({
   selector: 'app-users-table',
@@ -85,7 +85,7 @@ export class UsersPage extends AppTable<Person, PersonFilter> implements OnInit 
 
     this.i18nColumnPrefix = 'USER.';
     this.filterForm = formBuilder.group({
-      'searchText': [null]
+      searchText: [null]
     });
 
     // Fill statusById

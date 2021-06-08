@@ -3,9 +3,9 @@ import {RouterModule, Routes} from '@angular/router';
 import {HomePage} from './core/home/home';
 import {RegisterConfirmPage} from './core/register/confirm/confirm';
 import {AccountPage} from './core/account/account';
-import {SettingsPage} from "./core/settings/settings.page";
-import {AuthGuardService} from "./core/services/auth-guard.service";
-import {SHARED_ROUTE_OPTIONS, SharedRoutingModule} from "./shared/shared-routing.module";
+import {SettingsPage} from './core/settings/settings.page';
+import {AuthGuardService} from './core/services/auth-guard.service';
+import {SHARED_ROUTE_OPTIONS, SharedRoutingModule} from './shared/shared-routing.module';
 
 const routes: Routes = [
   // Core path
@@ -65,7 +65,7 @@ const routes: Routes = [
 
   // Other route redirection (should at the end of the array)
   {
-    path: "**",
+    path: '**',
     redirectTo: '/'
   }
 ];

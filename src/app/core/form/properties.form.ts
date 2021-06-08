@@ -1,14 +1,14 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, Input, OnInit, Optional} from "@angular/core";
-import {FormArray, FormBuilder, FormGroup, FormGroupDirective, Validators} from "@angular/forms";
-import {EntityUtils} from "../services/model/entity.model";
-import {FormFieldDefinition, FormFieldDefinitionMap} from "../../shared/form/field.model";
-import {isEmptyArray, isNil} from "../../shared/functions";
-import {DateAdapter} from "@angular/material/core";
-import {Moment} from "moment";
-import {LocalSettingsService} from "../services/local-settings.service";
-import {AppForm} from "./form.class";
-import {FormArrayHelper, FormArrayHelperOptions} from "./form.utils";
-import {Property} from "../../shared/types";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, Input, OnInit, Optional} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {EntityUtils} from '../services/model/entity.model';
+import {FormFieldDefinition, FormFieldDefinitionMap} from '../../shared/form/field.model';
+import {isEmptyArray, isNil} from '../../shared/functions';
+import {DateAdapter} from '@angular/material/core';
+import {Moment} from 'moment';
+import {LocalSettingsService} from '../services/local-settings.service';
+import {AppForm} from './form.class';
+import {FormArrayHelper, FormArrayHelperOptions} from './form.utils';
+import {Property} from '../../shared/types';
 
 @Component({
   selector: 'app-properties-form',
@@ -60,7 +60,7 @@ export class AppPropertiesForm<T = Property> extends AppForm<T[]> implements OnI
 
   ngOnInit() {
     if (isEmptyArray(this.definitions)) {
-      throw new Error("Missing or invalid attribute 'definitions'")
+      throw new Error('Missing or invalid attribute \'definitions\'');
     }
 
     // Fill options map
@@ -73,10 +73,10 @@ export class AppPropertiesForm<T = Property> extends AppForm<T[]> implements OnI
     const form = (this.formArray && this.formArray.parent as FormGroup || this.formGroupDir && this.formGroupDir.form || this.formBuilder.group({}));
     this.setForm(form);
 
-    this.formArray = this.formArray || this.formArrayName && form.get(this.formArrayName) as FormArray
+    this.formArray = this.formArray || this.formArrayName && form.get(this.formArrayName) as FormArray;
     this.formArrayName = this.formArrayName || this.formArray && Object.keys(form.controls).find(key => form.get(key) === this.formArray) || 'properties';
     if (!this.formArray) {
-      console.warn(`Missing array control '${this.formArrayName}'. Will create it!`)
+      console.warn(`Missing array control '${this.formArrayName}'. Will create it!`);
       this.formArray = this.formBuilder.array([]);
       this.form.addControl(this.formArrayName, this.formArray);
     }
@@ -135,7 +135,7 @@ export class AppPropertiesForm<T = Property> extends AppForm<T[]> implements OnI
 
   /* -- protected methods -- */
 
-  protected getPropertyFormGroup(data?: {key: string; value?: string;}): FormGroup {
+  protected getPropertyFormGroup(data?: {key: string; value?: string}): FormGroup {
     return this.formBuilder.group({
       key: [data && data.key || null, Validators.compose([Validators.required, Validators.max(50)])],
       value: [data && data.value || null, Validators.compose([Validators.required, Validators.max(100)])]

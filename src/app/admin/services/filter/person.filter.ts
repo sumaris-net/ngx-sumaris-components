@@ -1,10 +1,10 @@
-import {EntityClass} from "../../../core/services/model/entity.decorators";
-import {EntityFilter} from "../../../core/services/model/filter.model";
-import {Person} from "../../../core/services/model/person.model";
-import {FilterFn} from "../../../shared/services/entity-service.class";
-import {EntityAsObjectOptions, EntityUtils} from "../../../core/services/model/entity.model";
-import {StoreObject} from "@apollo/client/core";
-import {isNil, isNotEmptyArray} from "../../../shared/functions";
+import {EntityClass} from '../../../core/services/model/entity.decorators';
+import {EntityFilter} from '../../../core/services/model/filter.model';
+import {Person} from '../../../core/services/model/person.model';
+import {FilterFn} from '../../../shared/services/entity-service.class';
+import {EntityAsObjectOptions, EntityUtils} from '../../../core/services/model/entity.model';
+import {StoreObject} from '@apollo/client/core';
+import {isNil, isNotEmptyArray} from '../../../shared/functions';
 
 // @dynamic
 @EntityClass({typename: 'PersonFilterVO'})

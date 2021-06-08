@@ -1,19 +1,19 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output} from "@angular/core";
-import {FormBuilder, Validators} from "@angular/forms";
-import {ModalController} from "@ionic/angular";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
+import {ModalController} from '@ionic/angular';
 import {RegisterModal} from '../../register/modal/modal-register';
-import {AuthData} from "../../services/account.service";
-import {AuthTokenType, NetworkService} from "../../services/network.service";
-import {LocalSettingsService} from "../../services/local-settings.service";
-import {slideUpDownAnimation} from "../../../shared/material/material.animations";
-import {PlatformService} from "../../services/platform.service";
-import {DateAdapter} from "@angular/material/core";
-import {Moment} from "moment";
-import {debounceTime} from "rxjs/operators";
-import {AppForm} from "../../form/form.class";
-import {ENVIRONMENT} from "../../../../environments/environment.class";
-import {CORE_CONFIG_OPTIONS} from "../../services/config/core.config";
-import {ConfigService} from "../../services/config.service";
+import {AuthData} from '../../services/account.service';
+import {AuthTokenType, NetworkService} from '../../services/network.service';
+import {LocalSettingsService} from '../../services/local-settings.service';
+import {slideUpDownAnimation} from '../../../shared/material/material.animations';
+import {PlatformService} from '../../services/platform.service';
+import {DateAdapter} from '@angular/material/core';
+import {Moment} from 'moment';
+import {debounceTime} from 'rxjs/operators';
+import {AppForm} from '../../form/form.class';
+import {ENVIRONMENT} from '../../../../environments/environment.class';
+import {CORE_CONFIG_OPTIONS} from '../../services/config/core.config';
+import {ConfigService} from '../../services/config.service';
 
 
 @Component({
@@ -76,12 +76,12 @@ export class AuthForm extends AppForm<AuthData> implements OnInit {
         const tokenType = config.getProperty(CORE_CONFIG_OPTIONS.AUTH_TOKEN_TYPE) as AuthTokenType;
         // Login using email
         if (tokenType === 'token') {
-          this.usernamePlaceholder = "USER.EMAIL";
+          this.usernamePlaceholder = 'USER.EMAIL';
           this.form.get('username').setValidators(Validators.compose([Validators.required, Validators.email]));
         }
         // Login using username
         else {
-          this.usernamePlaceholder = "USER.USERNAME";
+          this.usernamePlaceholder = 'USER.USERNAME';
           this.form.get('username').setValidators(Validators.required);
         }
       })

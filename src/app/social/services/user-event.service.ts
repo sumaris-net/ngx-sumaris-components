@@ -1,30 +1,30 @@
-import {Inject, Injectable} from "@angular/core";
-import {gql} from "@apollo/client/core";
-import {ErrorCodes} from "./errors";
-import {AccountService} from "../../core/services/account.service";
-import {GraphqlService} from "../../core/graphql/graphql.service";
-import {Observable, of} from "rxjs";
-import {UserEvent, UserEventAction, UserEventTypes} from "./model/user-event.model";
-import {SocialFragments} from "./social.fragments";
-import {SortDirection} from "@angular/material/sort";
+import {Inject, Injectable} from '@angular/core';
+import {gql} from '@apollo/client/core';
+import {ErrorCodes} from './errors';
+import {AccountService} from '../../core/services/account.service';
+import {GraphqlService} from '../../core/graphql/graphql.service';
+import {Observable, of} from 'rxjs';
+import {UserEvent, UserEventAction, UserEventTypes} from './model/user-event.model';
+import {SocialFragments} from './social.fragments';
+import {SortDirection} from '@angular/material/sort';
 import {
   EntitiesServiceWatchOptions,
   EntityServiceLoadOptions, FilterFn,
   IEntitiesService, LoadResult,
   Page
-} from "../../shared/services/entity-service.class";
-import {map} from "rxjs/operators";
-import {isEmptyArray, isNil, isNilOrBlank, isNotNil, toNumber} from "../../shared/functions";
-import {ShowToastOptions, Toasts} from "../../shared/toasts";
-import {OverlayEventDetail} from "@ionic/core";
-import {ToastController} from "@ionic/angular";
-import {TranslateService} from "@ngx-translate/core";
-import {NetworkService} from "../../core/services/network.service";
-import {BaseGraphqlService} from "../../core/services/base-graphql-service.class";
-import {Entity, EntityUtils} from "../../core/services/model/entity.model";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {EntityFilter, EntityFilterUtils} from "../../core/services/model/filter.model";
-import {EntityClass} from "../../core/services/model/entity.decorators";
+} from '../../shared/services/entity-service.class';
+import {map} from 'rxjs/operators';
+import {isEmptyArray, isNil, isNilOrBlank, isNotNil, toNumber} from '../../shared/functions';
+import {ShowToastOptions, Toasts} from '../../shared/toasts';
+import {OverlayEventDetail} from '@ionic/core';
+import {ToastController} from '@ionic/angular';
+import {TranslateService} from '@ngx-translate/core';
+import {NetworkService} from '../../core/services/network.service';
+import {BaseGraphqlService} from '../../core/services/base-graphql-service.class';
+import {Entity, EntityUtils} from '../../core/services/model/entity.model';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {EntityFilter, EntityFilterUtils} from '../../core/services/model/filter.model';
+import {EntityClass} from '../../core/services/model/entity.decorators';
 
 // @dynamic
 @EntityClass()
@@ -143,7 +143,7 @@ export class UserEventService
 
     let now = this._debug && Date.now();
     //if (this._debug)
-    console.debug("[user-event-service] Loading user events...", filter);
+    console.debug('[user-event-service] Loading user events...', filter);
 
     filter = this.asFilter(filter);
 
@@ -151,7 +151,7 @@ export class UserEventService
     if (isNilOrBlank(filter.recipient) || !this.accountService.isAdmin()) {
       const recipient = this.accountService.account.pubkey;
       if (recipient !== filter.recipient) {
-        console.warn("[user-events-service] Force user event filter.recipient=" + recipient);
+        console.warn('[user-events-service] Force user event filter.recipient=' + recipient);
         filter.recipient = recipient;
       }
     }
@@ -169,9 +169,9 @@ export class UserEventService
         },
         filter
       },
-      arrayFieldName: "userEvents",
-      totalFieldName: "userEventCount",
-      error: {code: ErrorCodes.LOAD_USER_EVENTS_ERROR, message: "SOCIAL.ERROR.LOAD_USER_EVENTS_ERROR"},
+      arrayFieldName: 'userEvents',
+      totalFieldName: 'userEventCount',
+      error: {code: ErrorCodes.LOAD_USER_EVENTS_ERROR, message: 'SOCIAL.ERROR.LOAD_USER_EVENTS_ERROR'},
       fetchPolicy: options && options.fetchPolicy || undefined
     })
       .pipe(
@@ -198,6 +198,7 @@ export class UserEventService
 
   /**
    * Save a userEvent entity
+   *
    * @param entity
    */
   async save(entity: UserEvent, options?: EntityServiceLoadOptions): Promise<UserEvent> {
@@ -216,7 +217,7 @@ export class UserEventService
       variables: {
         userEvent: json
       },
-      error: { code: ErrorCodes.SAVE_USER_EVENT_ERROR, message: "SOCIAL.ERROR.SAVE_USER_EVENT_ERROR" },
+      error: { code: ErrorCodes.SAVE_USER_EVENT_ERROR, message: 'SOCIAL.ERROR.SAVE_USER_EVENT_ERROR' },
       update: (proxy, {data}) => {
         // Update entity
         const savedEntity = data && data.saveUserEvent;
@@ -249,6 +250,7 @@ export class UserEventService
 
   /**
    * Save many trips
+   *
    * @param entities
    * @param opts
    */
@@ -261,7 +263,7 @@ export class UserEventService
     if (isEmptyArray(ids)) return; // stop, if nothing else to do
 
     const now = Date.now();
-    if (this._debug) console.debug("[user-event-service] Deleting events... ids:", ids);
+    if (this._debug) console.debug('[user-event-service] Deleting events... ids:', ids);
 
     await this.graphql.mutate<any>({
       mutation: DeleteByIdsMutation,
@@ -294,7 +296,7 @@ export class UserEventService
 
   listenChanges(id: number, options?: any): Observable<UserEvent | undefined> {
     // TODO
-    console.warn("TODO: implement listen changes on user events");
+    console.warn('TODO: implement listen changes on user events');
     return of();
   }
 
@@ -308,9 +310,9 @@ export class UserEventService
   }
 
   async showToastErrorWithContext(opts: {
-    error?: any,
+    error?: any;
     message?: string;
-    context: any | (() => any) | Promise<any>}) {
+    context: any | (() => any) | Promise<any>;}) {
 
     let message = opts.message || (opts.error && opts.error.message || opts.error);
 
@@ -347,7 +349,7 @@ export class UserEventService
 
     // Send debug data
     try {
-      if (this._debug) console.debug("Sending debug data...");
+      if (this._debug) console.debug('Sending debug data...');
 
       // Call content factory
       let context: any = opts && opts.context;
@@ -365,7 +367,7 @@ export class UserEventService
         context: this.convertObjectToString(context)
       });
 
-      console.info("Debug data successfully sent to admin", userEvent);
+      console.info('Debug data successfully sent to admin', userEvent);
       this.showToast({
         type: 'info',
         message: 'INFO.DEBUG_DATA_SEND',
@@ -373,7 +375,7 @@ export class UserEventService
       });
     }
     catch (err) {
-      console.error("Error while sending debug data:", err);
+      console.error('Error while sending debug data:', err);
     }
   }
 
@@ -406,7 +408,7 @@ export class UserEventService
   }
 
   protected async showToast<T=any>(opts: ShowToastOptions): Promise<OverlayEventDetail<T>> {
-    if (!this.toastController) throw new Error("Missing toastController in component's constructor");
+    if (!this.toastController) throw new Error('Missing toastController in component\'s constructor');
     return await Toasts.show(this.toastController, this.translate, opts);
   }
 

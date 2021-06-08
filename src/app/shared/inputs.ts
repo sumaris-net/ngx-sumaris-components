@@ -1,12 +1,12 @@
-import {ElementRef, QueryList} from "@angular/core";
-import {FocusableElement, isFocusableElement} from "./focusable";
-import {isNil, isNilOrBlank, isNotEmptyArray, isNotNil, toBoolean, toNumber} from "./functions";
+import {ElementRef, QueryList} from '@angular/core';
+import {FocusableElement, isFocusableElement} from './focusable';
+import {isNil, isNilOrBlank, isNotEmptyArray, isNotNil, toBoolean, toNumber} from './functions';
 
 
 export function selectInputContent(event: UIEvent) {
   if (event.defaultPrevented) return false;
   const input = (event.target as any);
-  if (input && typeof input.select === "function") {
+  if (input && typeof input.select === 'function') {
 
     // Nothing to select
     if (isNilOrBlank(input.value)) return false;
@@ -14,7 +14,7 @@ export function selectInputContent(event: UIEvent) {
     try {
       input.select();
     } catch (err) {
-      console.error("Could not select input content", err);
+      console.error('Could not select input content', err);
       return false;
     }
   }
@@ -22,7 +22,7 @@ export function selectInputContent(event: UIEvent) {
 }
 
 export function selectInputRange(input: any, startIndex: number, endIndex?: number) {
-  if (input && typeof input.setSelectionRange === "function") {
+  if (input && typeof input.setSelectionRange === 'function') {
 
     // No content
     if (isNilOrBlank(input.value)) return false;
@@ -30,7 +30,7 @@ export function selectInputRange(input: any, startIndex: number, endIndex?: numb
     try {
       input.setSelectionRange(startIndex, isNotNil(endIndex) ? endIndex : startIndex);
     } catch (err) {
-      console.error("Could not select input range", err);
+      console.error('Could not select input range', err);
       return false;
     }
   }
@@ -53,7 +53,7 @@ export function moveInputCaretToSeparator(event: KeyboardEvent, separator: strin
   const caretPosition = getCaretPosition(input);
 
   // DEBUG
-  console.debug("caretPosition=", caretPosition);
+  console.debug('caretPosition=', caretPosition);
 
   if (caretPosition == -1) return true; // Caret pos not found: skip
 
@@ -89,7 +89,7 @@ export function moveInputCaretToSeparator(event: KeyboardEvent, separator: strin
       }
     }
   } catch (err) {
-    console.error("Could not move caret to next separator", err);
+    console.error('Could not move caret to next separator', err);
     return false;
   }
   return true;
@@ -125,7 +125,7 @@ export function focusInput(element: ElementRef) {
   if (inputElement)
     inputElement.focus();
   else {
-    console.warn("Trying to focus on this element:", element);
+    console.warn('Trying to focus on this element:', element);
   }
 }
 
@@ -137,7 +137,7 @@ export function setTabIndex(element: ElementRef, tabIndex: number) {
     element.nativeElement.tabIndex = tabIndex;
   }
   else {
-    console.warn("Trying to change tabindex on this element:", element);
+    console.warn('Trying to change tabindex on this element:', element);
   }
 }
 
@@ -208,7 +208,7 @@ export function getFocusableInputElements(elements: QueryList<ElementRef>, opts?
       // DEBUG
       if (input && opts.debug) console.debug(`[inputs] Focusable input {canFocus: ${included}, tabIndex: ${input.tabIndex||input.tabindex}}`, input);
       return included;
-    })
+    });
 
   // Sort by tabIndex
   if (opts.sortByTabIndex) {
@@ -232,7 +232,7 @@ export function focusNextInput(event: UIEvent|undefined, elements: QueryList<Ele
   const minTabindex = event && isInputElement(event.target) ? (event.target.tabIndex || event.target.tabindex) : undefined;
 
   // Get focusable input elements
-  const focusableInputs: InputElement[] = getFocusableInputElements(elements, {minTabindex: minTabindex, ...opts});
+  const focusableInputs: InputElement[] = getFocusableInputElements(elements, {minTabindex, ...opts});
 
   if (isNotEmptyArray(focusableInputs)) {
     // Focus on first inputs
@@ -255,7 +255,7 @@ export function focusPreviousInput(event: UIEvent|undefined, elements: QueryList
   const maxTabindex = event && isInputElement(event.target) ? (event.target.tabIndex || event.target.tabindex) : undefined;
 
   // Get focusable input elements
-  const focusableInputs: InputElement[] = getFocusableInputElements(elements, {maxTabindex: maxTabindex, ...opts});
+  const focusableInputs: InputElement[] = getFocusableInputElements(elements, {maxTabindex, ...opts});
 
   if (isNotEmptyArray(focusableInputs)) {
     // Focus on last inputs

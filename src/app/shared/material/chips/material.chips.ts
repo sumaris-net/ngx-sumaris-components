@@ -4,12 +4,12 @@ import {BehaviorSubject, isObservable, merge, Observable, Subscription} from 'rx
 import {FloatLabelType} from '@angular/material/form-field';
 import {debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap} from 'rxjs/operators';
 import {MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
-import {focusInput, InputElement, selectInputContent} from "../../inputs";
-import {LoadResult, SuggestFn} from "../../services/entity-service.class";
-import {DisplayFn} from "../../form/field.model";
-import {MatAutocompleteFieldConfig} from "../autocomplete/material.autocomplete";
-import {changeCaseToUnderscore, getPropertyByPath, isNil, isNotNil, isNotNilString, joinPropertiesPath, suggestFromArray, toBoolean, toNumber} from "../../functions";
-import {firstNotNilPromise} from "../../observables";
+import {focusInput, InputElement, selectInputContent} from '../../inputs';
+import {LoadResult, SuggestFn} from '../../services/entity-service.class';
+import {DisplayFn} from '../../form/field.model';
+import {MatAutocompleteFieldConfig} from '../autocomplete/material.autocomplete';
+import {changeCaseToUnderscore, getPropertyByPath, isNil, isNotNil, isNotNilString, joinPropertiesPath, suggestFromArray, toBoolean, toNumber} from '../../functions';
+import {firstNotNilPromise} from '../../observables';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector

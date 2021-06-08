@@ -1,33 +1,33 @@
 import {TestBed} from '@angular/core/testing';
-import {TranslateModule} from "@ngx-translate/core";
-import {ModalController, Platform} from "@ionic/angular";
-import {HttpClientModule} from "@angular/common/http";
-import {SplashScreen} from "@ionic-native/splash-screen";
-import {Network} from "@ionic-native/network/ngx";
-import {CacheModule} from "ionic-cache";
-import {of} from "rxjs";
-import {PlatformService} from "./platform.service";
-import {NetworkService} from "./network.service";
-import {AudioProvider} from "../../shared/audio/audio";
-import {StatusBar} from "@ionic-native/status-bar/ngx";
-import {Keyboard} from "@ionic-native/keyboard/ngx";
-import {PlatformModule} from "@angular/cdk/platform";
+import {TranslateModule} from '@ngx-translate/core';
+import {ModalController, Platform} from '@ionic/angular';
+import {HttpClientModule} from '@angular/common/http';
+import {SplashScreen} from '@ionic-native/splash-screen';
+import {Network} from '@ionic-native/network/ngx';
+import {CacheModule} from 'ionic-cache';
+import {of} from 'rxjs';
+import {PlatformService} from './platform.service';
+import {NetworkService} from './network.service';
+import {AudioProvider} from '../../shared/audio/audio';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {Keyboard} from '@ionic-native/keyboard/ngx';
+import {PlatformModule} from '@angular/cdk/platform';
 
 describe('PlatformService', () => {
   // service to test
   let service: PlatformService;
 
   // some mocks
-  let platformSpy = jasmine.createSpyObj('Platform', ['url']);
-  let modalSpy = jasmine.createSpyObj('Modal', ['present', 'onDidDismiss']);
-  let modalCtrlSpy = jasmine.createSpyObj('ModalController', ['create']);
-  modalCtrlSpy.create.and.callFake(function () {
+  const platformSpy = jasmine.createSpyObj('Platform', ['url']);
+  const modalSpy = jasmine.createSpyObj('Modal', ['present', 'onDidDismiss']);
+  const modalCtrlSpy = jasmine.createSpyObj('ModalController', ['create']);
+  modalCtrlSpy.create.and.callFake(function() {
     return modalSpy;
   });
-  let splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
-  let keyboardSpy = jasmine.createSpyObj('Keyboard', ['hideFormAccessoryBar']);
-  let statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault', 'overlaysWebView']);
-  let networkSpy = jasmine.createSpyObj('Network', ['onConnect', 'onDisconnect']);
+  const splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
+  const keyboardSpy = jasmine.createSpyObj('Keyboard', ['hideFormAccessoryBar']);
+  const statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault', 'overlaysWebView']);
+  const networkSpy = jasmine.createSpyObj('Network', ['onConnect', 'onDisconnect']);
   networkSpy.onConnect.and.callFake(() => of(true));
   networkSpy.onDisconnect.and.callFake(() => of(true));
 

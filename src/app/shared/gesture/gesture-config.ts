@@ -1,5 +1,5 @@
-import {Injectable} from "@angular/core";
-import {HammerGestureConfig} from "@angular/platform-browser";
+import {Injectable} from '@angular/core';
+import {HammerGestureConfig} from '@angular/platform-browser';
 
 export const HAMMER_TAP_TIME = 250;
 export const HAMMER_PRESS_TIME = 400; // Increase need for double tap (default: 251 ms)
@@ -32,7 +32,7 @@ export class AppGestureConfig extends HammerGestureConfig {
   buildHammer(element: HTMLElement) {
 
     // DEBUG
-    console.debug("[gesture] Applying HammerJS config to ", element.tagName);
+    console.debug('[gesture] Applying HammerJS config to ', element.tagName);
 
     const mc = new (<any>window).Hammer(element);
 

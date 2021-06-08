@@ -2,8 +2,8 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Entity} from '../services/model/entity.model';
 // import fade in animation
 import {fadeInAnimation} from '../../shared/material/material.animations';
-import {Moment} from "moment";
-import {toBoolean} from "../../shared/functions";
+import {Moment} from 'moment';
+import {toBoolean} from '../../shared/functions';
 
 @Component({
   selector: 'app-entity-metadata',

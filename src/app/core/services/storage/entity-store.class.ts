@@ -1,13 +1,13 @@
-import {BehaviorSubject, Observable} from "rxjs";
-import {Storage} from "@ionic/storage";
-import {map, mergeMap} from "rxjs/operators";
-import {Entity, EntityUtils, IEntity} from "../model/entity.model";
-import {isEmptyArray, isNil, isNotEmptyArray, isNotNil} from "../../../shared/functions";
-import {IEntitiesService, LoadResult} from "../../../shared/services/entity-service.class";
-import {chainPromises} from "../../../shared/observables";
-import {ErrorCodes} from "../errors";
+import {BehaviorSubject, Observable} from 'rxjs';
+import {Storage} from '@ionic/storage';
+import {map, mergeMap} from 'rxjs/operators';
+import {Entity, EntityUtils, IEntity} from '../model/entity.model';
+import {isEmptyArray, isNil, isNotEmptyArray, isNotNil} from '../../../shared/functions';
+import {IEntitiesService, LoadResult} from '../../../shared/services/entity-service.class';
+import {chainPromises} from '../../../shared/observables';
+import {ErrorCodes} from '../errors';
 
-export const ENTITIES_STORAGE_KEY_PREFIX = "entities";
+export const ENTITIES_STORAGE_KEY_PREFIX = 'entities';
 
 export type EntityStoreTypePolicyMode = 'default' | 'by-id';
 
@@ -89,6 +89,7 @@ export class EntityStore<
 
   /**
    * Watch a set of entities
+   *
    * @param variables
    * @param opts
    */
@@ -102,7 +103,7 @@ export class EntityStore<
 
     // If need full entities, but use light entities in the entities array
     if (this._mapToLightEntity && (opts && opts.fullLoad === true)) {
-      console.warn("[entity-store] WARN: Watching full entities, splited by id in entity store. This can be long! Please make sure you need full entities here.");
+      console.warn('[entity-store] WARN: Watching full entities, splited by id in entity store. This can be long! Please make sure you need full entities here.');
       return this._onChange
         .pipe(
           // Apply filter on cache
@@ -110,12 +111,10 @@ export class EntityStore<
 
           // Then convert into full entities (using parallel jobs - /!\ can use lot of memory)
           mergeMap((res) => Promise.all((res.data || [])
-            .map(e => this.loadFullEntity(e.id, opts))).then(data => {
-              return {
+            .map(e => this.loadFullEntity(e.id, opts))).then(data => ({
                 data,
                 total: res.total
-              };
-            })
+              }))
           )
         );
     }
@@ -129,6 +128,7 @@ export class EntityStore<
 
   /**
    * WIll apply a filter, then a sort, then a page slice
+   *
    * @param variables
    * @param opts
    */
@@ -159,7 +159,7 @@ export class EntityStore<
         entity.id = this.nextValue();
       }
       else if (+entity.id < 0 && +entity.id > this._sequence) {
-        console.warn("Trying to save a local entity with an id > sequence. Will replace id by sequence next value");
+        console.warn('Trying to save a local entity with an id > sequence. Will replace id by sequence next value');
         entity.id = this.nextValue();
       }
       else {
@@ -189,7 +189,7 @@ export class EntityStore<
     return entity;
   }
 
-  saveAll(entities: T[], opts?: { emitEvent?: boolean; reset?: boolean; }): T[] {
+  saveAll(entities: T[], opts?: { emitEvent?: boolean; reset?: boolean }): T[] {
     if (isEmptyArray(entities) && (!opts || opts.reset !== true)) return entities; // Skip (Nothing to save)
 
     let result: T[];
@@ -215,7 +215,7 @@ export class EntityStore<
     return result || this._cache.slice();
   }
 
-  delete(id: ID, opts?: { emitEvent?: boolean; }): T | undefined {
+  delete(id: ID, opts?: { emitEvent?: boolean }): T | undefined {
     const status = isNotNil(id) ? this._statusById.get(id) : undefined;
     const index = status ? status.index : undefined;
     if (isNil(index)) return undefined;
@@ -229,7 +229,7 @@ export class EntityStore<
 
     // Remove full entity, by id
     if (this.isByIdMode) {
-      this.storage.remove(this._storageKey + "#" + id);
+      this.storage.remove(this._storageKey + '#' + id);
     }
 
     // Mark as dirty
@@ -280,7 +280,7 @@ export class EntityStore<
    * @param opts
    *  opts.force : force all entities to be persist, and not only if dirty
    */
-  async persist(opts?: { skipIfPristine?: boolean; }): Promise<number> {
+  async persist(opts?: { skipIfPristine?: boolean }): Promise<number> {
     opts = {
       skipIfPristine: true,
       ...opts
@@ -343,7 +343,7 @@ export class EntityStore<
     return entities.length;
   }
 
-  async restore(opts?: { emitEvent?: boolean; }): Promise<number> {
+  async restore(opts?: { emitEvent?: boolean }): Promise<number> {
     let entities: T[];
 
     const res = await Promise.all([
@@ -359,7 +359,7 @@ export class EntityStore<
     if (this.isByIdMode) {
       if (isNotNil(ids)) {
         // Load entity by id (one by one)
-        const storageKeys = ids.map(id => this._storageKey + "#" + id);
+        const storageKeys = ids.map(id => this._storageKey + '#' + id);
         entities = await chainPromises<T>(storageKeys.map(key => () => this.storage.get(key)));
       }
       // Migrate from the standard mode
@@ -376,7 +376,7 @@ export class EntityStore<
         entities = values.filter(e => e && isNotNil(e.id));
       }
       else if (isNotNil(ids)) {
-        const storageKeys = ids.map(id => this._storageKey + "#" + id);
+        const storageKeys = ids.map(id => this._storageKey + '#' + id);
         // Load entity by id (one by one)
         entities = await chainPromises<T>(storageKeys.map(key => () => this.storage.get(key)));
         migration = true;
@@ -424,7 +424,7 @@ export class EntityStore<
     return this._cache.length;
   }
 
-  markAsDirty(opts?: { emitEvent?: boolean; }) {
+  markAsDirty(opts?: { emitEvent?: boolean }) {
     this._dirty = true;
 
     // Emit update event
@@ -433,7 +433,7 @@ export class EntityStore<
     }
   }
 
-  markAsPristine(opts?: { emitEvent?: boolean; }) {
+  markAsPristine(opts?: { emitEvent?: boolean }) {
 
     for (const s of this._statusById.values()) {
       if (isNotNil(s)) {
@@ -474,7 +474,7 @@ export class EntityStore<
     return this._cache[index];
   }
 
-  private setEntities(entities: T[], opts?: {emitEvent?: boolean; }) {
+  private setEntities(entities: T[], opts?: {emitEvent?: boolean }) {
     // Filter non nil (and if need non local) entities
     entities = (entities || [])
         .filter(item => isNotNil(item)
@@ -505,6 +505,7 @@ export class EntityStore<
 
   /**
    * WIll apply a filter, then a sort, then a page slice
+   *
    * @param data
    * @param variables
    */

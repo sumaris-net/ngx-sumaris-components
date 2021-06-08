@@ -1,6 +1,6 @@
-import {Observable} from "rxjs";
-import {filter, first} from "rxjs/operators";
-import {isNotNil} from "./functions";
+import {Observable} from 'rxjs';
+import {filter, first} from 'rxjs/operators';
+import {isNotNil} from './functions';
 
 
 export function filterNotNil<T = any>(obs: Observable<T>): Observable<T> {

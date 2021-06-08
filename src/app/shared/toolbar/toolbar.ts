@@ -9,14 +9,14 @@ import {
   ViewChild
 } from '@angular/core';
 import {ProgressBarService, ProgressMode} from '../services/progress-bar.service';
-import {Router} from "@angular/router";
-import {IonRouterOutlet, IonSearchbar} from "@ionic/angular";
-import {isNotNil, isNotNilOrBlank, toBoolean} from "../functions";
-import {debounceTime, distinctUntilChanged, startWith, tap} from "rxjs/operators";
-import {Observable} from "rxjs";
-import {HammerTapEvent} from "../gesture/hammer.utils";
-import {HAMMER_PRESS_TIME} from "../gesture/gesture-config";
-import {PredefinedColors} from "@ionic/core";
+import {Router} from '@angular/router';
+import {IonRouterOutlet, IonSearchbar} from '@ionic/angular';
+import {isNotNil, isNotNilOrBlank, toBoolean} from '../functions';
+import {debounceTime, distinctUntilChanged, startWith, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {HammerTapEvent} from '../gesture/hammer.utils';
+import {HAMMER_PRESS_TIME} from '../gesture/gesture-config';
+import {PredefinedColors} from '@ionic/core';
 
 export abstract class ToolbarToken {
   abstract onBackClick: Observable<Event>;
@@ -120,7 +120,7 @@ export class ToolbarComponent implements ToolbarToken, OnInit, OnDestroy {
       this.progressBarMode$ = progressBarService.onProgressChanged
         .pipe(
           startWith<ProgressMode, ProgressMode>('none' as ProgressMode),
-          tap((mode) => "[toolbar] Updating progressBarMode: " + mode),
+          tap((mode) => '[toolbar] Updating progressBarMode: ' + mode),
           debounceTime(100), // wait 100ms, to group changes
           distinctUntilChanged()
         );
@@ -180,7 +180,7 @@ export class ToolbarComponent implements ToolbarToken, OnInit, OnDestroy {
       await this.router.navigateByUrl(this._defaultBackHref);
     }
     else {
-      console.error("[toolbar] Cannot go back. Missing attribute 'defaultBackHref' or 'backHref'");
+      console.error('[toolbar] Cannot go back. Missing attribute \'defaultBackHref\' or \'backHref\'');
     }
   }
 

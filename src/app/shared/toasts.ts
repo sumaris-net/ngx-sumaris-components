@@ -1,8 +1,8 @@
-import {createAnimation, IonicSafeString, ToastController} from "@ionic/angular";
-import {TranslateService} from "@ngx-translate/core";
-import {OverlayEventDetail, ToastOptions} from "@ionic/core";
-import {ToastButton} from "@ionic/core/dist/types/components/toast/toast-interface";
-import {isEmptyArray, isNotNil} from "./functions";
+import {createAnimation, IonicSafeString, ToastController} from '@ionic/angular';
+import {TranslateService} from '@ngx-translate/core';
+import {OverlayEventDetail, ToastOptions} from '@ionic/core';
+import {ToastButton} from '@ionic/core/dist/types/components/toast/toast-interface';
+import {isEmptyArray, isNotNil} from './functions';
 
 const TOAST_MAX_HEIGHT_PX = 75;
 const TOAST_MAX_STACK_SIZE = 4;
@@ -24,9 +24,9 @@ export class Toasts {
     opts: ShowToastOptions
   ): Promise<OverlayEventDetail<T>> {
     if (!toastController || !translate) {
-      console.error("Missing required argument 'toastController' or 'translate'");
-      if (opts.message instanceof IonicSafeString) console.info("[toasts] message: " + (translate && translate.instant(opts.message.value) || opts.message.value));
-      else if (typeof opts.message === "string") console.info("[toasts] message: " + (translate && translate.instant(opts.message, opts.messageParams) || opts.message));
+      console.error('Missing required argument \'toastController\' or \'translate\'');
+      if (opts.message instanceof IonicSafeString) console.info('[toasts] message: ' + (translate && translate.instant(opts.message.value) || opts.message.value));
+      else if (typeof opts.message === 'string') console.info('[toasts] message: ' + (translate && translate.instant(opts.message, opts.messageParams) || opts.message));
       return Promise.resolve({});
     }
 
@@ -50,7 +50,7 @@ export class Toasts {
       else if (this.stackSize == currentOffset + 1){
         this.stackSize--;
       }
-    }
+    };
 
 
     const message = opts.message && opts.message instanceof IonicSafeString ? opts.message.value : opts.message as string;
@@ -80,14 +80,14 @@ export class Toasts {
     // Add 'error' class, if need
     if (opts.type) {
       switch (opts.type) {
-        case "error":
-          opts.header = "ERROR";
+        case 'error':
+          opts.header = 'ERROR';
           cssArray.push('danger');
           break;
-        case "warning":
+        case 'warning':
           cssArray.push('accent');
           break;
-        case "info":
+        case 'info':
           cssArray.push('secondary');
           break;
       }
@@ -112,13 +112,11 @@ export class Toasts {
       const direction = position === 'top' ? 1 : -1;
       const start = (currentOffset) * TOAST_MAX_HEIGHT_PX  - direction * TOAST_MAX_HEIGHT_PX;
       const end = direction * (currentOffset) * TOAST_MAX_HEIGHT_PX;
-      opts.enterAnimation = (baseEl: any, opts?: any) => {
-        return createAnimation()
+      opts.enterAnimation = (baseEl: any, opts?: any) => createAnimation()
           .addElement(baseEl.querySelector('.toast-wrapper'))
           .duration(250)
           .fromTo('transform', `translateY(${start}px)`, `translateY(${end}px)`)
           .fromTo('opacity', '0', '1');
-      };
     }
 
     const toast = await toastController.create({

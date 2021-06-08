@@ -1,10 +1,10 @@
-import {Inject, Injectable} from "@angular/core";
-import {Platform} from "@ionic/angular";
-import * as uuidv4Imported from "uuid/v4";
-import {Base64ImageReader, Base64ImageResizeOptions} from "./base64-image-reader";
-import {chainPromises, firstNotNilPromise} from "../observables";
-import {HttpClient} from "@angular/common/http";
-import {ENVIRONMENT} from "../../../environments/environment.class";
+import {Inject, Injectable} from '@angular/core';
+import {Platform} from '@ionic/angular';
+import * as uuidv4Imported from 'uuid/v4';
+import {Base64ImageReader, Base64ImageResizeOptions} from './base64-image-reader';
+import {chainPromises, firstNotNilPromise} from '../observables';
+import {HttpClient} from '@angular/common/http';
+import {ENVIRONMENT} from '../../../environments/environment.class';
 
 const uuidv4 = uuidv4Imported;
 
@@ -41,9 +41,9 @@ export class FileService {
   }
 
   getImages(sources: string[], opts?: Base64ImageResizeOptions & {
-    responseType?: 'file' | 'dataUrl'
+    responseType?: 'file' | 'dataUrl';
   }): Promise<string[]> {
-    if (!this._started) throw new Error("Platform must be started first!");
+    if (!this._started) throw new Error('Platform must be started first!');
 
     //const fileTransfer = this.canUseFileSystem ? this.transfer.create() : undefined;
     //const jobsFactories = (sources || []).map(source => () => this.getImage(source, {...opts, fileTransfer}));
@@ -54,7 +54,7 @@ export class FileService {
 
   async getImage(source: string, opts?: Base64ImageResizeOptions & {
     //fileTransfer?: FileTransferObject;
-    responseType?: 'file' | 'dataUrl'
+    responseType?: 'file' | 'dataUrl';
     }): Promise<string> {
 
     let responseType = opts && opts.responseType || (this.canUseFileSystem ? 'file' : 'dataUrl');
@@ -65,7 +65,7 @@ export class FileService {
 
     // Read the filename
     const lastSlashIndex = source.lastIndexOf('/');
-    if (lastSlashIndex === -1) throw new Error("Invalid URL: " + source);
+    if (lastSlashIndex === -1) throw new Error('Invalid URL: ' + source);
     const fileName = lastSlashIndex < (source.length - 1) && source.substring(lastSlashIndex + 1) || uuidv4();
 
 
@@ -79,7 +79,7 @@ export class FileService {
           responseType: 'blob',
           reportProgress: false
         }));
-        console.debug("[file] Getting blob :" + blob.type);
+        console.debug('[file] Getting blob :' + blob.type);
 
         //await this.file.writeFile(this._imageDirectory, fileName, blob, {replace: true});
 

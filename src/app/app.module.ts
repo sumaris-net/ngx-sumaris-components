@@ -1,50 +1,48 @@
-import "./vendor";
+import './vendor';
 
-import {APP_BASE_HREF} from "@angular/common";
-import {BrowserModule, HAMMER_GESTURE_CONFIG, HammerModule} from "@angular/platform-browser";
-import {CUSTOM_ELEMENTS_SCHEMA, NgModule, SecurityContext} from "@angular/core";
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
+import {APP_BASE_HREF} from '@angular/common';
+import {BrowserModule, HAMMER_GESTURE_CONFIG, HammerModule} from '@angular/platform-browser';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule, SecurityContext} from '@angular/core';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {MomentDateAdapter} from '@angular/material-moment-adapter';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
-import {NativeAudio} from "@ionic-native/native-audio/ngx";
+import {NativeAudio} from '@ionic-native/native-audio/ngx';
 import {Vibration} from '@ionic-native/vibration/ngx';
-// App modules
-import {AppComponent} from "./app.component";
-import {AppRoutingModule} from "./app-routing.module";
-import {CoreModule} from "./core/core.module";
-import {environment} from "../environments/environment";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {Camera} from "@ionic-native/camera/ngx";
-import {Network} from "@ionic-native/network/ngx";
-import {AudioManagement} from "@ionic-native/audio-management/ngx";
-import {APP_LOCAL_SETTINGS, APP_LOCAL_SETTINGS_OPTIONS} from "./core/services/local-settings.service";
-import {APP_LOCALES, LocalSettings} from "./core/services/model/settings.model";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {APP_CONFIG_OPTIONS} from "./core/services/config.service";
-import {IonicStorageModule} from "@ionic/storage";
-import {InAppBrowser} from "@ionic-native/in-app-browser/ngx";
-import {APP_MENU_ITEMS} from "./core/menu/menu.component";
-import {APP_HOME_BUTTONS} from "./core/home/home";
-import {CORE_CONFIG_OPTIONS, CORE_LOCAL_SETTINGS_OPTIONS} from "./core/services/config/core.config";
-import {APP_TESTING_PAGES} from "./shared/material/testing/material.testing.page";
-import {IonicModule} from "@ionic/angular";
-import {CacheModule} from "ionic-cache";
-import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
-import {SharedModule} from "./shared/shared.module";
-import {HttpTranslateLoaderFactory} from "./shared/translate/http-translate-loader-factory";
-import {MarkdownModule, MarkedOptions} from "ngx-markdown";
-import {APP_LOCAL_STORAGE_TYPE_POLICIES} from "./core/services/storage/entities-storage.service";
-import {AppGestureConfig} from "./shared/gesture/gesture-config";
-import {APP_GRAPHQL_TYPE_POLICIES} from "./core/graphql/graphql.service";
-import {SocialModule} from "./social/social.module";
-import {DATE_ISO_PATTERN} from "./shared/constants";
-import {JDENTICON_CONFIG} from "ngx-jdenticon";
-import {APP_ABOUT_DEVELOPERS, APP_ABOUT_PARTNERS} from "./core/about/modal-about";
-import {Department} from "./core/services/model/department.model";
-import {Person} from "./core/services/model/person.model";
-import {CORE_TESTING_PAGES} from "./core/core.testing.module";
+import {Camera} from '@ionic-native/camera/ngx';
+import {Network} from '@ionic-native/network/ngx';
+import {AudioManagement} from '@ionic-native/audio-management/ngx';
+import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
+import {APP_LOCAL_SETTINGS, APP_LOCAL_SETTINGS_OPTIONS} from './core/services/local-settings.service';
+import {APP_LOCALES, LocalSettings} from './core/services/model/settings.model';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {APP_CONFIG_OPTIONS} from './core/services/config.service';
+import {IonicStorageModule} from '@ionic/storage';
+import {APP_MENU_ITEMS} from './core/menu/menu.component';
+import {APP_HOME_BUTTONS} from './core/home/home';
+import {CORE_CONFIG_OPTIONS, CORE_LOCAL_SETTINGS_OPTIONS} from './core/services/config/core.config';
+import {APP_TESTING_PAGES} from './shared/material/testing/material.testing.page';
+import {IonicModule} from '@ionic/angular';
+import {CacheModule} from 'ionic-cache';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {SharedModule} from './shared/shared.module';
+import {HttpTranslateLoaderFactory} from './shared/translate/http-translate-loader-factory';
+import {MarkdownModule, MarkedOptions} from 'ngx-markdown';
+import {APP_LOCAL_STORAGE_TYPE_POLICIES} from './core/services/storage/entities-storage.service';
+import {AppGestureConfig} from './shared/gesture/gesture-config';
+import {APP_GRAPHQL_TYPE_POLICIES} from './core/graphql/graphql.service';
+import {SocialModule} from './social/social.module';
+import {DATE_ISO_PATTERN} from './shared/constants';
+import {JDENTICON_CONFIG} from 'ngx-jdenticon';
+import {APP_ABOUT_DEVELOPERS, APP_ABOUT_PARTNERS} from './core/about/modal-about';
+import {Department} from './core/services/model/department.model';
+import {CORE_TESTING_PAGES} from './core/core.testing.module';
+import {AppComponent} from './app.component';
+import {AppRoutingModule} from './app-routing.module';
+import {CoreModule} from './core/core.module';
+import {environment} from '../environments/environment';
 
 
 @NgModule({
@@ -103,7 +101,7 @@ import {CORE_TESTING_PAGES} from "./core/core.testing.module";
     AudioManagement,
 
     //{provide: APP_BASE_HREF, useValue: (environment.baseUrl || '/')},
-    {provide: APP_BASE_HREF, useFactory: function () {
+    {provide: APP_BASE_HREF, useFactory: () => {
         try {
           return document.getElementsByTagName('base')[0].href;
         }
@@ -115,7 +113,8 @@ import {CORE_TESTING_PAGES} from "./core/core.testing.module";
     },
     //{ provide: ErrorHandler, useClass: IonicErrorHandler },
 
-    {provide: APP_LOCALES, useValue:
+    {
+      provide: APP_LOCALES, useValue:
         [
           {
             key: 'fr',
@@ -156,20 +155,23 @@ import {CORE_TESTING_PAGES} from "./core/core.testing.module";
     {provide: HAMMER_GESTURE_CONFIG, useClass: AppGestureConfig},
 
     // Settings default values
-    { provide: APP_LOCAL_SETTINGS, useValue: <Partial<LocalSettings>>{
+    {
+      provide: APP_LOCAL_SETTINGS, useValue: <Partial<LocalSettings>>{
         pageHistoryMaxSize: 3
       }
     },
 
     // Settings options definition
-    { provide: APP_LOCAL_SETTINGS_OPTIONS, useValue: CORE_LOCAL_SETTINGS_OPTIONS
+    {
+      provide: APP_LOCAL_SETTINGS_OPTIONS, useValue: CORE_LOCAL_SETTINGS_OPTIONS
     },
 
     // Config options definition (Core + trip)
-    { provide: APP_CONFIG_OPTIONS, useValue: CORE_CONFIG_OPTIONS},
+    {provide: APP_CONFIG_OPTIONS, useValue: CORE_CONFIG_OPTIONS},
 
     // Menu items
-    { provide: APP_MENU_ITEMS, useValue: [
+    {
+      provide: APP_MENU_ITEMS, useValue: [
         {title: 'MENU.HOME', path: '/', icon: 'home'},
 
         // Settings
@@ -186,31 +188,35 @@ import {CORE_TESTING_PAGES} from "./core/core.testing.module";
     },
 
     // Home buttons
-    { provide: APP_HOME_BUTTONS, useValue: [] },
+    {provide: APP_HOME_BUTTONS, useValue: []},
 
     // Entities Apollo cache options
-    { provide: APP_GRAPHQL_TYPE_POLICIES, useValue: {} },
+    {provide: APP_GRAPHQL_TYPE_POLICIES, useValue: {}},
 
     // Entities storage options
-    { provide: APP_LOCAL_STORAGE_TYPE_POLICIES, useValue: {} },
+    {provide: APP_LOCAL_STORAGE_TYPE_POLICIES, useValue: {}},
 
     // About developers
-    { provide: APP_ABOUT_DEVELOPERS, useValue: <Partial<Department>[]>[
-        { siteUrl: 'https://www.e-is.pro', logo: 'assets/img/logo/logo-eis_50px.png', label: 'Environmental Information Systems' }
+    {
+      provide: APP_ABOUT_DEVELOPERS, useValue: <Partial<Department>[]>[
+        {siteUrl: 'https://www.e-is.pro', logo: 'assets/img/logo/logo-eis_50px.png', label: 'Environmental Information Systems'}
       ]
     },
 
     // About partners
-    { provide: APP_ABOUT_PARTNERS, useValue: <Partial<Department>[]>[
-        { siteUrl: 'https://www.sumaris.net', logo: 'assets/img/logo/logo-sumaris.png' },
-        { siteUrl: 'https://www.e-is.pro', logo: 'assets/img/logo/logo-eis_50px.png' }
+    {
+      provide: APP_ABOUT_PARTNERS, useValue: <Partial<Department>[]>[
+        {siteUrl: 'https://www.sumaris.net', logo: 'assets/img/logo/logo-sumaris.png'},
+        {siteUrl: 'https://www.e-is.pro', logo: 'assets/img/logo/logo-eis_50px.png'}
       ]
     },
 
     // Testing pages
-    { provide: APP_TESTING_PAGES, useValue: [
-      ...CORE_TESTING_PAGES
-      ]},
+    {
+      provide: APP_TESTING_PAGES, useValue: [
+        ...CORE_TESTING_PAGES
+      ]
+    },
 
     // Custom identicon style
     // https://jdenticon.com/icon-designer.html?config=4451860010ff320028501e5a

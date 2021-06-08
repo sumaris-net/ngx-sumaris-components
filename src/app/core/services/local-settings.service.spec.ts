@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import {LocalSettingsService} from "./local-settings.service";
-import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import {IonicStorageModule} from "@ionic/storage";
-import {LocalSettings} from "./model/settings.model";
+import {LocalSettingsService} from './local-settings.service';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
+import {IonicStorageModule} from '@ionic/storage';
+import {LocalSettings} from './model/settings.model';
 
 describe('LocalSettingsService', () => {
   let service: LocalSettingsService;

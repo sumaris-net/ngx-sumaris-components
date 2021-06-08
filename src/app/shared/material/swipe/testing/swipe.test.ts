@@ -1,13 +1,13 @@
-import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {SharedValidators} from "../../../validator/validators";
-import * as momentImported from "moment";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {SharedValidators} from '../../../validator/validators';
+import * as momentImported from 'moment';
 const moment = momentImported;
-import {BehaviorSubject} from "rxjs";
-import {Moment} from "moment";
-import {DateFormatPipe} from "../../../pipes/date-format.pipe";
-import {DisplayFn} from "../../../form/field.model";
-import {distinctUntilChanged} from "rxjs/operators";
+import {BehaviorSubject} from 'rxjs';
+import {Moment} from 'moment';
+import {DateFormatPipe} from '../../../pipes/date-format.pipe';
+import {DisplayFn} from '../../../form/field.model';
+import {distinctUntilChanged} from 'rxjs/operators';
 
 @Component({
   selector: 'app-swipe-test',
@@ -18,7 +18,7 @@ export class SwipeTestPage implements OnInit {
   form: FormGroup;
 
   $dates = new BehaviorSubject<Moment[]>(undefined);
-  private _today = moment().startOf("day");
+  private _today = moment().startOf('day');
 
   constructor(
     protected formBuilder: FormBuilder,
@@ -40,7 +40,7 @@ export class SwipeTestPage implements OnInit {
 
     const dates: Moment[] = [];
     for (let d = 0; d < 7; d++) {
-      dates[d] = moment(this._today).add(d-3, "day");
+      dates[d] = moment(this._today).add(d-3, 'day');
     }
     this.$dates.next(dates);
 
@@ -66,7 +66,7 @@ export class SwipeTestPage implements OnInit {
   }
 
   doSubmit(event) {
-    console.debug("Validate form: ", this.form.value);
+    console.debug('Validate form: ', this.form.value);
   }
 
   /* -- protected methods -- */

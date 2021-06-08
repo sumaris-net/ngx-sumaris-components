@@ -1,10 +1,10 @@
-import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn} from "@angular/forms";
-import * as momentImported from "moment";
+import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn} from '@angular/forms';
+import * as momentImported from 'moment';
 const moment = momentImported;
-import {DATE_ISO_PATTERN, PUBKEY_REGEXP} from "../constants";
-import {isEmptyArray, isNil, isNilOrBlank, isNotNil, isNotNilOrBlank, isNotNilOrNaN, toBoolean} from "../functions";
-import {Moment} from "moment";
-import {fromDateISOString} from "../dates";
+import {DATE_ISO_PATTERN, PUBKEY_REGEXP} from '../constants';
+import {isEmptyArray, isNil, isNilOrBlank, isNotNil, isNotNilOrBlank, isNotNilOrNaN, toBoolean} from '../functions';
+import {Moment} from 'moment';
+import {fromDateISOString} from '../dates';
 
 // @dynamic
 export class SharedValidators {
@@ -75,13 +75,13 @@ export class SharedValidators {
     return null;
   }
 
-  static double(opts?: { maxDecimals?: number; }): ValidatorFn {
+  static double(opts?: { maxDecimals?: number }): ValidatorFn {
     let regexpStr;
     if (opts && isNotNil(opts.maxDecimals)) {
       if (opts.maxDecimals < 0) throw new Error(`Invalid maxDecimals value: ${opts.maxDecimals}`);
-      regexpStr = opts.maxDecimals > 1 ? `^[-]?[0-9]+([.,][0-9]{1,${opts.maxDecimals}})?$` : "^[-]?[0-9]+([.,][0-9])?$";
+      regexpStr = opts.maxDecimals > 1 ? `^[-]?[0-9]+([.,][0-9]{1,${opts.maxDecimals}})?$` : '^[-]?[0-9]+([.,][0-9])?$';
     } else {
-      regexpStr = "^[-]?[0-9]+([.,][0-9]*)?$";
+      regexpStr = '^[-]?[0-9]+([.,][0-9]*)?$';
     }
 
     const regexp = new RegExp(regexpStr);
@@ -91,7 +91,7 @@ export class SharedValidators {
         //console.log("WARN: Getting a NaN value !");
         value = null;
       }
-      if (isNotNil(value) && value !== "" && !regexp.test(value as string)) {
+      if (isNotNil(value) && value !== '' && !regexp.test(value as string)) {
         return {maxDecimals: true};
       }
       return null;
@@ -295,6 +295,7 @@ export class SharedFormArrayValidators {
 
   /**
    * Validate uniqueness of an entity in a FormArray
+   *
    * @param controlName the name of the control in FormArray
    */
   static uniqueEntity(controlName: string): ValidatorFn {

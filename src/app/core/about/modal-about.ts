@@ -1,10 +1,10 @@
-import {Component, Inject, InjectionToken, Optional} from "@angular/core";
-import {ModalController} from "@ionic/angular";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {capitalizeFirstLetter} from "../../shared/functions";
-import {Department} from "../services/model/department.model";
-import {Person} from "../services/model/person.model";
-import {TranslateService} from "@ngx-translate/core";
+import {Component, Inject, InjectionToken, Optional} from '@angular/core';
+import {ModalController} from '@ionic/angular';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {capitalizeFirstLetter} from '../../shared/functions';
+import {Department} from '../services/model/department.model';
+import {Person} from '../services/model/person.model';
+import {TranslateService} from '@ngx-translate/core';
 
 export const APP_ABOUT_DEVELOPERS = new InjectionToken<Partial<Department>[]>('aboutDevelopers');
 export const APP_ABOUT_PARTNERS = new InjectionToken<Partial<Department>[]>('aboutPartners');

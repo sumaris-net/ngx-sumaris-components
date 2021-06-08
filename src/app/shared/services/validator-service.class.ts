@@ -1,5 +1,5 @@
-import {ValidatorService} from "@e-is/ngx-material-table";
-import {FormGroup} from "@angular/forms";
+import {ValidatorService} from '@e-is/ngx-material-table';
+import {FormGroup} from '@angular/forms';
 
 export interface IValidatorService<T> extends ValidatorService {
 

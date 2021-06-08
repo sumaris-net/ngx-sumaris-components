@@ -1,6 +1,6 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
 
-import {UsageMode} from "../model/settings.model";
+import {UsageMode} from '../model/settings.model';
 
 @Pipe({
   name: 'isOnField'

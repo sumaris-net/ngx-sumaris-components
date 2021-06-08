@@ -1,7 +1,7 @@
-import {ObjectMap, Property} from "../types";
-import {isNotNil} from "../functions";
-import {InjectionToken} from "@angular/core";
-import {MatAutocompleteFieldAddOptions} from "../material/autocomplete/material.autocomplete";
+import {ObjectMap, Property} from '../types';
+import {isNotNil} from '../functions';
+import {InjectionToken} from '@angular/core';
+import {MatAutocompleteFieldAddOptions} from '../material/autocomplete/material.autocomplete';
 
 export declare type DisplayFn = (obj: any) => string;
 
@@ -26,7 +26,7 @@ export declare interface FormFieldDefinition<T = any> {
     [key: string]: {
       disabled?: boolean;
       required: boolean;
-    }
+    };
   };
 }
 export declare type FormFieldDefinitionMap = ObjectMap<FormFieldDefinition>;
@@ -35,7 +35,7 @@ export declare type FormFieldDefinitionMap = ObjectMap<FormFieldDefinition>;
 export abstract class FormFieldValuesHolder {
   getAsBoolean(data: ObjectMap, definition: FormFieldDefinition): boolean {
     const value = this.get(data, definition);
-    return isNotNil(value) ? (value && value !== "false") : undefined;
+    return isNotNil(value) ? (value && value !== 'false') : undefined;
   }
 
   getAsInt(data: any, definition: FormFieldDefinition): number {

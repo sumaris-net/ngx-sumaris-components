@@ -29,8 +29,8 @@ export class VersionUtils {
  *  Taken from http://stackoverflow.com/a/6832721/11236
  */
  export function compareVersionNumbers(v1, v2){
-  var v1parts = v1.split('.');
-  var v2parts = v2.split('.');
+  const v1parts = v1.split('.');
+  const v2parts = v2.split('.');
 
   // First, validate both numbers are true version numbers
 

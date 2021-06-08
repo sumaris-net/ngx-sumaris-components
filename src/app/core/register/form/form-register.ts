@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, OnInit, Output, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Inject, OnInit, Output, ViewChild} from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -8,18 +8,18 @@ import {
   ValidationErrors,
   ValidatorFn,
   Validators
-} from "@angular/forms";
-import {AccountService, RegisterData} from "../../services/account.service";
-import {Account} from "../../services/model/account.model";
-import {referentialToString} from "../../services/model/referential.model";
-import {MatHorizontalStepper} from "@angular/material/stepper";
-import {Observable, Subscription, timer} from "rxjs";
-import {AccountValidatorService} from "../../services/validator/account.validator";
-import {FormFieldDefinition} from "../../../shared/form/field.model";
-import {mergeMap} from "rxjs/operators";
-import {LocalSettingsService} from "../../services/local-settings.service";
-import {MatAutocompleteConfigHolder} from "../../../shared/material/autocomplete/material.autocomplete";
-import {ENVIRONMENT} from "../../../../environments/environment.class";
+} from '@angular/forms';
+import {AccountService, RegisterData} from '../../services/account.service';
+import {Account} from '../../services/model/account.model';
+import {referentialToString} from '../../services/model/referential.model';
+import {MatHorizontalStepper} from '@angular/material/stepper';
+import {Observable, Subscription, timer} from 'rxjs';
+import {AccountValidatorService} from '../../services/validator/account.validator';
+import {FormFieldDefinition} from '../../../shared/form/field.model';
+import {mergeMap} from 'rxjs/operators';
+import {LocalSettingsService} from '../../services/local-settings.service';
+import {MatAutocompleteConfigHolder} from '../../../shared/material/autocomplete/material.autocomplete';
+import {ENVIRONMENT} from '../../../../environments/environment.class';
 
 
 @Component({
@@ -92,7 +92,7 @@ export class RegisterForm implements OnInit {
       //if (this.debug) console.debug("[register-form] Add additional field {" + field.name + "} to form", field);
       formDetailDef[field.key] = new FormControl(null, this.accountValidatorService.getValidators(field));
 
-      if (field.type === "entity") {
+      if (field.type === 'entity') {
         field.autocomplete = this.autocompleteHelper.add(field.key, field.autocomplete);
       }
 
@@ -165,10 +165,10 @@ export class RegisterForm implements OnInit {
   }
 
   equalsValidator(otherControlName: string): ValidatorFn {
-    return function (c: AbstractControl): ValidationErrors | null {
+    return function(c: AbstractControl): ValidationErrors | null {
       if (c.parent && c.value !== c.parent.value[otherControlName]) {
         return {
-          "equals": true
+          equals: true
         };
       }
       return null;
@@ -176,16 +176,14 @@ export class RegisterForm implements OnInit {
   }
 
   emailAvailability(accountService: AccountService): AsyncValidatorFn {
-    return function (control: AbstractControl): Observable<ValidationErrors | null> {
+    return function(control: AbstractControl): Observable<ValidationErrors | null> {
 
-      return timer(500).pipe(mergeMap(() => {
-        return accountService.checkEmailAvailable(control.value)
+      return timer(500).pipe(mergeMap(() => accountService.checkEmailAvailable(control.value)
           .then(res => null)
           .catch(err => {
             console.error(err);
             return { availability: true };
-          });
-      }));
+          })));
     };
   }
 

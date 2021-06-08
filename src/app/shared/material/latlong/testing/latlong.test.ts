@@ -1,6 +1,6 @@
-import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {SharedValidators} from "../../../validator/validators";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {SharedValidators} from '../../../validator/validators';
 
 
 @Component({
@@ -65,11 +65,11 @@ export class LatLongTestPage implements OnInit {
   }
 
   doSubmit(event) {
-    console.debug("Validate form: ", this.form.value);
+    console.debug('Validate form: ', this.form.value);
   }
 
   geoPosition(event: UIEvent): boolean {
-    console.debug("Click on geoLocation button", event);
+    console.debug('Click on geoLocation button', event);
     event.preventDefault();
     event.stopPropagation();
     return false;

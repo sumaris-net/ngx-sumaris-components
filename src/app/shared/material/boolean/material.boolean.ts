@@ -13,13 +13,13 @@ import {
   ViewChild, ViewChildren
 } from '@angular/core';
 import {FloatLabelType} from '@angular/material/form-field';
-import {ControlValueAccessor, FormBuilder, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR} from "@angular/forms";
-import {TranslateService} from "@ngx-translate/core";
+import {ControlValueAccessor, FormBuilder, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {TranslateService} from '@ngx-translate/core';
 import {isNil, isNotNil} from '../../functions';
-import {InputElement} from "../../inputs";
-import {MatRadioButton, MatRadioChange} from "@angular/material/radio";
-import {MatCheckbox, MatCheckboxChange} from "@angular/material/checkbox";
-import {MatDateShort} from "../datetime/material.dateshort";
+import {InputElement} from '../../inputs';
+import {MatRadioButton, MatRadioChange} from '@angular/material/radio';
+import {MatCheckbox, MatCheckboxChange} from '@angular/material/checkbox';
+import {MatDateShort} from '../datetime/material.dateshort';
 
 const DEFAULT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
@@ -117,7 +117,7 @@ export class MatBooleanField implements OnInit, AfterViewInit, ControlValueAcces
 
   ngOnInit() {
     this.formControl = this.formControl || this.formControlName && this.formGroupDir && this.formGroupDir.form.get(this.formControlName) as FormControl;
-    if (!this.formControl) throw new Error("Missing mandatory attribute 'formControl' or 'formControlName' in <mat-boolean-field>.");
+    if (!this.formControl) throw new Error('Missing mandatory attribute \'formControl\' or \'formControlName\' in <mat-boolean-field>.');
 
     this.style = this.style || (this.compact ? 'checkbox' : 'radio');
 

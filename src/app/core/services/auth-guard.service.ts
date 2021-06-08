@@ -1,10 +1,10 @@
 import {Inject, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
-import {ModalController} from "@ionic/angular";
-import {AuthModal} from "../auth/modal/modal-auth";
-import {AccountService} from "./account.service";
-import {ENVIRONMENT} from "../../../environments/environment.class";
+import {ModalController} from '@ionic/angular';
+import {AuthModal} from '../auth/modal/modal-auth';
+import {AccountService} from './account.service';
+import {ENVIRONMENT} from '../../../environments/environment.class';
 
 @Injectable({providedIn: 'root'})
 export class AuthGuardService implements CanActivate {
@@ -33,11 +33,11 @@ export class AuthGuardService implements CanActivate {
 
     // Force login
     if (!this.accountService.isLogin()) {
-      if (this._debug) console.debug("[auth-gard] Need authentication for page /" + next.url.join('/'));
+      if (this._debug) console.debug('[auth-gard] Need authentication for page /' + next.url.join('/'));
       return this.login(next)
         .then(res => {
           if (!res) {
-            if (this._debug) console.debug("[auth-gard] Authentication cancelled. Could not access to /" + next.url.join('/'));
+            if (this._debug) console.debug('[auth-gard] Authentication cancelled. Could not access to /' + next.url.join('/'));
             return this.router.parseUrl('/home');
           }
           // Iterate
@@ -46,16 +46,16 @@ export class AuthGuardService implements CanActivate {
     }
 
     if (next.data && next.data.profile && !this.accountService.hasMinProfile(next.data.profile)) {
-      if (this._debug) console.debug("[auth-gard] Not authorized access to /" + next.url.join('/') + ". Missing required profile: " + next.data.profile);
+      if (this._debug) console.debug('[auth-gard] Not authorized access to /' + next.url.join('/') + '. Missing required profile: ' + next.data.profile);
       return false;
     }
-    if (this._debug) console.debug("[auth-gard] Authorized access to /" + next.url.join('/'));
+    if (this._debug) console.debug('[auth-gard] Authorized access to /' + next.url.join('/'));
     return true;
   }
 
   login(next?: ActivatedRouteSnapshot): Promise<boolean> {
     return new Promise<boolean>(async (resolve) => {
-      const modal = await this.modalCtrl.create({component: AuthModal, componentProps: {next: next}});
+      const modal = await this.modalCtrl.create({component: AuthModal, componentProps: {next}});
       modal.onDidDismiss()
         .then(() => {
           if (this.accountService.isLogin()) {

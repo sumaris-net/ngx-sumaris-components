@@ -7,14 +7,14 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {AccountValidatorService} from '../services/validator/account.validator';
 import {AppForm} from '../form/form.class';
 import {Moment} from 'moment';
-import {DateAdapter} from "@angular/material/core";
+import {DateAdapter} from '@angular/material/core';
 import {AppFormUtils} from '../form/form.utils';
-import {TranslateService} from "@ngx-translate/core";
-import {FormFieldDefinition} from "../../shared/form/field.model";
-import {LocalSettingsService} from "../services/local-settings.service";
-import {LAT_LONG_PATTERNS} from "../../shared/material/latlong/latlong.utils";
-import {StatusIds} from "../services/model/model.enum";
-import {APP_LOCALES, LocaleConfig} from "../services/model/settings.model";
+import {TranslateService} from '@ngx-translate/core';
+import {FormFieldDefinition} from '../../shared/form/field.model';
+import {LocalSettingsService} from '../services/local-settings.service';
+import {LAT_LONG_PATTERNS} from '../../shared/material/latlong/latlong.utils';
+import {StatusIds} from '../services/model/model.enum';
+import {APP_LOCALES, LocaleConfig} from '../services/model/settings.model';
 
 @Component({
   selector: 'page-account',
@@ -146,13 +146,13 @@ export class AccountPage extends AppForm<Account> implements OnDestroy {
     }
 
     this.email.sending = true;
-    console.debug("[account] Sending confirmation email...");
+    console.debug('[account] Sending confirmation email...');
     try {
       await this.accountService.sendConfirmationEmail(
         json.email,
         json.settings && json.settings.locale || this.translate.currentLang
       );
-      console.debug("[account] Confirmation email sent.");
+      console.debug('[account] Confirmation email sent.');
       this.email.sending = false;
     }
     catch (err) {
@@ -180,7 +180,7 @@ export class AccountPage extends AppForm<Account> implements OnDestroy {
       ...(this.form.value)
     });
 
-    console.debug("[account] Saving account...", newAccount);
+    console.debug('[account] Saving account...', newAccount);
     try {
       this.disable();
 

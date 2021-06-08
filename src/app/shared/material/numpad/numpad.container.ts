@@ -1,6 +1,6 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from "@angular/core";
-import {MatNumpadConfig, MatNumpadEvent, MatNumpadKey, MatNumpadKeymap, MatNumpadRef} from "./numpad.model";
-import {BehaviorSubject} from "rxjs";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {MatNumpadConfig, MatNumpadEvent, MatNumpadKey, MatNumpadKeymap, MatNumpadRef} from './numpad.model';
+import {BehaviorSubject} from 'rxjs';
 import {animate, AnimationEvent, state, style, transition, trigger} from '@angular/animations';
 
 export enum AnimationState {
@@ -76,7 +76,7 @@ export class MatNumpadContainerComponent implements OnInit, OnDestroy, MatNumpad
   decimal: boolean;
   disabled: boolean;
   appendToInput: boolean;
-  keymap: MatNumpadKeymap
+  keymap: MatNumpadKeymap;
   disableAnimation: boolean;
   noBackdrop: boolean;
   position: string;
@@ -84,12 +84,12 @@ export class MatNumpadContainerComponent implements OnInit, OnDestroy, MatNumpad
   constructor(
     protected cd: ChangeDetectorRef
   ) {
-    if (this.debug) console.debug('[numpad-container] Creating component')
+    if (this.debug) console.debug('[numpad-container] Creating component');
   }
 
   ngOnInit(): void {
     if (!this.keymap || !this.keymap.length) {
-      throw new Error("An invalid 'keymap' was sent to numpad container");
+      throw new Error('An invalid \'keymap\' was sent to numpad container');
     }
 
 

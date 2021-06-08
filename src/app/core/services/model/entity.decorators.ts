@@ -1,10 +1,10 @@
-import {environment} from "../../../../environments/environment";
-import {Entity, isInstanceOf} from "./entity.model";
+import {environment} from '../../../../environments/environment';
+import {Entity, isInstanceOf} from './entity.model';
 
 export function EntityClass(opts?: {
   typename?: string;
   fromObjectAlwaysNew?: boolean;
-  fromObjectReuseStrategy?: 'default' | 'clone'
+  fromObjectReuseStrategy?: 'default' | 'clone';
 }) {
 
   opts = {
@@ -12,7 +12,7 @@ export function EntityClass(opts?: {
     ...opts
   };
 
-  return function <T extends new (...args: any[]) => {}>(constructor: T) {
+  return function <T extends new(...args: any[]) => {}>(constructor: T) {
 
     // Make sure the class extends Entity
     if (!environment.production) {

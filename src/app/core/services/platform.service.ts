@@ -1,29 +1,29 @@
 import {Inject, Injectable, Optional} from '@angular/core';
-import {Platform, ToastController} from "@ionic/angular";
-import {NetworkService} from "./network.service";
-import {Platforms} from "@ionic/core";
-import {SplashScreen} from "@ionic-native/splash-screen/ngx";
-import {StatusBar} from "@ionic-native/status-bar/ngx";
-import {Keyboard} from "@ionic-native/keyboard/ngx";
-import {LocalSettingsService} from "./local-settings.service";
-import {CacheService} from "ionic-cache";
-import {AudioProvider} from "../../shared/audio/audio";
+import {Platform, ToastController} from '@ionic/angular';
+import {NetworkService} from './network.service';
+import {Platforms} from '@ionic/core';
+import {SplashScreen} from '@ionic-native/splash-screen/ngx';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {Keyboard} from '@ionic-native/keyboard/ngx';
+import {LocalSettingsService} from './local-settings.service';
+import {CacheService} from 'ionic-cache';
+import {AudioProvider} from '../../shared/audio/audio';
 
-import {InAppBrowser} from "@ionic-native/in-app-browser/ngx";
-import {isEmptyArray, isNil, isNotNil} from "../../shared/functions";
-import {Storage} from "@ionic/storage";
-import {EntitiesStorage} from "./storage/entities-storage.service";
-import {StorageUtils} from "../../shared/services/storage.utils";
-import {ShowToastOptions, Toasts} from "../../shared/toasts";
-import {TranslateService} from "@ngx-translate/core";
-import * as momentImported from "moment";
-import {AccountService} from "./account.service";
-import {timer} from "rxjs";
-import {filter, first} from "rxjs/operators";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {ConfigService} from "./config.service";
-import {CORE_CONFIG_OPTIONS} from "./config/core.config";
-import {MomentDateAdapter} from "@angular/material-moment-adapter";
+import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
+import {isEmptyArray, isNil, isNotNil} from '../../shared/functions';
+import {Storage} from '@ionic/storage';
+import {EntitiesStorage} from './storage/entities-storage.service';
+import {StorageUtils} from '../../shared/services/storage.utils';
+import {ShowToastOptions, Toasts} from '../../shared/toasts';
+import {TranslateService} from '@ngx-translate/core';
+import * as momentImported from 'moment';
+import {AccountService} from './account.service';
+import {timer} from 'rxjs';
+import {filter, first} from 'rxjs/operators';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {ConfigService} from './config.service';
+import {CORE_CONFIG_OPTIONS} from './config/core.config';
+import {MomentDateAdapter} from '@angular/material-moment-adapter';
 
 const moment = momentImported;
 
@@ -97,7 +97,7 @@ export class PlatformService {
 
     this._started = false;
     const now = Date.now();
-    console.info("[platform] Starting platform...");
+    console.info('[platform] Starting platform...');
 
     this._startPromise = this.platform.ready()
       .then(() => {
@@ -153,6 +153,7 @@ export class PlatformService {
   /**
    * Wait platform is ready.<br/>
    * Important: this will NOT start the platform, has it should be started by the AppComponent
+   *
    * @param opts
    */
   ready(opts?: {
@@ -185,7 +186,7 @@ export class PlatformService {
   /* -- protected methods -- */
 
   protected configureCordovaPlugins(mobile: boolean) {
-    console.info("[platform] Configuring Cordova plugins...");
+    console.info('[platform] Configuring Cordova plugins...');
 
     if (this.statusBar) {
       this.statusBar.styleDefault();
@@ -208,7 +209,7 @@ export class PlatformService {
 
 
   protected configureTranslate() {
-    console.info("[platform] Configuring i18n ...");
+    console.info('[platform] Configuring i18n ...');
 
     // this language will be used as a fallback when a translation isn't found in the current language
     this.translate.setDefaultLang(this.environment.defaultLocale);
@@ -219,7 +220,7 @@ export class PlatformService {
 
         // force 'en' as 'en_GB'
         if (event.lang === 'en') {
-          event.lang = "en_GB";
+          event.lang = 'en_GB';
         }
 
         // config moment lib
@@ -318,7 +319,7 @@ export class PlatformService {
           type: 'info',
           showCloseButton: true
         });
-        console.info("[platform] Starting storage migration [OK]");
+        console.info('[platform] Starting storage migration [OK]');
 
         // Drop the old instance
         console.info(`[platform] Drop old storage {name: '${forage.config().name}', driver: '${oldForage.driver()}'}`);
@@ -336,13 +337,11 @@ export class PlatformService {
   }
 
   protected showToast(opts: ShowToastOptions): Promise<HTMLIonToastElement> {
-    if (!this.toastController) throw new Error("Missing toastController in component's constructor");
-    return new Promise(resolve => {
-      return Toasts.show(this.toastController, this.translate, {
+    if (!this.toastController) throw new Error('Missing toastController in component\'s constructor');
+    return new Promise(resolve => Toasts.show(this.toastController, this.translate, {
         ...opts,
         onWillPresent: (t) => resolve(t)
-      });
-    });
+      }));
   }
 
   protected async onStartupError(err) {
@@ -377,7 +376,7 @@ export class PlatformService {
     }
     else {
       console.error(message);
-      if (err && err.details) console.error("cause", err.details);
+      if (err && err.details) console.error('cause', err.details);
     }
   }
 }

@@ -1,12 +1,12 @@
-import {DurationPipe} from "./duration.pipe";
-import {TestBed} from "@angular/core/testing";
+import {DurationPipe} from './duration.pipe';
+import {TestBed} from '@angular/core/testing';
 import {
   MissingTranslationHandler,
   MissingTranslationHandlerParams,
   TranslateModule
-} from "@ngx-translate/core";
-import {HttpClientModule} from "@angular/common/http";
-import {Injectable} from "@angular/core";
+} from '@ngx-translate/core';
+import {HttpClientModule} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 
 describe('DurationPipe', () => {
 
@@ -25,7 +25,7 @@ describe('DurationPipe', () => {
       ]
     });
     pipe = TestBed.inject(DurationPipe);
-  })
+  });
 
   it('create an instance', () => {
     expect(pipe).toBeTruthy();

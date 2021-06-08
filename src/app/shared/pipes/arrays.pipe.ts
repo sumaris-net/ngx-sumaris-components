@@ -1,5 +1,5 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {isNotNil} from "../functions";
+import {isNotNil} from '../functions';
 
 @Pipe({
     name: 'isNotEmptyArray'
@@ -37,7 +37,7 @@ export class EmptyArrayPipe implements PipeTransform {
 @Injectable({providedIn: 'root'})
 export class ArrayLengthPipe implements PipeTransform {
 
-  transform(val: any[], args?: { greaterThan?: number; equals?: number; lessThan?: number; }): any {
+  transform(val: any[], args?: { greaterThan?: number; equals?: number; lessThan?: number }): any {
     args = args || {};
     const size = (val === undefined || val === null) ? 0 : val.length;
     if (isNotNil(args.lessThan)) {

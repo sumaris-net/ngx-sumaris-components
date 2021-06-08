@@ -1,11 +1,11 @@
-import {Moment} from "moment";
-import {FormFieldDefinition} from "../../../shared/form/field.model";
-import {Entity, EntityAsObjectOptions, EntityUtils, IEntity} from "./entity.model";
-import {Department} from "./department.model";
-import {PropertiesMap} from "../../../shared/types";
-import {fromDateISOString, toDateISOString} from "../../../shared/dates";
-import {isNotNil} from "../../../shared/functions";
-import {EntityClass} from "./entity.decorators";
+import {Moment} from 'moment';
+import {FormFieldDefinition} from '../../../shared/form/field.model';
+import {Entity, EntityAsObjectOptions, EntityUtils, IEntity} from './entity.model';
+import {Department} from './department.model';
+import {PropertiesMap} from '../../../shared/types';
+import {fromDateISOString, toDateISOString} from '../../../shared/dates';
+import {isNotNil} from '../../../shared/functions';
+import {EntityClass} from './entity.decorators';
 
 // @dynamic
 @EntityClass({typename: 'SoftwareVO'})
@@ -89,7 +89,7 @@ export class Configuration extends Software<Configuration> {
 
   getPropertyAsBoolean(definition: FormFieldDefinition): boolean {
     const value = this.getProperty(definition);
-    return isNotNil(value) ? (value && value !== "false") : undefined;
+    return isNotNil(value) ? (value && value !== 'false') : undefined;
   }
 
   getPropertyAsInt(definition: FormFieldDefinition): number {

@@ -1,26 +1,26 @@
-import {Inject, Injectable, InjectionToken, Optional} from "@angular/core";
-import {gql} from "@apollo/client/core";
-import {Configuration} from "./model/config.model";
-import {Storage} from "@ionic/storage";
-import {BehaviorSubject, Observable, Subject, Subscription} from "rxjs";
-import {ErrorCodes} from "./errors";
-import {GraphqlService} from "../graphql/graphql.service";
-import {FormFieldDefinition, FormFieldDefinitionMap} from "../../shared/form/field.model";
-import {isNotEmptyArray, isNotNil} from "../../shared/functions";
-import {FileService} from "../../shared/file/file.service";
-import {NetworkService} from "./network.service";
-import {CORE_CONFIG_OPTIONS} from "./config/core.config";
-import {Platform, ToastController} from "@ionic/angular";
-import {ShowToastOptions, Toasts} from "../../shared/toasts";
-import {TranslateService} from "@ngx-translate/core";
-import {filter} from "rxjs/operators";
-import {EntityServiceLoadOptions, IEntityService} from "../../shared/services/entity-service.class";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {BaseGraphqlService} from "./base-graphql-service.class";
-import {UserProfileLabels} from "./model/person.model";
+import {Inject, Injectable, InjectionToken, Optional} from '@angular/core';
+import {gql} from '@apollo/client/core';
+import {Configuration} from './model/config.model';
+import {Storage} from '@ionic/storage';
+import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
+import {ErrorCodes} from './errors';
+import {GraphqlService} from '../graphql/graphql.service';
+import {FormFieldDefinition, FormFieldDefinitionMap} from '../../shared/form/field.model';
+import {isNotEmptyArray, isNotNil} from '../../shared/functions';
+import {FileService} from '../../shared/file/file.service';
+import {NetworkService} from './network.service';
+import {CORE_CONFIG_OPTIONS} from './config/core.config';
+import {Platform, ToastController} from '@ionic/angular';
+import {ShowToastOptions, Toasts} from '../../shared/toasts';
+import {TranslateService} from '@ngx-translate/core';
+import {filter} from 'rxjs/operators';
+import {EntityServiceLoadOptions, IEntityService} from '../../shared/services/entity-service.class';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {BaseGraphqlService} from './base-graphql-service.class';
+import {UserProfileLabels} from './model/person.model';
 
 
-const CONFIGURATION_STORAGE_KEY = "configuration";
+const CONFIGURATION_STORAGE_KEY = 'configuration';
 
 /* ------------------------------------
  * GraphQL queries
@@ -126,7 +126,7 @@ export class ConfigService
     super(graphql, environment);
 
     this._debug = !environment.production;
-    if (this._debug) console.debug("[config] Creating service");
+    if (this._debug) console.debug('[config] Creating service');
 
     this._optionDefs = Object.values({...CORE_CONFIG_OPTIONS, ...defaultOptionsMap});
 
@@ -143,7 +143,7 @@ export class ConfigService
     if (this._startPromise) return this._startPromise;
     if (this._started) return;
 
-    console.info("[config] Starting configuration...");
+    console.info('[config] Starting configuration...');
 
     // Update model enum, when data loaded
     this._subscription.add(
@@ -186,14 +186,14 @@ export class ConfigService
   async loadDefault(
     opts?: EntityServiceLoadOptions): Promise<Configuration> {
     const now = Date.now();
-    console.debug("[config] Loading Pod configuration...");
+    console.debug('[config] Loading Pod configuration...');
 
     const query = opts && opts.query || LoadQuery;
     const variables = opts && opts.variables || undefined;
     const res = await this.graphql.query<{ data: any }>({
       query,
       variables,
-      error: {code: ErrorCodes.LOAD_CONFIG_ERROR, message: "ERROR.LOAD_CONFIG_ERROR"},
+      error: {code: ErrorCodes.LOAD_CONFIG_ERROR, message: 'ERROR.LOAD_CONFIG_ERROR'},
       fetchPolicy: opts && opts.fetchPolicy || undefined/*default*/
     });
 
@@ -205,18 +205,19 @@ export class ConfigService
   async load(
     id: number,
     opts?: EntityServiceLoadOptions & { query?: any }): Promise<Configuration> {
-    console.warn("[config] Invalid call of configService.load(id). Please use loadDefault() instead");
+    console.warn('[config] Invalid call of configService.load(id). Please use loadDefault() instead');
 
     return this.loadDefault();
   }
 
   /**
    * Save a configuration
+   *
    * @param config
    */
   async save(config: Configuration): Promise<Configuration> {
 
-    console.debug("[config] Saving Pod configuration...", config);
+    console.debug('[config] Saving Pod configuration...', config);
 
     const json = config.asObject();
 
@@ -228,7 +229,7 @@ export class ConfigService
       },
       error: {
         code: ErrorCodes.SAVE_CONFIG_ERROR,
-        message: "ERROR.SAVE_CONFIG_ERROR"
+        message: 'ERROR.SAVE_CONFIG_ERROR'
       }
     });
 
@@ -238,9 +239,9 @@ export class ConfigService
     config.id = savedConfig && savedConfig.id || config.id;
     config.updateDate = savedConfig && savedConfig.updateDate || config.updateDate;
 
-    console.debug("[config] Pod configuration saved!");
+    console.debug('[config] Pod configuration saved!');
 
-    const reloadedConfig = await this.loadDefault({fetchPolicy: "network-only"});
+    const reloadedConfig = await this.loadDefault({fetchPolicy: 'network-only'});
 
     // If this is the default config
     const defaultConfig = this.$data.getValue();
@@ -256,13 +257,13 @@ export class ConfigService
   async getCacheStatistics(): Promise<string> {
 
     const now = Date.now();
-    console.debug("[config] Loading server cache statistics...");
+    console.debug('[config] Loading server cache statistics...');
 
     const res = await this.graphql.query<{ cacheStatistics: any }>({
       query: CacheStatistics,
       variables: null,
-      error: {code: ErrorCodes.LOAD_CONFIG_ERROR, message: "ERROR.LOAD_CONFIG_ERROR"},
-      fetchPolicy: "network-only"
+      error: {code: ErrorCodes.LOAD_CONFIG_ERROR, message: 'ERROR.LOAD_CONFIG_ERROR'},
+      fetchPolicy: 'network-only'
     });
 
     const data = res && res.cacheStatistics || undefined;
@@ -272,15 +273,15 @@ export class ConfigService
 
   async clearCache(opts?: {cacheName?: string}) {
     const now = Date.now();
-    console.debug("[config] Clear server cache...");
+    console.debug('[config] Clear server cache...');
 
     const variables = {name: opts && opts.cacheName} || undefined;
 
     const res = await this.graphql.query<{ clearCache: boolean }>({
       query: ClearCache,
       variables,
-      error: {code: ErrorCodes.LOAD_CONFIG_ERROR, message: "ERROR.LOAD_CONFIG_ERROR"},
-      fetchPolicy: "network-only"
+      error: {code: ErrorCodes.LOAD_CONFIG_ERROR, message: 'ERROR.LOAD_CONFIG_ERROR'},
+      fetchPolicy: 'network-only'
     });
 
     const data = res && res.clearCache || undefined;
@@ -289,7 +290,7 @@ export class ConfigService
   }
 
   delete(data: Configuration, options?: any): Promise<any> {
-    throw new Error("Not implemented yet!");
+    throw new Error('Not implemented yet!');
   }
 
   listenChanges(id: number, options?: any): Observable<Configuration | undefined> {
@@ -306,7 +307,7 @@ export class ConfigService
     let data;
     let wasJustLoaded = false;
     try {
-      data = await this.loadDefault({ fetchPolicy: "network-only" });
+      data = await this.loadDefault({ fetchPolicy: 'network-only' });
       wasJustLoaded = true;
     } catch (err) {
       // Log, then continue
@@ -344,24 +345,24 @@ export class ConfigService
     // Try to load from local storage
     const value: any = await this.storage.get(CONFIGURATION_STORAGE_KEY);
     if (value) {
-      console.debug("[config] Restoring configuration from local storage...");
-      if (typeof value === "string") {
+      console.debug('[config] Restoring configuration from local storage...');
+      if (typeof value === 'string') {
         try {
           data = Configuration.fromObject(JSON.parse(value));
         } catch (err) {
           console.error(`Failed to parse config found in local storage: ${err && err.message || err}`, err);
         }
       }
-      else if (typeof value === "object") {
+      else if (typeof value === 'object') {
         data = Configuration.fromObject(value);
       }
 
-      console.debug("[config] Restoring configuration [OK]");
+      console.debug('[config] Restoring configuration [OK]');
     }
 
     // Or load default value, from the environment
     if (!data) {
-      console.debug("[config] No configuration found. Using environment...");
+      console.debug('[config] No configuration found. Using environment...');
       data = Configuration.fromObject(this.environment as any);
     }
 
@@ -440,7 +441,7 @@ export class ConfigService
       // Saving config to storage
       {
         now = this._debug && Date.now();
-        if (this._debug) console.debug("[config] Saving config into local storage...");
+        if (this._debug) console.debug('[config] Saving config into local storage...');
         await this.storage.set(CONFIGURATION_STORAGE_KEY, data.asObject());
         if (this._debug) console.debug(`[config] Saving config into local storage [OK] in ${Date.now() - now}ms`);
       }
@@ -450,10 +451,10 @@ export class ConfigService
 
   private updateModelEnumerations(config: Configuration) {
     if (!config.properties) {
-      console.warn("[config] No properties found in pod config! Skip model enumerations update");
+      console.warn('[config] No properties found in pod config! Skip model enumerations update');
       return;
     }
-    console.info("[config] Updating model enumerations...");
+    console.info('[config] Updating model enumerations...');
 
     // User profiles
     UserProfileLabels.ADMIN = config.getProperty(CORE_CONFIG_OPTIONS.PROFILE_ADMIN_LABEL);

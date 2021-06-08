@@ -1,27 +1,27 @@
-import {EventEmitter, Inject, Injectable, Optional} from "@angular/core";
-import {CryptoService} from "./crypto.service";
-import {TranslateService} from "@ngx-translate/core";
+import {EventEmitter, Inject, Injectable, Optional} from '@angular/core';
+import {CryptoService} from './crypto.service';
+import {TranslateService} from '@ngx-translate/core';
 import {Storage} from '@ionic/storage';
-import {Peer} from "./model/peer.model";
-import {LocalSettings} from "./model/settings.model";
-import {ModalController, Platform, ToastController} from "@ionic/angular";
-import {SelectPeerModal} from "../peer/select-peer.modal";
-import {BehaviorSubject, Subject, Subscription, timer} from "rxjs";
-import {LocalSettingsService, SETTINGS_STORAGE_KEY} from "./local-settings.service";
-import {SplashScreen} from "@ionic-native/splash-screen/ngx";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {isNotEmptyArray, isNotNilOrBlank, sleep, toBoolean} from "../../shared/functions";
+import {Peer} from './model/peer.model';
+import {LocalSettings} from './model/settings.model';
+import {ModalController, Platform, ToastController} from '@ionic/angular';
+import {SelectPeerModal} from '../peer/select-peer.modal';
+import {BehaviorSubject, Subject, Subscription, timer} from 'rxjs';
+import {LocalSettingsService, SETTINGS_STORAGE_KEY} from './local-settings.service';
+import {SplashScreen} from '@ionic-native/splash-screen/ngx';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {isNotEmptyArray, isNotNilOrBlank, sleep, toBoolean} from '../../shared/functions';
 import {Connection, Network} from '@ionic-native/network/ngx';
-import {DOCUMENT} from "@angular/common";
-import {CacheService} from "ionic-cache";
-import {ShowToastOptions, Toasts} from "../../shared/toasts";
-import {distinctUntilChanged, filter, map, mergeMap, tap} from "rxjs/operators";
-import {OverlayEventDetail} from "@ionic/core";
-import {NodeInfo} from "./network.utils";
-import {HttpUtils} from "../../shared/http/http.utils";
-import {VersionUtils} from "../../shared/version/versions";
-import {ENVIRONMENT} from "../../../environments/environment.class";
-import {isInstanceOf} from "./model/entity.model";
+import {DOCUMENT} from '@angular/common';
+import {CacheService} from 'ionic-cache';
+import {ShowToastOptions, Toasts} from '../../shared/toasts';
+import {distinctUntilChanged, filter, map, mergeMap, tap} from 'rxjs/operators';
+import {OverlayEventDetail} from '@ionic/core';
+import {NodeInfo} from './network.utils';
+import {HttpUtils} from '../../shared/http/http.utils';
+import {VersionUtils} from '../../shared/version/versions';
+import {ENVIRONMENT} from '../../../environments/environment.class';
+import {isInstanceOf} from './model/entity.model';
 
 export type ConnectionType = 'none' | 'wifi' | 'ethernet' | 'cell' | 'unknown' ;
 
@@ -75,7 +75,7 @@ export class NetworkService {
   private _deviceConnectionType: ConnectionType;
   private _forceOffline: boolean;
   private _listeners: {
-   [key: string]: ((data?: any) => Promise<void>)[]
+   [key: string]: ((data?: any) => Promise<void>)[];
   } = {};
 
 
@@ -151,21 +151,22 @@ export class NetworkService {
 
   /**
    * Register to network event
+   *
    * @param eventType
    * @param callback
    */
   on<T= any>(eventType: NetworkEventType, callback: (data?: T) => Promise<void>): Subscription {
     switch (eventType) {
-      case "start":
+      case 'start':
         return this.onStart.subscribe(() => callback());
 
-      case "peerChanged":
+      case 'peerChanged':
         return this.onPeerChanges.subscribe(() => callback());
 
-      case "statusChanged":
+      case 'statusChanged':
         return this.onNetworkStatusChanges.subscribe((type) => callback(type as unknown as T));
 
-      case "resetCache":
+      case 'resetCache':
         return this.onResetNetworkCache.subscribe(() => callback());
 
       default:
@@ -178,7 +179,7 @@ export class NetworkService {
     if (this._startPromise) return this._startPromise;
     if (this._started) return;
 
-    console.info("[network] Starting network...");
+    console.info('[network] Starting network...');
 
     // Restoring local settings
     this._startPromise = (!peer && this.restoreLocally() || Promise.resolve(peer))
@@ -189,7 +190,7 @@ export class NetworkService {
 
         // No peer in settings: ask user to choose
         while (!peer) {
-          console.debug("[network] No peer defined. Asking user to choose a peer.");
+          console.debug('[network] No peer defined. Asking user to choose a peer.');
           peer = await this.showSelectPeerModal({allowSelectDownPeer: false});
         }
         this._peer = peer;
@@ -256,7 +257,7 @@ export class NetworkService {
     showOnlineToast?: boolean;
     showLoadingToast?: boolean;
     afterRetryDelay?: number;
-    afterRetryPromise?: () => Promise<any>
+    afterRetryPromise?: () => Promise<any>;
   }): Promise<boolean> {
     // If offline mode not forced, and device says there is no connection: skip
     if (!this._forceOffline || this._deviceConnectionType === 'none') return false;
@@ -272,7 +273,7 @@ export class NetworkService {
     }
 
     try {
-      console.info("[network] Checking connection to pod...");
+      console.info('[network] Checking connection to pod...');
       const settings: LocalSettings = await this.settings.ready();
 
       if (!settings.peerUrl) return false; // No peer define. Skip
@@ -328,7 +329,7 @@ export class NetworkService {
     showRetryButton?: boolean;
     showRetrySuccessToast?: boolean;
     showRetryLoadingToast?: boolean;
-    onRetrySuccess?: () => void
+    onRetrySuccess?: () => void;
   }): Promise<boolean> {
     if (this.online) return; // Skip if online
 
@@ -336,7 +337,7 @@ export class NetworkService {
     if (!opts || opts.showRetryButton !== false) {
 
       const toastResult = await this.showToast({
-        message: (opts && opts.message || "ERROR.NETWORK_REQUIRED"),
+        message: (opts && opts.message || 'ERROR.NETWORK_REQUIRED'),
         type: 'warning',
         showCloseButton: true,
         duration: 100000,
@@ -378,7 +379,7 @@ export class NetworkService {
 
     // Simple toast, without 'await', because not need to wait toast's dismiss
     this.showToast({
-      message: "ERROR.NETWORK_REQUIRED",
+      message: 'ERROR.NETWORK_REQUIRED',
       type: 'error',
       ...opts
     });
@@ -406,7 +407,7 @@ export class NetworkService {
 
     // Else, if App is hosted, try the web site as a peer
     const location = this._document && this._document.location;
-    if (location && location.protocol && location.protocol.startsWith("http")) {
+    if (location && location.protocol && location.protocol.startsWith('http')) {
       const hostname = this._document.location.host;
       const detectedPeer = Peer.parseUrl(`${this._document.location.protocol}${hostname}${this.environment.baseUrl}`);
       if (await this.checkPeerAlive(detectedPeer)) {
@@ -428,6 +429,7 @@ export class NetworkService {
 
   /**
    * Stop to network state
+   *
    * @protected
    */
   protected stopRefreshTimer() {
@@ -439,6 +441,7 @@ export class NetworkService {
 
   /**
    * Refresh the network state
+   *
    * @protected
    */
   protected startRefreshTimer(){
@@ -453,7 +456,7 @@ export class NetworkService {
         filter(this._timerRefreshCondition),
 
         // Checkin if peer alive
-        tap(() =>  console.debug("[network] Checking connection to pod...")),
+        tap(() =>  console.debug('[network] Checking connection to pod...')),
         mergeMap(() => this.checkPeerAlive(this.peer)),
 
         // Filter to keep only changes
@@ -478,14 +481,15 @@ export class NetworkService {
           }
         });
 
-    this._timerSubscription.add(() => console.debug("[network] Refresh timer stopped"));
+    this._timerSubscription.add(() => console.debug('[network] Refresh timer stopped'));
   }
 
   /**
    * Check if the peer is alive
+   *
    * @param email
    */
-  async checkPeerAlive(peer?: string | Peer, opts?: { checkCompatible?: boolean; displayToast?: boolean; } ): Promise<NodeInfo> {
+  async checkPeerAlive(peer?: string | Peer, opts?: { checkCompatible?: boolean; displayToast?: boolean } ): Promise<NodeInfo> {
     peer = peer || this.peer;
     if (!peer) {
       const settings: LocalSettings = await this.settings.ready();
@@ -496,12 +500,12 @@ export class NetworkService {
     try {
       return await this.getNodeInfo(peer);
     } catch (err) {
-      console.debug("[network] Cannot get /api/node/info from peer");
+      console.debug('[network] Cannot get /api/node/info from peer');
       return undefined;
     }
   }
 
-  async checkPeerCompatible(peerInfo: NodeInfo, opts?: { showToast?: boolean; }): Promise<boolean> {
+  async checkPeerCompatible(peerInfo: NodeInfo, opts?: { showToast?: boolean }): Promise<boolean> {
     if (!this.environment.peerMinVersion) return true; // Skip compatibility check
 
     // Check the min pod version, defined by the app
@@ -588,11 +592,11 @@ export class NetworkService {
     return data && (data as Peer) || undefined;
   }
 
-  async clearCache(opts?: { emitEvent?: boolean; }): Promise<void> {
+  async clearCache(opts?: { emitEvent?: boolean }): Promise<void> {
 
     const now = this._debug && Date.now();
 
-    console.info("[network] Clearing all caches...");
+    console.info('[network] Clearing all caches...');
     return this.cache.clearAll()
       .then(() => {
         // Emit event
@@ -641,12 +645,12 @@ export class NetworkService {
     }
     catch (err) {
       if (err && err.message) {
-        console.error("[network] " + err.message, err);
+        console.error('[network] ' + err.message, err);
       }
       else {
         console.error(`[network] Error on get request ${uri}: ${err && err.statusText}`);
       }
-      throw {code: err.status, message: "ERROR.UNKNOWN_NETWORK_ERROR"};
+      throw {code: err.status, message: 'ERROR.UNKNOWN_NETWORK_ERROR'};
     }
   }
 
@@ -724,7 +728,7 @@ export class NetworkService {
       return Promise.all(hooks.map(callback => {
         const promise = callback(data);
         if (!promise) return;
-        return promise.catch(err => console.error("Error while executing hook " + name, err));
+        return promise.catch(err => console.error('Error while executing hook ' + name, err));
       }));
     }
   }

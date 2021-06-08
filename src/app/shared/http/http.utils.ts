@@ -1,4 +1,4 @@
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 
 export class HttpUtils {
   static async getResource<T>(http: HttpClient,
@@ -34,7 +34,7 @@ export class HttpUtils {
       else {
         console.error(`[network] Error on get request ${uri}: ${err && err.statusText}`);
       }
-      throw {code: err.status, message: "ERROR.UNKNOWN_NETWORK_ERROR"};
+      throw {code: err.status, message: 'ERROR.UNKNOWN_NETWORK_ERROR'};
     }
   }
 }

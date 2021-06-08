@@ -1,7 +1,7 @@
 // Import the core angular services.
-import {AfterContentInit, Directive, ElementRef, OnChanges, OnDestroy, Optional, SimpleChanges} from "@angular/core";
-import {Platform} from "@ionic/angular";
-import {Keyboard} from "@ionic-native/keyboard/ngx";
+import {AfterContentInit, Directive, ElementRef, OnChanges, OnDestroy, Optional, SimpleChanges} from '@angular/core';
+import {Platform} from '@ionic/angular';
+import {Keyboard} from '@ionic-native/keyboard/ngx';
 import Timeout = NodeJS.Timeout;
 
 // ----------------------------------------------------------------------------------- //
@@ -10,10 +10,10 @@ import Timeout = NodeJS.Timeout;
 const BASE_TIMER_DELAY = 100;
 
 @Directive({
-  selector: "[autofocus], input[appAutofocus]",
+  selector: '[autofocus], input[appAutofocus]',
   inputs: [
-    "shouldFocusElement: appAutofocus",
-    "timerDelay: autofocusDelay"
+    'shouldFocusElement: appAutofocus',
+    'timerDelay: autofocusDelay'
   ]
 })
 export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestroy {
@@ -33,7 +33,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
 
     this.elementRef = elementRef;
 
-    this.shouldFocusElement = "";
+    this.shouldFocusElement = '';
     this.timer = null;
     this.timerDelay = BASE_TIMER_DELAY;
 
@@ -53,7 +53,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
     // the more specialized "appAutofocus" property, we need to check to see if the
     // "shouldFocusElement" input property is the empty string. This will signify
     // that the focus it not being data-driven and should be performed automatically.
-    if ( this.shouldFocusElement === "" ) {
+    if ( this.shouldFocusElement === '' ) {
 
       this.startFocusWorkflow();
 
@@ -68,7 +68,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
     // If the timer delay is being passed-in as a string (ie, someone is using
     // attribute-input syntax, not property-input syntax), let's coalesce the
     // attribute to a numeric value so that our type-annotations are consistent.
-    if ( changes.timerDelay && ( typeof( this.timerDelay ) !== "number" ) ) {
+    if ( changes.timerDelay && ( typeof( this.timerDelay ) !== 'number' ) ) {
 
       // If the coalesce fails, just fall-back to a sane value.
       if ( isNaN( this.timerDelay = +this.timerDelay ) ) {
