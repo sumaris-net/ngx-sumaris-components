@@ -155,7 +155,7 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
       const filter = ReferentialFilter.fromObject(json);
       this.filterForm.patchValue(json, {emitEvent: false});
       this.filterCriteriaCount = filter.countNotEmptyCriteria();
-      this.applyFilter(filter, {emitEvent: false});
+      this.setFilter(filter, {emitEvent: false});
       this.markForCheck();
     }
   }

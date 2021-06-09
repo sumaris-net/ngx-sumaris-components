@@ -518,46 +518,6 @@ export abstract class AppTable<
     }
   }
 
-  /* -- internal method -- */
-
-  protected applyFilter(filter: F, opts: { emitEvent: boolean }) {
-    if (this.debug) console.debug('[table] Applying filter', filter);
-    this._filter = filter;
-    if (opts && opts.emitEvent) {
-      if (this.paginator && this.paginator.pageIndex > 0) {
-        this.paginator.pageIndex = 0;
-      }
-      this.onRefresh.emit();
-    }
-  }
-
-
-  protected listenDatasource(dataSource: EntitiesTableDataSource<T, F, ID>) {
-    if (!dataSource) throw new Error('[table] dataSource not set !');
-
-    // Cleaning previous subscription on datasource
-    if (isNotNil(this._dataSourceSubscription)) {
-      //if (this.debug)
-      console.debug('[table] Many call to listenDatasource(): Cleaning previous subscriptions...');
-      this._dataSourceSubscription.unsubscribe();
-      this._subscription.remove(this._dataSourceSubscription);
-    }
-    this._dataSourceSubscription = this._dataSource.$busy
-        .pipe(
-            distinctUntilChanged(),
-
-            // If changed to True: propagate as soon as possible
-            tap((loading) => loading && this.setLoading(true)),
-
-            // If changed to False: wait 250ms before propagate (to make sure the spinner has been displayed)
-            debounceTime(250),
-            tap(loading => !loading && this.setLoading(false))
-        )
-        .subscribe();
-
-    this._subscription.add(this._dataSourceSubscription);
-  }
-
   confirmAndAddRow(event?: any, row?: TableElement<T>): boolean {
     if (!this.confirmEditCreate(event, row)) {
       return false;
@@ -864,6 +824,20 @@ export abstract class AppTable<
     }
   }
 
+  getCurrentColumns(): ColumnItem[] {
+    const hiddenColumns = this.columns.slice(RESERVED_START_COLUMNS.length)
+        .filter(name => this.displayedColumns.indexOf(name) === -1);
+    return this.displayedColumns
+        .concat(hiddenColumns)
+        .filter(name => !RESERVED_START_COLUMNS.includes(name) && !RESERVED_END_COLUMNS.includes(name)
+            && !this.excludesColumns.includes(name))
+        .map(name => ({
+          name,
+          label: this.getI18nColumnName(name),
+          visible: this.displayedColumns.indexOf(name) !== -1,
+          canHide: this.getRequiredColumns().indexOf(name) === -1
+        }));
+  }
 
   /* -- protected method -- */
 
@@ -972,21 +946,6 @@ export abstract class AppTable<
     return await this.router.navigate(['new'], {
       relativeTo: this.route
     });
-  }
-
-  getCurrentColumns(): ColumnItem[] {
-    const hiddenColumns = this.columns.slice(RESERVED_START_COLUMNS.length)
-      .filter(name => this.displayedColumns.indexOf(name) === -1);
-    return this.displayedColumns
-      .concat(hiddenColumns)
-      .filter(name => !RESERVED_START_COLUMNS.includes(name) && !RESERVED_END_COLUMNS.includes(name)
-        && !this.excludesColumns.includes(name))
-      .map(name => ({
-          name,
-          label: this.getI18nColumnName(name),
-          visible: this.displayedColumns.indexOf(name) !== -1,
-          canHide: this.getRequiredColumns().indexOf(name) === -1
-        }));
   }
 
   // can be overridden to add more required columns
@@ -1211,6 +1170,44 @@ export abstract class AppTable<
     }
   }
 
+  /* -- private method -- */
+
+  private applyFilter(filter: F, opts: { emitEvent: boolean }) {
+    if (this.debug) console.debug('[table] Applying filter', filter);
+    this._filter = filter;
+    if (opts && opts.emitEvent) {
+      if (this.paginator && this.paginator.pageIndex > 0) {
+        this.paginator.pageIndex = 0;
+      }
+      this.onRefresh.emit();
+    }
+  }
+
+  private listenDatasource(dataSource: EntitiesTableDataSource<T, F, ID>) {
+    if (!dataSource) throw new Error('[table] dataSource not set !');
+
+    // Cleaning previous subscription on datasource
+    if (isNotNil(this._dataSourceSubscription)) {
+      //if (this.debug)
+      console.debug('[table] Many call to listenDatasource(): Cleaning previous subscriptions...');
+      this._dataSourceSubscription.unsubscribe();
+      this._subscription.remove(this._dataSourceSubscription);
+    }
+    this._dataSourceSubscription = this._dataSource.$busy
+        .pipe(
+            distinctUntilChanged(),
+
+            // If changed to True: propagate as soon as possible
+            tap((loading) => loading && this.setLoading(true)),
+
+            // If changed to False: wait 250ms before propagate (to make sure the spinner has been displayed)
+            debounceTime(250),
+            tap(loading => !loading && this.setLoading(false))
+        )
+        .subscribe();
+
+    this._subscription.add(this._dataSourceSubscription);
+  }
 
 }
 
