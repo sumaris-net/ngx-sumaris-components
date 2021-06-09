@@ -45,7 +45,7 @@ export abstract class EntityFilter<
     const json = this.asPodObject();
     return Object.keys(json)
       .map(key => json[key])
-      .findIndex(value => isNotNilOrBlank(value) || isNotEmptyArray(value) || ReferentialUtils.isNotEmpty(value)) !== -1;
+      .some(value => isNotNilOrBlank(value) || isNotEmptyArray(value) || ReferentialUtils.isNotEmpty(value)) === false;
   }
 
   countNotEmptyCriteria(): number {
