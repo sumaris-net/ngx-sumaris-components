@@ -70,6 +70,8 @@ export abstract class EntityFilter<F extends EntityFilter<F, T, ID, AO, FO>,
         (typeof value === 'string' && value.trim() !== '') ||
         // valid number
         (typeof value === 'number' && !isNaN(value)) ||
+        // valid boolean
+        (typeof value === 'boolean') ||
         // not empty array
         (value.length > 0) ||
         // entity with an id
