@@ -3,9 +3,9 @@ import {filter, map, mergeMap} from 'rxjs/operators';
 import {isEmptyArray, isNotEmptyArray, isNotNil} from '../functions';
 import {EntitiesService, EntitiesServiceWatchOptions, FilterFn, FilterFnFactory, IEntitiesService, LoadResult} from './entity-service.class';
 import {SortDirection} from '@angular/material/sort';
-import {Directive} from '@angular/core';
+import {Directive, OnDestroy} from '@angular/core';
 import {EntityUtils, IEntity} from '../../core/services/model/entity.model';
-import {EntityFilter} from '../../core/services/model/filter.model';
+import {EntityFilter, EntityFilterUtils} from '../../core/services/model/filter.model';
 
 export interface InMemoryEntitiesServiceOptions<T, F> {
   onSort?: (data: T[], sortBy?: string, sortDirection?: SortDirection) => T[];
@@ -28,24 +28,23 @@ export class InMemoryEntitiesService<
   ID = number,
   O extends EntitiesServiceWatchOptions = EntitiesServiceWatchOptions>
   extends EntitiesService<T, F, ID>
-  implements IEntitiesService<T, F, O> {
+  implements IEntitiesService<T, F, O>, OnDestroy {
+
+  debug = false;
+  dirty = false;
+
+  protected data: T[];
+  private _hiddenData: T[];
 
   private readonly _onChange = new BehaviorSubject(true);
   private readonly _sortFn: (data: T[], sortBy?: string, sortDirection?: SortDirection) => T[];
   private readonly _onLoad: (data: T[]) => T[] | Promise<T[]>;
   private readonly _onSaveFn: (data: T[]) => T[] | Promise<T[]>;
   private readonly _equalsFn: (d1: T, d2: T) => boolean;
-  private readonly _filterFn: (data: T) => boolean;
   private readonly _filterFnFactory: FilterFnFactory<T, F>;
   private readonly _sortByReplacement: { [key: string]: string };
 
-  protected data: T[];
-  private _hiddenData: T[];
-
   // TODO add test  see sub-batches.modal.ts onLoadData & _hiddenData
-
-  debug = false;
-  dirty = false;
 
   set value(data: T[]) {
     this.setValue(data);
@@ -238,6 +237,10 @@ export class InMemoryEntitiesService<
     return EntityUtils.sort(data, sortBy, sortDirection);
   }
 
+  asFilter(source: Partial<F>): F {
+    return EntityFilterUtils.fromObject(source, this.filterType);
+  }
+
   protected filter(data: T[], _filter: F, hiddenData: T[]): T[] {
 
     // if filter is DataFilter instance, use its test function
@@ -259,7 +262,7 @@ export class InMemoryEntitiesService<
     return data;
   }
 
-  connect(): Observable<LoadResult<T>> {
+  protected connect(): Observable<LoadResult<T>> {
     return this._onChange.pipe(
       map(_ => {
         const data = this.data || [];
@@ -267,19 +270,6 @@ export class InMemoryEntitiesService<
         return {data, total};
       })
     );
-  }
-
-  asFilter(source: Partial<F>): F {
-    if (!source) return undefined;
-    if (source instanceof EntityFilter) return source as unknown as F;
-    const target = new this.filterType();
-    if (target instanceof EntityFilter) {
-      target.fromObject(source);
-    }
-    else {
-      Object.assign(target, source);
-    }
-    return target;
   }
 
   protected equals(d1: T, d2: T): boolean {
