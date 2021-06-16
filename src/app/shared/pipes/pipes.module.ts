@@ -14,7 +14,7 @@ import {EvenPipe, MathAbsPipe, OddPipe} from './math.pipes';
 import {ArrayFirstPipe, ArrayIncludesPipe, ArrayLengthPipe, ArrayPluckPipe, EmptyArrayPipe, NotEmptyArrayPipe} from './arrays.pipe';
 import {MapGetPipe, MapKeysPipe, MapValuesPipe} from './maps.pipe';
 import {IsNilOrBlankPipe, IsNotNilOrBlankPipe} from './string.pipes';
-import {TranslateContextPipe} from './translate-context.pipe';
+import {TranslatablePipe, TranslateContextPipe} from './translate-context.pipe';
 import {PropertyGetPipe} from './properties.pipe';
 
 @NgModule({
@@ -49,7 +49,8 @@ import {PropertyGetPipe} from './properties.pipe';
     MapValuesPipe,
     IsNilOrBlankPipe,
     IsNotNilOrBlankPipe,
-    TranslateContextPipe
+    TranslateContextPipe,
+    TranslatablePipe,
   ],
   exports: [
     PropertyGetPipe,
@@ -77,7 +78,8 @@ import {PropertyGetPipe} from './properties.pipe';
     IsNilOrBlankPipe,
     IsNotNilOrBlankPipe,
     ArrayIncludesPipe,
-    TranslateContextPipe
+    TranslateContextPipe,
+    TranslatablePipe,
   ]
 })
 export class SharedPipesModule {

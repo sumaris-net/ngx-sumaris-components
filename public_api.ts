@@ -50,6 +50,7 @@ export * from './src/app/shared/file/file.service';
 export * from './src/app/shared/services/entity-service.class';
 export * from './src/app/shared/services/memory-entity-service.class';
 export * from './src/app/shared/services/progress-bar.service';
+export * from './src/app/shared/services/translate-context.service';
 
 // Shared other
 export * from './src/app/shared/types';
@@ -87,7 +88,7 @@ export { IReferentialRef, ReferentialRef,
   BaseReferential, Referential, ReferentialUtils,
   ReferentialAsObjectOptions,
   referentialToString, referentialsToString,
-  StatusValue, DefaultStatusList } from './src/app/core/services/model/referential.model';
+  StatusValue, DefaultStatusList, SAVE_AS_OBJECT_OPTIONS } from './src/app/core/services/model/referential.model';
 export * from './src/app/core/services/model/settings.model';
 
 // GraphQL
