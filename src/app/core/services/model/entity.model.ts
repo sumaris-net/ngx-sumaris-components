@@ -99,7 +99,7 @@ export function isInstanceOf<T>(obj: any, constructor: new (...args: any[]) => T
   if (!obj) return false;
   // DEBUG
   //if (obj.constructor.name === (constructor as any).CLASSNAME) console.debug("isInstanceOf() => OK for " + obj.constructor.name, );
-  return obj.constructor.name === (constructor as any).CLASSNAME;
+  return obj.constructor === constructor || obj.constructor.CLASSNAME === (constructor as any).CLASSNAME;
 }
 
 // @dynamic

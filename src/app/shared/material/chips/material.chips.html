@@ -59,7 +59,7 @@
               <ion-row>
                 <ion-col *ngFor="let attr of displayAttributes; index as i;"
                          [size]="displayColumnSizes[i]">
-                  <ion-text [innerHTML]="getPropertyByPath(item, attr) | highlight: {search: inputControl.value }"></ion-text>
+                  <ion-text [innerHTML]="getPropertyByPath(item, attr) | highlight: inputControl.value"></ion-text>
                 </ion-col>
               </ion-row>
             </mat-option>
