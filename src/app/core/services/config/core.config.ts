@@ -2,8 +2,6 @@
 // then declare a type like this :
 // > export declare type ConfigOptions = key of CONFIG_OPTIONS_MAP
 import {FormFieldDefinition} from '../../../shared/form/field.model';
-import {StatusIds} from '../model/model.enum';
-import {UserProfileLabels} from '../model/person.model';
 import {APP_LOCALES} from '../model/settings.model';
 import {AuthTokenType} from '../network.service';
 

@@ -1,3 +1,4 @@
+import {DEFAULT_PLACEHOLDER_CHAR} from '../../constants';
 
 export declare type LatLongPattern = 'DDMMSS' | 'DDMM' | 'DD';
 export const LAT_LONG_PATTERNS: LatLongPattern[] = ['DDMMSS', 'DDMM', 'DD'];
@@ -9,13 +10,12 @@ export declare class LatLongFormatOptions {
   hideSign?: boolean;
 }
 export declare type LatLongFormatFn = (value: number | null, opts?: LatLongFormatOptions) => string;
-export const DEFAULT_PLACEHOLDER_CHAR = '\u005F';
-export const SPACE_PLACEHOLDER_CHAR = '\u2000';
-export const DEFAULT_MAX_DECIMALS = 3;
+export const LAT_LONG_DEFAULT_MAX_DECIMALS = 3;
+
 
 const DEFAULT_OPTIONS = <LatLongFormatOptions>{
   pattern: 'DDMM',
-  maxDecimals: DEFAULT_MAX_DECIMALS,
+  maxDecimals: LAT_LONG_DEFAULT_MAX_DECIMALS,
   placeholderChar: DEFAULT_PLACEHOLDER_CHAR
 };
 const DEFAULT_LATITUDE_OPTIONS: LatLongFormatOptions & { longitude: boolean } = {

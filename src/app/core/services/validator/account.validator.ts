@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {FormBuilder, ValidatorFn, Validators} from '@angular/forms';
 import {Account} from '../model/account.model';
-import {getMainProfile} from '../model/person.model';
+import {PersonUtils} from '../model/person.model';
 import {StatusIds} from '../model/model.enum';
 import {AccountService} from '../account.service';
 import {SharedValidators} from '../../../shared/validator/validators';
@@ -26,7 +26,7 @@ export class AccountValidatorService extends AppValidatorService<Account> {
       lastName: [data && data.lastName || null, Validators.compose([Validators.required, Validators.minLength(2)])],
       firstName: [data && data.firstName || null, Validators.compose([Validators.required, Validators.minLength(2)])],
       email: [data && data.email || null, Validators.compose([Validators.required, Validators.email])],
-      mainProfile: [data && (data.mainProfile || getMainProfile(data.profiles)) || 'GUEST', Validators.required],
+      mainProfile: [data && (data.mainProfile || PersonUtils.getMainProfile(data.profiles)) || 'GUEST', Validators.required],
       statusId: [data && data.statusId || StatusIds.TEMPORARY, Validators.required],
       pubkey: [data && data.pubkey || null, Validators.compose([Validators.required, SharedValidators.pubkey])]
     };

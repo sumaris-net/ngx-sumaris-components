@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {CryptoService, KeyPair} from './crypto.service';
 import {Department} from './model/department.model';
 import {Account} from './model/account.model';
-import {Person, PersonUtils, UserProfileLabel, UserProfileLabels} from './model/person.model';
+import {Person, PersonUtils, UserProfileLabel} from './model/person.model';
 import {UsageMode, UserSettings} from './model/settings.model';
 import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
 import {FetchPolicy, gql} from '@apollo/client/core';
@@ -343,13 +343,12 @@ export class AccountService extends BaseGraphqlService {
     return PersonUtils.hasUpperOrEqualsProfile(this.data.account.profiles, userProfile);
   }
 
-  hasExactProfile(userProfile: UserProfileLabel): boolean {
+  hasExactProfile(label: UserProfileLabel): boolean {
     // should be login, and status ENABLE or TEMPORARY
     if (!this.data.account || !this.data.account.pubkey ||
       (this.data.account.statusId !== StatusIds.ENABLE && this.data.account.statusId !== StatusIds.TEMPORARY))
       return false;
-    const label = UserProfileLabels[userProfile];
-    return !!this.data.account.profiles.find(profile => profile === label);
+    return this.data.account.profiles.some(profile => profile === label);
   }
 
   hasProfileAndIsEnable(userProfile: UserProfileLabel): boolean {

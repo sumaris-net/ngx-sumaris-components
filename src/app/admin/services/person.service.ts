@@ -4,7 +4,7 @@ import {BehaviorSubject} from 'rxjs';
 import {GraphqlService} from '../../core/graphql/graphql.service';
 import {NetworkService} from '../../core/services/network.service';
 import {EntitiesStorage} from '../../core/services/storage/entities-storage.service';
-import {Person, UserProfileLabels} from '../../core/services/model/person.model';
+import {Person, UserProfileLabel} from '../../core/services/model/person.model';
 import {ReferentialUtils} from '../../core/services/model/referential.model';
 import {StatusIds} from '../../core/services/model/model.enum';
 import {SortDirection} from '@angular/material/sort';
@@ -15,7 +15,6 @@ import {PlatformService} from '../../core/services/platform.service';
 import {PersonFilter} from './filter/person.filter';
 import {isInstanceOf} from '../../core/services/model/entity.model';
 import {BaseEntityGraphqlMutations, BaseEntityService} from '../../core/services/base-entity-service.class';
-
 
 export const PersonFragments = {
   person: gql`fragment PersonFragment on PersonVO {
@@ -168,7 +167,7 @@ export class PersonService extends BaseEntityService<Person, PersonFilter>
     const maxProgression = opts && opts.maxProgression || 100;
     const filter = {
       statusIds: [StatusIds.ENABLE, StatusIds.TEMPORARY],
-      userProfiles: [UserProfileLabels.SUPERVISOR, UserProfileLabels.USER, UserProfileLabels.GUEST]
+      userProfiles: <UserProfileLabel[]>['SUPERVISOR', 'USER', 'GUEST']
     };
 
     console.info('[person-service] Importing persons...');

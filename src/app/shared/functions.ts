@@ -24,7 +24,7 @@ export function firstArrayValue<T>(obj: T[] | null | undefined): T | undefined {
 export function isEmptyArray<T>(obj: T[] | null | undefined): boolean {
   return obj === undefined || obj === null || !obj.length;
 }
-export function isArray<T>(obj: any): obj is any[] {
+export function isArray(obj: any): obj is any[] {
   return obj && isNotNil(obj['length']) || false;
 }
 export function isNotNilString(obj: any | null | undefined): obj is string {

@@ -28,9 +28,8 @@ import {
 import {TranslateService} from '@ngx-translate/core';
 import {SharedValidators} from '../../validator/validators';
 import {
-  DEFAULT_MAX_DECIMALS,
   formatLatitude,
-  formatLongitude,
+  formatLongitude, LAT_LONG_DEFAULT_MAX_DECIMALS,
   LatLongFormatFn,
   LatLongFormatOptions,
   LatLongPattern,
@@ -42,6 +41,7 @@ import {isNil, isNotNil, isNotNilOrBlank} from '../../functions';
 import {getCaretPosition, moveInputCaretToSeparator, selectInputContent, selectInputRange} from '../../inputs';
 import {merge, Subscription} from 'rxjs';
 import {TextMaskConfig} from 'angular2-text-mask';
+import {DEFAULT_MAX_DECIMALS} from '../duration/duration.utils';
 
 const MASKS: {
   [key: string]: {
@@ -111,7 +111,7 @@ export class MatLatLongField implements OnInit, AfterViewInit, OnDestroy, Contro
 
   @Input() defaultSign: '-' | '+';
 
-  @Input() maxDecimals: number = DEFAULT_MAX_DECIMALS;
+  @Input() maxDecimals: number = LAT_LONG_DEFAULT_MAX_DECIMALS;
 
   @Input() placeholderChar: string = DEFAULT_PLACEHOLDER_CHAR;
 

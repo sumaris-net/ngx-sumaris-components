@@ -1,5 +1,6 @@
 import {Injectable, Pipe, PipeTransform} from '@angular/core';
-import {Person, personsToString, personToString} from '../model/person.model';
+import {Person, PersonUtils} from '../model/person.model';
+import {isArray} from '../../../shared/functions';
 
 @Pipe({
   name: 'personToString'
@@ -7,10 +8,9 @@ import {Person, personsToString, personToString} from '../model/person.model';
 @Injectable({providedIn: 'root'})
 export class PersonToStringPipe implements PipeTransform {
 
-
   transform(value: Person | Person[] ): string {
-    if (value instanceof Array) return personsToString(value);
-    return personToString(value);
+    if (isArray(value)) return PersonUtils.personsToString(value);
+    return PersonUtils.personToString(value as Person);
   }
 }
 

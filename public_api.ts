@@ -1,4 +1,5 @@
 // Environment
+
 export * from './src/environments/environment.class';
 
 // Shared
@@ -8,6 +9,7 @@ export {SHARED_ROUTE_OPTIONS, SharedRoutingModule} from './src/app/shared/shared
 
 // Shared material
 export * from './src/app/shared/material/material.module';
+export * from './src/app/shared/material/boolean/boolean.module';
 export {MatBooleanField} from './src/app/shared/material/boolean/material.boolean';
 export * from './src/app/shared/material/autocomplete/autocomplete.module';
 export {MatAutocompleteField, MatAutocompleteFieldConfig, MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions} from './src/app/shared/material/autocomplete/material.autocomplete';
@@ -19,6 +21,8 @@ export * from './src/app/shared/material/stepper/material.stepper-i18n';
 export {MatDateShort} from './src/app/shared/material/datetime/material.dateshort';
 export {MatDateTime} from './src/app/shared/material/datetime/material.datetime';
 export {MatDate} from './src/app/shared/material/datetime/material.date';
+export {MatLatLongField} from './src/app/shared/material/latlong/material.latlong';
+export * from './src/app/shared/material/latlong/material.latlong.module';
 
 // Shared components
 export * from './src/app/shared/inputs';
@@ -29,6 +33,8 @@ export * from './src/app/shared/toolbar/toolbar';
 export * from './src/app/shared/toolbar/modal-toolbar';
 export * from './src/app/shared/interceptors/progess.interceptor';
 export * from './src/app/shared/toasts';
+export * from './src/app/shared/help/help.modal';
+
 
 // Shared directives
 export * from './src/app/shared/directives/directives.module';
@@ -43,6 +49,7 @@ export * from './src/app/shared/pipes/latlong-format.pipe';
 export * from './src/app/shared/pipes/highlight.pipe';
 export * from './src/app/shared/pipes/number-format.pipe';
 export * from './src/app/shared/pipes/properties.pipe';
+export * from './src/app/shared/pipes/duration.pipe';
 
 // Shared services
 export * from './src/app/shared/audio/audio';
@@ -51,6 +58,7 @@ export * from './src/app/shared/services/entity-service.class';
 export * from './src/app/shared/services/memory-entity-service.class';
 export * from './src/app/shared/services/progress-bar.service';
 export * from './src/app/shared/services/translate-context.service';
+export * from './src/app/shared/services/job.utils';
 
 // Shared other
 export * from './src/app/shared/types';
@@ -62,9 +70,12 @@ export * from './src/app/shared/alerts';
 export * from './src/app/shared/hotkeys/shared-hotkeys.module';
 export * from './src/app/shared/hotkeys/hotkeys.service';
 export * from './src/app/shared/hotkeys/dialog/hotkeys-dialog.component';
+export {Color, ColorName, ColorScale, ColorScaleLegend, ColorScaleOptions, ColorGradientOptions, ColorScaleLegendItem} from './src/app/shared/graph/graph-colors';
 export * from './src/app/shared/graph/colors.utils';
 export * from './src/app/shared/gesture/gesture-config';
+export * from './src/app/shared/gesture/hammer.utils';
 export * from './src/app/shared/validator/validators';
+export * from './src/app/shared/material/latlong/latlong.utils';
 
 // Shared test
 export * from './src/app/shared/shared.testing.module';
@@ -88,7 +99,8 @@ export { IReferentialRef, ReferentialRef,
   BaseReferential, Referential, ReferentialUtils,
   ReferentialAsObjectOptions,
   referentialToString, referentialsToString,
-  StatusValue, DefaultStatusList, SAVE_AS_OBJECT_OPTIONS } from './src/app/core/services/model/referential.model';
+  StatusValue, DefaultStatusList,
+  MINIFY_ENTITY_FOR_LOCAL_STORAGE, MINIFY_ENTITY_FOR_POD } from './src/app/core/services/model/referential.model';
 export * from './src/app/core/services/model/settings.model';
 
 // GraphQL
@@ -150,7 +162,7 @@ export * from './src/app/social/list/user-events.table';
 
 // Admin
 export * from './src/app/admin/admin.module';
-export * from './src/app/admin/admin-routing.module';
+export {AdminRoutingModule} from './src/app/admin/admin-routing.module';
 export * from './src/app/admin/services/filter/person.filter';
 export * from './src/app/admin/services/validator/person.validator';
 export * from './src/app/admin/services/errors';

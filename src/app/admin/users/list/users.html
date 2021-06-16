@@ -205,8 +205,8 @@
       <mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
         <mat-form-field floatLabel="never">
           <mat-select [formControl]="row.validator.controls['mainProfile']" [placeholder]="'USER.PROFILE'|translate">
-            <mat-option *ngFor="let item of profiles | keyvalue" [value]="item.value">
-              {{ ('USER.PROFILE_ENUM.' + item.key) | uppercase |translate }}
+            <mat-option *ngFor="let item of profiles" [value]="item">
+              {{ ('USER.PROFILE_ENUM.' + item) | uppercase |translate }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="row.validator.controls['mainProfile'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>

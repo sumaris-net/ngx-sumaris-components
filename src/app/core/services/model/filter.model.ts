@@ -1,14 +1,9 @@
 import {isEmptyArray} from '../../../shared/functions';
-import {ReferentialUtils} from './referential.model';
+import {MINIFY_ENTITY_FOR_POD, ReferentialUtils} from './referential.model';
 import {Entity, EntityAsObjectOptions, IEntity, isInstanceOf} from './entity.model';
 import {FilterFn} from '../../../shared/services/entity-service.class';
 
 
-export const MINIFY_FOR_POD_OPTIONS = Object.freeze(<EntityAsObjectOptions>{
-  minify: true,
-  keepTypename: false,
-  keepLocalId: false
-});
 
 export interface IEntityFilter<F extends IEntityFilter<F, T, ID, AO, FO>,
   T extends IEntity<T, ID>,
@@ -37,7 +32,7 @@ export abstract class EntityFilter<F extends EntityFilter<F, T, ID, AO, FO>,
    * Clean a filter, before sending to the pod (e.g convert dates, remove internal properties, etc.)
    */
   asPodObject(): any {
-    return this.asObject(MINIFY_FOR_POD_OPTIONS as AO);
+    return this.asObject(MINIFY_ENTITY_FOR_POD as AO);
   }
 
   isEmpty(): boolean {

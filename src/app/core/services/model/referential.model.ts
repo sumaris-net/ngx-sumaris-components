@@ -144,23 +144,25 @@ export interface ReferentialAsObjectOptions extends EntityAsObjectOptions {
   keepEntityName?: boolean;
 }
 
-export const NOT_MINIFY_OPTIONS: ReferentialAsObjectOptions = {minify: false};
-
-export const MINIFY_OPTIONS: ReferentialAsObjectOptions = {minify: true};
-
-export const SAVE_LOCALLY_AS_OBJECT_OPTIONS: ReferentialAsObjectOptions = {
+/**
+ * Used to store an entity locally
+ */
+export const MINIFY_ENTITY_FOR_LOCAL_STORAGE: ReferentialAsObjectOptions = Object.freeze({
   minify: true,
   keepTypename: true,
   keepEntityName: true,
   keepLocalId: true
-};
+});
 
-export const SAVE_AS_OBJECT_OPTIONS: ReferentialAsObjectOptions = {
+/**
+ * Used to send an entity to a pod
+ */
+export const MINIFY_ENTITY_FOR_POD: ReferentialAsObjectOptions = Object.freeze({
   minify: true,
   keepTypename: false,
   keepEntityName: false,
   keepLocalId: false
-};
+});
 
 // @dynamic
 @EntityClass({typename: 'ReferentialVO'})

@@ -181,7 +181,7 @@ export class Alerts {
   }
 
 
-  static async  askSaveBeforeAction(alertCtrl: AlertController,
+  static async askSaveBeforeAction(alertCtrl: AlertController,
                                     translate: TranslateService,
                                     event?: { valid: boolean }): Promise<{ confirmed: boolean; save: boolean } | undefined> {
 

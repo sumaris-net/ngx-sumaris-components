@@ -1,21 +1,13 @@
 import {Moment} from 'moment';
 import {ReferentialAsObjectOptions} from './referential.model';
 import {Entity} from './entity.model';
-import {Department, departmentToString} from './department.model';
+import {Department} from './department.model';
 import {fromDateISOString, toDateISOString} from '../../../shared/dates';
 import {EntityClass} from './entity.decorators';
 
 
 export type UserProfileLabel = 'ADMIN' | 'USER' | 'SUPERVISOR' | 'GUEST';
-
-// Enumeration for User profile.
-// /!\ WARN: Field order is used to known profile hierarchy
-export const UserProfileLabels = {
-  ADMIN: 'ADMIN',
-  SUPERVISOR: 'SUPERVISOR',
-  USER: 'USER',
-  GUEST: 'GUEST'
-};
+export const PRIORITIZED_AUTHORITIES: Readonly<UserProfileLabel[]> = Object.freeze(["ADMIN", "SUPERVISOR", "USER", "GUEST"]);
 
 // @dynamic
 @EntityClass({typename: 'PersonVO'})
@@ -54,10 +46,10 @@ export class Person<
     target.department = this.department && this.department.asObject(opts) || undefined;
     target.profiles = this.profiles && this.profiles.slice(0) || [];
     // Set profile list from the main profile
-    target.profiles = this.mainProfile && [this.mainProfile] || target.profiles || [UserProfileLabels.GUEST];
+    target.profiles = this.mainProfile && [this.mainProfile] || target.profiles;
     target.creationDate = toDateISOString(this.creationDate);
 
-    if (!opts || opts.minify !== true) target.mainProfile = getMainProfile(target.profiles);
+    if (!opts || opts.minify !== true) target.mainProfile = PersonUtils.getMainProfile(target.profiles);
     return target;
   }
 
@@ -76,38 +68,40 @@ export class Person<
     if (source.mainProfile && !this.profiles.find(p => p === source.mainProfile)) {
       this.profiles = this.profiles.concat(source.mainProfile);
     }
-    this.mainProfile = getMainProfile(this.profiles);
+    this.mainProfile = PersonUtils.getMainProfile(this.profiles);
   }
 }
 
 export class PersonUtils {
-  static getMainProfile = getMainProfile;
-  static getMainProfileIndex = getMainProfileIndex;
-  static hasUpperOrEqualsProfile = hasUpperOrEqualsProfile;
-  static personToString = personToString;
-  static personsToString = personsToString;
+  static getMainProfile(profiles?: string[]): UserProfileLabel {
+    if (!profiles && !profiles.length) return 'GUEST';
+    return PRIORITIZED_AUTHORITIES.find(label => profiles.includes(label)) || 'GUEST';
+  }
+
+  static getMainProfileIndex(profiles?: string[]): number {
+    if (!profiles && !profiles.length) return PRIORITIZED_AUTHORITIES.length - 1; // return last (lower) profile
+    const index = PRIORITIZED_AUTHORITIES.findIndex(label => profiles.includes(label));
+    return (index !== -1) ? index : (PRIORITIZED_AUTHORITIES.length - 1);
+  }
+
+  static hasUpperOrEqualsProfile(actualProfiles: string[], expectedProfile: UserProfileLabel): boolean {
+    const expectedProfileIndex = PRIORITIZED_AUTHORITIES.indexOf(expectedProfile);
+    return expectedProfileIndex !== -1 && PersonUtils.getMainProfileIndex(actualProfiles) <= expectedProfileIndex;
+  }
+
+  static personToString(obj: Person): string {
+    return obj && obj.id && (obj.lastName + ' ' + obj.firstName) || undefined;
+  }
+
+  static personsToString(data: Person[], separator?: string): string {
+    return (data || []).map(PersonUtils.personToString).join(separator || ', ');
+  }
+
 }
 
-export function getMainProfile(profiles?: string[]): string {
-  if (!profiles && !profiles.length) return UserProfileLabels.GUEST;
-  return Object.values(UserProfileLabels).find(label => profiles.includes(label)) || UserProfileLabels.GUEST;
-}
 
-export function getMainProfileIndex(profiles?: string[]): number {
-  if (!profiles && !profiles.length) return Object.values(UserProfileLabels).length - 1; // return last (lower) profile
-  const index = Object.values(UserProfileLabels).findIndex(label => profiles.includes(label));
-  return (index !== -1) ? index : (Object.values(UserProfileLabels).length - 1);
-}
 
-export function hasUpperOrEqualsProfile(actualProfiles: string[], expectedProfile: UserProfileLabel): boolean {
-  const expectedProfileIndex = Object.keys(UserProfileLabels).indexOf(expectedProfile);
-  return expectedProfileIndex !== -1 && getMainProfileIndex(actualProfiles) <= expectedProfileIndex;
-}
 
-export function personToString(obj: Person): string {
-  return obj && obj.id && (obj.lastName + ' ' + obj.firstName) || undefined;
-}
 
-export function personsToString(data: Person[], separator?: string): string {
-  return (data || []).map(personToString).join(separator || ', ');
-}
+
+

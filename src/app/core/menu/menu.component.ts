@@ -240,7 +240,7 @@ export class MenuComponent implements OnInit {
           handler: () => {
             this.accountService.logout();
 
-            setTimeout(() => 
+            setTimeout(() =>
               // Back to home
                this.router.navigateByUrl('/', {replaceUrl: true /* will clear router history */})
             , 100);
