@@ -132,6 +132,7 @@ export * from './src/app/core/table/table-select-columns.component';
 export * from './src/app/core/home/home';
 export * from './src/app/core/settings/settings.page';
 export * from './src/app/core/account/account';
+export * from './src/app/core/register/confirm/confirm';
 export * from './src/app/core/menu/menu.component';
 export * from './src/app/core/menu/menu.service';
 export * from './src/app/core/about/modal-about';

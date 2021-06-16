@@ -75,27 +75,6 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
       type: 'string',
       defaultValue: 'https://www.gravatar.com/avatar/{md5}'
     },
-    DATA_NOT_SELF_ACCESS_ROLE: <FormFieldDefinition>{
-        key: 'sumaris.auth.notSelfDataAccess.role',
-        label: 'CONFIGURATION.OPTIONS.NOT_SELF_DATA_ACCESS_MIN_ROLE',
-        type: 'enum',
-        values: Object.keys(UserProfileLabels).map(key => ({
-            key: 'ROLE_' + key,
-            value: 'USER.PROFILE_ENUM.' + key
-        }))
-    },
-    ENTITY_TRASH: <FormFieldDefinition> {
-      key: 'sumaris.persistence.trash.enable',
-      label: 'CONFIGURATION.OPTIONS.ENTITY_TRASH',
-      type: 'boolean',
-      defaultValue: true
-    },
-    UPDATE_TECHNICAL_TABLES: <FormFieldDefinition> {
-      key: 'sumaris.persistence.technicalTables.update',
-      label: 'CONFIGURATION.OPTIONS.UPDATE_TECHNICAL_TABLES',
-      type: 'boolean',
-      defaultValue: false
-    },
     TESTING: <FormFieldDefinition>{
         key: 'sumaris.testing.enable',
         label: 'CONFIGURATION.OPTIONS.TESTING',
@@ -105,21 +84,6 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
       key: 'sumaris.app.version.min',
       label: 'CONFIGURATION.OPTIONS.APP_MIN_VERSION',
       type: 'string'
-    },
-    VESSEL_DEFAULT_STATUS: <FormFieldDefinition>{
-        key: 'sumaris.vessel.status.default',
-        label: 'CONFIGURATION.OPTIONS.VESSEL.DEFAULT_NEW_VESSEL_STATUS',
-        type: 'enum',
-        values: [
-            {
-                key: StatusIds.ENABLE.toString(),
-                value: 'REFERENTIAL.STATUS_ENUM.ENABLE'
-            },
-            {
-                key: StatusIds.TEMPORARY.toString(),
-                value: 'REFERENTIAL.STATUS_ENUM.TEMPORARY'
-            }
-        ]
     },
     LOGO_LARGE: <FormFieldDefinition>{
         key: 'sumaris.logo.large',
@@ -171,35 +135,9 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
         label: 'CONFIGURATION.OPTIONS.COLORS.DANGER',
         type: 'color'
     },
-    PROFILE_ADMIN_LABEL: <FormFieldDefinition>{
-        key: 'sumaris.enumeration.UserProfile.ADMIN.label',
-        label: 'CONFIGURATION.OPTIONS.PROFILE.ADMIN',
-        type: 'string',
-        defaultValue: 'ADMIN'
-    },
-    PROFILE_USER_LABEL: <FormFieldDefinition>{
-        key: 'sumaris.enumeration.UserProfile.USER.label',
-        label: 'CONFIGURATION.OPTIONS.PROFILE.USER',
-        type: 'string',
-        defaultValue: 'USER'
-    },
-    PROFILE_SUPERVISOR_LABEL: <FormFieldDefinition>{
-        key: 'sumaris.enumeration.UserProfile.SUPERVISOR.label',
-        label: 'CONFIGURATION.OPTIONS.PROFILE.SUPERVISOR',
-        type: 'string',
-        defaultValue: 'SUPERVISOR'
-    },
-    PROFILE_GUEST_LABEL: <FormFieldDefinition>{
-        key: 'sumaris.enumeration.UserProfile.GUEST.label',
-        label: 'CONFIGURATION.OPTIONS.PROFILE.GUEST',
-        type: 'string',
-        defaultValue: 'GUEST'
-    },
     ANDROID_INSTALL_URL: <FormFieldDefinition>{
         key: 'sumaris.android.install.url',
         label: 'CONFIGURATION.OPTIONS.ANDROID_INSTALL_URL',
         type: 'string'
     }
 });
-
-export const CORE_LOCAL_SETTINGS_OPTIONS = Object.freeze({});

@@ -22,7 +22,7 @@ import {APP_CONFIG_OPTIONS} from './core/services/config.service';
 import {IonicStorageModule} from '@ionic/storage';
 import {APP_MENU_ITEMS} from './core/menu/menu.component';
 import {APP_HOME_BUTTONS} from './core/home/home';
-import {CORE_CONFIG_OPTIONS, CORE_LOCAL_SETTINGS_OPTIONS} from './core/services/config/core.config';
+import {CORE_CONFIG_OPTIONS} from './core/services/config/core.config';
 import {APP_TESTING_PAGES} from './shared/material/testing/material.testing.page';
 import {IonicModule} from '@ionic/angular';
 import {CacheModule} from 'ionic-cache';
@@ -52,7 +52,6 @@ import {environment} from '../environments/environment';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    //NoopAnimationsModule,
     HttpClientModule,
     IonicModule.forRoot(),
     CacheModule.forRoot(),
@@ -163,7 +162,7 @@ import {environment} from '../environments/environment';
 
     // Settings options definition
     {
-      provide: APP_LOCAL_SETTINGS_OPTIONS, useValue: CORE_LOCAL_SETTINGS_OPTIONS
+      provide: APP_LOCAL_SETTINGS_OPTIONS, useValue: {} // Empty
     },
 
     // Config options definition (Core + trip)
