@@ -241,6 +241,12 @@ export class InMemoryEntitiesService<
     return EntityFilterUtils.fromObject(source, this.filterType);
   }
 
+  addSortByReplacement(source: string, target: string) {
+    this._sortByReplacement[source] = target;
+  }
+
+  /* -- protected methods -- */
+
   protected filter(data: T[], _filter: F, hiddenData: T[]): T[] {
 
     // if filter is DataFilter instance, use its test function
