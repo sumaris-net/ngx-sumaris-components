@@ -28,7 +28,6 @@ import {IonicModule} from '@ionic/angular';
 import {CacheModule} from 'ionic-cache';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {SharedModule} from './shared/shared.module';
-import {HttpTranslateLoaderFactory} from './shared/translate/http-translate-loader-factory';
 import {MarkdownModule, MarkedOptions} from 'ngx-markdown';
 import {APP_LOCAL_STORAGE_TYPE_POLICIES} from './core/services/storage/entities-storage.service';
 import {AppGestureConfig} from './shared/gesture/gesture-config';
@@ -43,6 +42,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {CoreModule} from './core/core.module';
 import {environment} from '../environments/environment';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 
 @NgModule({
@@ -62,7 +62,7 @@ import {environment} from '../environments/environment';
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpTranslateLoaderFactory.build,
+        useFactory: (httpClient) => new TranslateHttpLoader(httpClient, './assets/i18n/', `.json`),
         deps: [HttpClient]
       }
     }),

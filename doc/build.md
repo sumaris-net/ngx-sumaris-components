@@ -15,7 +15,7 @@ nvm install 12.19.1
 
 3. Install global dependency: 
 ```bash
-npm install -g @ionic/cli 
+npm install -g @ionic/cli @angular/cli
 ```
 
 4. Get sources (clone the repo) : `git clone ...`

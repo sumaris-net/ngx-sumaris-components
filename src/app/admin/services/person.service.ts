@@ -1,20 +1,20 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {FetchPolicy, gql} from '@apollo/client/core';
 import {BehaviorSubject} from 'rxjs';
-import {GraphqlService} from '../../core/graphql/graphql.service';
-import {NetworkService} from '../../core/services/network.service';
-import {EntitiesStorage} from '../../core/services/storage/entities-storage.service';
-import {Person, UserProfileLabel} from '../../core/services/model/person.model';
-import {ReferentialUtils} from '../../core/services/model/referential.model';
-import {StatusIds} from '../../core/services/model/model.enum';
+import {GraphqlService} from '@app/core/graphql/graphql.service';
+import {NetworkService} from '@app/core/services/network.service';
+import {EntitiesStorage} from '@app/core/services/storage/entities-storage.service';
+import {Person, UserProfileLabel} from '@app/core/services/model/person.model';
+import {ReferentialUtils} from '@app/core/services/model/referential.model';
+import {StatusIds} from '@app/core/services/model/model.enum';
 import {SortDirection} from '@angular/material/sort';
-import {JobUtils} from '../../shared/services/job.utils';
-import {LoadResult, SuggestService} from '../../shared/services/entity-service.class';
-import {ENVIRONMENT} from '../../../environments/environment.class';
-import {PlatformService} from '../../core/services/platform.service';
+import {JobUtils} from '@app/shared/services/job.utils';
+import {LoadResult, SuggestService} from '@app/shared/services/entity-service.class';
+import {PlatformService} from '@app/core/services/platform.service';
 import {PersonFilter} from './filter/person.filter';
-import {isInstanceOf} from '../../core/services/model/entity.model';
-import {BaseEntityGraphqlMutations, BaseEntityService} from '../../core/services/base-entity-service.class';
+import {isInstanceOf} from '@app/core/services/model/entity.model';
+import {BaseEntityGraphqlMutations, BaseEntityService} from '@app/core/services/base-entity-service.class';
+import {environment} from '@environments/environment';
 
 export const PersonFragments = {
   person: gql`fragment PersonFragment on PersonVO {
@@ -84,8 +84,7 @@ export class PersonService extends BaseEntityService<Person, PersonFilter>
     protected graphql: GraphqlService,
     protected platform: PlatformService,
     protected network: NetworkService,
-    protected entities: EntitiesStorage,
-    @Inject(ENVIRONMENT) protected environment
+    protected entities: EntitiesStorage
   ) {
     super(graphql, platform, Person, PersonFilter, {
       queries: PersonQueries,

@@ -16,7 +16,6 @@ export const environment: Environment = Object.freeze({
   defaultLocale: 'fr',
   defaultLatLongFormat: 'DDMM',
   apolloFetchPolicy: 'cache-first',
-  mock: false,
 
   // FIXME: GraphQL subscription never unsubscribe...
   listenRemoteChanges: false,

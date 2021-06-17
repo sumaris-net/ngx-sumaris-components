@@ -1,56 +1,33 @@
-import { Environment } from './environment.class';
-const pkg = require('../../package.json');
+import {Environment} from './environment.class';
 
 /* eslint-disable */
-// FIXME SHOULD NOT BE USED BY PACKAGER
 export const environment: Environment = Object.freeze({
-  name: (pkg.name as string),
-  version: (pkg.version as string),
+  name: '@sumaris-net/ngx-components',
+  version: ndefined, // overridden by ENVIRONMENT token
   production: true,
-  baseUrl: "/",
-  defaultLocale: "fr",
-  defaultLatLongFormat: "DDMM",
-  apolloFetchPolicy: "cache-first",
-  mock: false,
+  baseUrl: '/',
+  defaultLocale: 'fr',
+  defaultLatLongFormat: 'DDMM',
+  apolloFetchPolicy: 'cache-first',
 
-  // Must be change manually. Can be override using Pod properties 'sumaris.app.min.version'
-  peerMinVersion: '1.8.0',
-
-  // FIXME: GraphQL subscription never unsubscribe...
+  peerMinVersion: '1.0.0',
   listenRemoteChanges: false,
-
-  // FIXME: enable cache
   persistCache: false,
-
-  // Leave null,
   defaultPeer: null,
-
   // Production and public peers
   defaultPeers: [
-    {
-      host: 'www.sumaris.net',
-      port: 443
-    },
-    {
-      host: 'adap.pecheursdebretagne.eu',
-      port: 443
-    },
-    {
-      host: 'test.sumaris.net',
-      port: 443
-    },
-    {
-      host: 'isi.ifremer.fr/imagine-server/',
-      port: 443
-    }
+    // No default peer in production
   ],
-
   defaultAppName: 'SUMARiS',
   defaultAndroidInstallUrl: 'https://play.google.com/store/apps/details?id=net.sumaris.app',
 
   // Storage
   storage: {
     driverOrder: ['sqlite', 'indexeddb', 'websql', 'localstorage']
-  }
+  },
+
+  // About
+  sourceUrl: 'https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components',
+  reportIssueUrl: 'https://gitlab.ifremer.fr/sih-public/sumaris/ngx-sumaris-components/-/issues',
 });
 /* eslint-enable */

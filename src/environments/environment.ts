@@ -12,7 +12,6 @@ export const environment: Environment = Object.freeze({
   defaultLocale: 'fr',
   defaultLatLongFormat: 'DDMM',
   apolloFetchPolicy: 'cache-first',
-  mock: false,
 
   // FIXME: GraphQL subscription never unsubscribe...
   listenRemoteChanges: false,
@@ -45,39 +44,6 @@ export const environment: Environment = Object.freeze({
     {
       host: '192.168.0.29',
       port: 8080
-    },
-    {
-      host: 'server.e-is.pro',
-      port: 443
-    },
-    {
-      host: 'adap.pecheursdebretagne.eu',
-      port: 443
-    },
-    {
-      host: 'adap.pecheursdebretagne.eu',
-      port: 443,
-      path: '/test'
-    },
-    {
-      host: 'www.sumaris.net',
-      port: 443
-    },
-    {
-      host: 'test.sumaris.net',
-      port: 443
-    },
-    {
-      host: 'adap.e-is.pro',
-      port: 443
-    },
-    {
-      host: 'visi-common-docker1.ifremer.fr',
-      port: 8080
-    },
-    {
-      host: 'isi.ifremer.fr/imagine-server/',
-      port: 443
     }
   ],
   defaultAppName: 'SUMARiS',

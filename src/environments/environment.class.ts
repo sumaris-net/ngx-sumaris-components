@@ -9,7 +9,6 @@ export class Environment {
   version: string;
   production: boolean;
   baseUrl: string;
-  mock?: boolean;
   listenRemoteChanges?: boolean;
 
   // A peer to use at startup (useful on a web site deployment)

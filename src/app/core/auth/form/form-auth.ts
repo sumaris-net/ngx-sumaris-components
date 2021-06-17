@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Optional, Output} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {ModalController} from '@ionic/angular';
 import {RegisterModal} from '../../register/modal/modal-register';
@@ -52,7 +52,7 @@ export class AuthForm extends AppForm<AuthData> implements OnInit {
     private modalCtrl: ModalController,
     public network: NetworkService,
     private cd: ChangeDetectorRef,
-    @Inject(ENVIRONMENT) protected environment
+    @Optional() @Inject(ENVIRONMENT) protected environment
   ) {
     super(dateAdapter,
       formBuilder.group({
@@ -88,7 +88,7 @@ export class AuthForm extends AppForm<AuthData> implements OnInit {
     );
 
     // For DEV only
-    if (this.environment.production === false) {
+    if (this.environment && this.environment.production === false) {
       // Set the default user, for testing.
       // (see values in the test database - XML files in the module 'sumaris-core-test-shared')
       this.form.patchValue({

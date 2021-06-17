@@ -17,7 +17,6 @@ import {AppFormUtils, IAppForm} from '../form/form.utils';
 import {LocalSettingsService} from '../services/local-settings.service';
 import {TranslateService} from '@ngx-translate/core';
 import {PlatformService} from '../services/platform.service';
-import {Environment} from '../../../environments/environment.class';
 import {MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions, MatAutocompleteFieldConfig} from '../../shared/material/autocomplete/material.autocomplete';
 import {CompletableEvent, createPromiseEventEmitter, emitPromiseEvent} from '../../shared/events';
 import {isEmptyArray, isNil, isNotNil, toBoolean} from '../../shared/functions';
@@ -81,7 +80,6 @@ export abstract class AppTable<
   protected translate: TranslateService;
   protected alertCtrl: AlertController;
   protected toastController: ToastController;
-  protected environment: Environment;
 
   excludesColumns: string[] = [];
   displayedColumns: string[];

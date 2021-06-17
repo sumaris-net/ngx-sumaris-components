@@ -1,7 +1,9 @@
 <ng-container *ngIf="value && value.id">
   <ion-card @fadeInAnimation>
+
+    <!-- recorder -->
     <ion-item color="light"
-              *ngIf="value &&  (value.recorderDepartment || value.recorderPerson)">
+              *ngIf="showRecorder && value &&  (value.recorderDepartment || value.recorderPerson)">
 
       <!-- recorder avatar -->
       <ion-avatar slot="start" *ngIf="value.recorderPerson; let recorderPerson">
@@ -9,7 +11,7 @@
           src="{{ recorderPerson.avatar }}">
         <ng-template #generateAvatar>
           <svg *ngIf="recorderPerson.id; let personId"
-               width="38" width="38" [data-jdenticon-value]="personId"></svg>
+               width="38" height="38" [data-jdenticon-value]="personId"></svg>
         </ng-template>
       </ion-avatar>
 

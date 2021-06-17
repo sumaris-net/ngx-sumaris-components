@@ -19,13 +19,17 @@
       "es2018",
       "dom"
     ],
+
     "paths": {
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@environments/*": [
+        "src/environments/*"
+      ],
       // Force using the RxJS project's version
       "rxjs": ["node_modules/rxjs"],
-      "rxjs/*": ["node_modules/rxjs/*"],
-      "@angular/*": [
-        "./node_modules/@angular/*"
-      ]
+      "rxjs/*": ["node_modules/rxjs/*"]
     }
   },
   "angularCompilerOptions": {
