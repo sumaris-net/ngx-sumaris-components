@@ -28,6 +28,10 @@ export abstract class EntityFilter<F extends EntityFilter<F, T, ID, AO, FO>,
   extends Entity<F, number, AO, FO>
   implements IEntityFilter<F, T, ID, AO, FO> {
 
+  constructor(__typename?: string) {
+    super(__typename);
+  }
+
   /**
    * Clean a filter, before sending to the pod (e.g convert dates, remove internal properties, etc.)
    */

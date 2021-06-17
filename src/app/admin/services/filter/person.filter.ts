@@ -4,7 +4,7 @@ import {Person} from '../../../core/services/model/person.model';
 import {FilterFn} from '../../../shared/services/entity-service.class';
 import {EntityAsObjectOptions, EntityUtils} from '../../../core/services/model/entity.model';
 import {StoreObject} from '@apollo/client/core';
-import {isNil, isNotEmptyArray} from '../../../shared/functions';
+import {isNil, isNotEmptyArray, isNotNil} from '../../../shared/functions';
 
 // @dynamic
 @EntityClass({typename: 'PersonFilterVO'})
@@ -16,20 +16,24 @@ export class PersonFilter extends EntityFilter<PersonFilter, Person> {
         return source && PersonFilter.fromObject(source).asFilterFn();
     }
 
-    email?: string;
-    pubkey?: string;
-    searchText?: string;
-    statusIds?: number[];
-    userProfiles?: string[];
-    excludedIds?: number[];
-    searchAttribute?: string;
+    email: string;
+    pubkey: string;
+    searchText: string;
+    statusIds: number[];
+    userProfiles: string[];
+    excludedIds: number[];
+    searchAttribute: string;
+
+    constructor() {
+      super(PersonFilter.TYPENAME);
+    }
 
     fromObject(source: any, opts?: EntityAsObjectOptions) {
         super.fromObject(source, opts);
         this.email = source.email;
         this.pubkey = source.pubkey;
         this.searchText = source.searchText;
-        this.statusIds = source.statusIds;
+        this.statusIds = source.statusIds || (isNotNil(source.statusId) ? [source.statusId] : undefined);
         this.userProfiles = source.userProfiles;
         this.excludedIds = source.excludedIds;
         this.searchAttribute = source.searchAttribute;

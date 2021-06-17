@@ -216,24 +216,12 @@
   "MENU": {
     "HOME": "Accueil",
     "TESTING": "Mode développeur",
-    "TRIPS": "Marées",
-    "DOWNLOADS": "Téléchargements",
     "DATA_ENTRY_DIVIDER": "Saisie de données",
     "DATA_ACCESS_DIVIDER": "Accès aux données",
-    "OBSERVED_LOCATIONS": "Sorties",
-    "AUCTION_OCCASION": "Sorties en criée",
-    "OCCASION": "Sorties",
     "ADMINISTRATION_DIVIDER": "Administration",
-    "REFERENTIAL_DIVIDER": "Référentiels",
     "USERS": "Utilisateurs",
-    "VESSELS": "Navires",
-    "REFERENTIAL": "Référentiels",
-    "PROGRAMS": "Programmes",
-    "EXTRACTIONS": "Extractions",
-    "MAP": "Cartes",
     "FOOTER_VERSION_ABOUT": "v{{version}} | à propos",
     "LOCAL_SETTINGS": "Paramètres",
-    "SERVER": "Configuration serveur",
     "LOGOUT": "Se déconnecter",
     "ABOUT": "À propos"
   },
@@ -290,6 +278,14 @@
       "NOT_SAME_EMAIL": "Les emails ne correspondent pas",
       "NOT_SAME_PASSWORD": "Les mots de passe ne correspondent pas",
       "EMAIL_ALREADY_REGISTERED": "Email déjà enregistrée"
+    }
+  },
+  "REFERENTIAL": {
+    "STATUS_ENUM": {
+      "ENABLE": "Actif à la saisie",
+      "DISABLE": "Inactif à la saisie",
+      "TEMPORARY": "Temporaire",
+      "DELETED": "En cours de suppression"
     }
   },
   "ACCOUNT": {
@@ -363,6 +359,8 @@
     },
     "STATUS": "Etat",
     "PUBKEY": "Clé publique",
+    "USERNAME": "Login",
+    "USERNAME_EXTRANET": "Login Extranet",
     "PROFILE": "Profil",
     "PROFILE_ENUM": {
       "ADMIN": "Administrateur",

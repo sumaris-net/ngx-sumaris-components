@@ -61,8 +61,8 @@ query Configuration{
 
 // Save (create or update) account mutation
 const SaveMutation: any = gql`
-  mutation SaveConfiguration($config:ConfigurationVOInput){
-    saveConfiguration(config: $config){
+  mutation SaveConfiguration($data: ConfigurationVOInput){
+    data: saveConfiguration(config: $data){
        ...ConfigFragment
     }
   }
@@ -215,10 +215,10 @@ export class ConfigService
     const json = config.asObject();
 
     // Execute mutation
-    const res = await this.graphql.mutate<{ saveConfiguration: any }>({
+    const res = await this.graphql.mutate<{ data: any }>({
       mutation: SaveMutation,
       variables: {
-        config: json
+        data: json
       },
       error: {
         code: ErrorCodes.SAVE_CONFIG_ERROR,
@@ -226,7 +226,7 @@ export class ConfigService
       }
     });
 
-    const savedConfig = res && res.saveConfiguration;
+    const savedConfig = res && res.data;
 
     // Copy update properties
     config.id = savedConfig && savedConfig.id || config.id;

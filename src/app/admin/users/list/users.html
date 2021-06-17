@@ -1,34 +1,46 @@
-<app-toolbar [title]="'USER.LIST.TITLE'|translate" color="primary"
+<app-toolbar [title]="'USER.LIST.TITLE'|translate"
+             color="primary"
              [canGoBack]="false"
-             [hasValidate]="!(loadingSubject|async) && dirty" (onValidate)="save()">
-</app-toolbar>
-
-<ion-content class="ion-no-padding">
-
-  <mat-toolbar>
-
+             [hasValidate]="!(loadingSubject|async) && dirty"
+             (onValidate)="save()">
+  <ion-buttons slot="end">
     <ng-container *ngIf="!selection.hasValue(); else hasSelection">
-      <button mat-icon-button class="hidden-xs hidden-sm hidden-mobile"
-              *ngIf="canEdit"
+      <!-- Add -->
+      <button mat-icon-button
+              *ngIf="canEdit && !mobile"
               [title]="'COMMON.BTN_ADD'|translate"
               (click)="addRow()">
         <mat-icon>add</mat-icon>
       </button>
-      <button mat-icon-button color="light" [title]="'COMMON.BTN_REFRESH'|translate" (click)="onRefresh.emit()">
+
+      <!-- Refresh -->
+      <button mat-icon-button *ngIf="!mobile"
+              [title]="'COMMON.BTN_REFRESH'|translate"
+              (click)="onRefresh.emit()">
         <mat-icon>refresh</mat-icon>
       </button>
-      <button mat-icon-button color="{{filterIsEmpty ? '' : 'primary'}}"
-              [title]="'COMMON.BTN_FILTER'|translate"
-              (click)="filterExpansionPanel.toggle()">
-        <mat-icon>filter_list_alt</mat-icon>
-        <ion-text *ngIf="!filterIsEmpty">
-          <span [innerHTML]="'COMMON.TABLE.FILTERED_PARENTHESIS'|translate"></span></ion-text>
+
+      <!-- reset filter -->
+      <button mat-icon-button (click)="resetFilter()"
+              *ngIf="filterCriteriaCount">
+        <mat-icon color="accent">filter_list_alt</mat-icon>
+        <mat-icon  class="icon-secondary" style="left: 16px; top: 5px; font-weight: bold;">close</mat-icon>
+      </button>
+
+      <!-- show filter -->
+      <button mat-icon-button (click)="filterExpansionPanel.toggle()">
+        <mat-icon *ngIf="filterCriteriaCount; else emptyFilter"
+                  [matBadge]="filterCriteriaCount"
+                  matBadgeColor="accent"
+                  matBadgeSize="small"
+                  matBadgePosition="above after">filter_list_alt</mat-icon>
+        <ng-template #emptyFilter>
+          <mat-icon>filter_list_alt</mat-icon>
+        </ng-template>
       </button>
     </ng-container>
 
-    <!-- if row selection -->
     <ng-template #hasSelection>
-
       <!-- delete -->
       <button mat-icon-button
               class="hidden-xs hidden-sm"
@@ -37,22 +49,19 @@
         <mat-icon>delete</mat-icon>
       </button>
     </ng-template>
+  </ion-buttons>
+</app-toolbar>
 
-    <!-- error -->
-    <ion-item *ngIf="error" hidden-xs hidden-sm hidden-mobile lines="none">
-      <ion-icon color="danger" slot="start" name="alert-circle"></ion-icon>
-      <ion-label color="danger" class="error" [innerHTML]="error|translate"></ion-label>
-    </ion-item>
+<ion-content class="ion-no-padding">
 
-    <div class="toolbar-spacer"></div>
-
-    <button mat-icon-button [title]="'COMMON.DISPLAYED_COLUMNS'|translate" (click)="openSelectColumnsModal($event)">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-  </mat-toolbar>
+  <!-- error -->
+  <ion-item *ngIf="errorSubject|async ; let error" lines="none" @slideUpDownAnimation>
+    <ion-icon color="danger" slot="start" name="alert-circle"></ion-icon>
+    <ion-label color="danger" class="error" [innerHTML]="error|translate"></ion-label>
+  </ion-item>
 
   <!-- search -->
-  <mat-expansion-panel #filterExpansionPanel class="ion-no-padding">
+  <mat-expansion-panel #filterExpansionPanel class="ion-no-padding filter-panel">
     <form class="form-container ion-padding" [formGroup]="filterForm" (ngSubmit)="onRefresh.emit()">
       <ion-grid>
         <ion-row>
@@ -60,6 +69,33 @@
             <!-- search -->
             <mat-form-field>
               <input matInput [placeholder]="'USER.LIST.FILTER.SEARCH'|translate" formControlName="searchText">
+
+              <button mat-icon-button matSuffix tabindex="-1"
+                      type="button"
+                      (click)="clearControlValue($event, filterForm.controls.searchText)"
+                      [hidden]="filterForm.controls.searchText.disabled || !filterForm.controls.searchText.value">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </ion-col>
+
+          <ion-col>
+            <!-- status -->
+            <mat-form-field>
+              <mat-select formControlName="statusId" [placeholder]="'USER.STATUS'|translate" >
+                <mat-option [value]="null"><i><span translate>COMMON.EMPTY_OPTION</span></i></mat-option>
+                <mat-option *ngFor="let item of statusList" [value]="item.id">
+                  <ion-icon [name]="item.icon"></ion-icon>
+                  {{ item.label |translate }}
+                </mat-option>
+              </mat-select>
+
+              <button mat-icon-button matSuffix tabindex="-1"
+                      type="button"
+                      (click)="clearControlValue($event, filterForm.controls.statusId)"
+                      [hidden]="filterForm.controls.statusId.disabled || !filterForm.controls.statusId.value">
+                <mat-icon>close</mat-icon>
+              </button>
             </mat-form-field>
           </ion-col>
         </ion-row>
@@ -68,7 +104,8 @@
 
     <mat-action-row>
       <!-- Counter  -->
-      <ion-label [hidden]="(loadingSubject|async) || filterForm.dirty" [color]="totalRowCount === 0 && 'danger'"
+      <ion-label [hidden]="(loadingSubject|async) || filterForm.dirty"
+                 [color]="empty && 'danger'"
                  class="ion-padding">
         {{ (totalRowCount ? 'COMMON.RESULT_COUNT' : 'COMMON.NO_RESULT') | translate: {count: (totalRowCount |
               numberFormat)} }}
@@ -76,14 +113,22 @@
 
       <div class="toolbar-spacer"></div>
 
+      <!-- Close panel -->
+      <ion-button mat-button fill="clear" color="dark"
+                  (click)="filterExpansionPanel.close()"
+                  [disabled]="loadingSubject|async">
+        <ion-text translate>COMMON.BTN_CLOSE</ion-text>
+      </ion-button>
+
       <!-- Search button -->
       <ion-button mat-button
-                  *ngIf="!mobile"
-                  [color]="filterForm.dirty ? 'tertiary' : undefined"
+                  [color]="filterForm.dirty ? 'tertiary' : 'dark'"
                   [fill]="filterForm.dirty ? 'solid' : 'clear'"
-                  (click)="onRefresh.emit()">
-        <ion-text translate>COMMON.BTN_SEARCH</ion-text>
+                  (click)="applyFilterAndClosePanel($event)"
+                  [disabled]="loadingSubject|async">
+        <ion-text translate>COMMON.BTN_APPLY</ion-text>
       </ion-button>
+
     </mat-action-row>
   </mat-expansion-panel>
 
@@ -93,217 +138,261 @@
     <ion-label color="danger" class="error" [innerHTML]="error|translate"></ion-label>
   </ion-item>
 
-  <mat-table #table [dataSource]="dataSource" matSort matSortActive="lastName" matSortDirection="asc"
-    matSortDisableClear [trackBy]="trackByFn">
+  <div class="table-container">
+    <table #table mat-table matSort
+           [dataSource]="dataSource"
+           [matSortActive]="defaultSortBy" [matSortDirection]="defaultSortDirection"
+      matSortDisableClear [trackBy]="trackByFn">
 
-    <ng-container matColumnDef="select">
-      <mat-header-cell class="hidden-xs hidden-sm" *matHeaderCellDef [class.cdk-visually-hidden]="!inlineEdition">
-        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
-        </mat-checkbox>
-      </mat-header-cell>
-      <mat-cell class="hidden-xs hidden-sm" *matCellDef="let row" [class.cdk-visually-hidden]="!inlineEdition">
-        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
-        </mat-checkbox>
-      </mat-cell>
+      <ng-container matColumnDef="select">
+        <th mat-header-cell  *matHeaderCellDef [class.cdk-visually-hidden]="!inlineEdition">
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.cdk-visually-hidden]="!inlineEdition">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Id Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <ion-label>#</ion-label>
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.currentData.id }}</td>
+      </ng-container>
+
+      <!-- avatar Column -->
+      <ng-container matColumnDef="avatar">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <div class="avatar" *ngIf="row.currentData.avatar; else generateIcon"
+               [ngStyle]="{'background-image':'url('+row.currentData.avatar+')'}"></div>
+          <ng-template #generateIcon>
+            <div class="avatar">
+              <svg width="38" width="38" [data-jdenticon-value]="row.currentData.id"></svg>
+            </div>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- lastName  -->
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <span translate>USER.LAST_NAME</span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-form-field floatLabel="never">
+            <input matInput [formControl]="row.validator.controls['lastName']" [placeholder]="'USER.LAST_NAME'|translate"
+              [readonly]="!row.editing" [appAutofocus]="row == -1 && row.editing">
+            <mat-error *ngIf="row.validator.controls['lastName'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+            <mat-error *ngIf="row.validator.controls['lastName'].hasError('minlength')">
+              <span>{{'ERROR.FIELD_MIN_LENGTH' | translate: {minLength: 2} }}</span>
+            </mat-error>
+          </mat-form-field>
+
+        </td>
+
+      </ng-container>
+
+      <!-- firstname -->
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <span translate>USER.FIRST_NAME</span>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
+          <mat-form-field floatLabel="never">
+            <input matInput [formControl]="row.validator.controls['firstName']" [placeholder]="'USER.FIRST_NAME'|translate"
+              [readonly]="!row.editing">
+            <mat-error *ngIf="row.validator.controls['firstName'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+            <mat-error *ngIf="row.validator.controls['firstName'].hasError('minlength')">
+              <span>{{'ERROR.FIELD_MIN_LENGTH' | translate: {minLength: 2} }}</span>
+            </mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- email  -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <span translate>USER.EMAIL</span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-form-field floatLabel="never">
+            <input matInput [formControl]="row.validator.controls['email']" [placeholder]="'USER.EMAIL'|translate"
+              [readonly]="!row.editing">
+            <mat-error *ngIf="row.validator.controls['email'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+            <mat-error *ngIf="row.validator.controls['email'].hasError('email')">
+              <span translate>ERROR.FIELD_NOT_VALID_EMAIL</span>
+            </mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- additional fields -->
+      <ng-container *ngFor="let definition of additionalFields" [matColumnDef]="definition.key">
+        <th mat-header-cell *matHeaderCellDef>
+          <span>{{definition.label|translate}}</span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <app-form-field floatLabel="never"
+                          [definition]="definition"
+                          [formControl]="row.validator.controls[definition.key]"
+                          [required]="definition.extra?.account?.required">
+          </app-form-field>
+        </td>
+      </ng-container>
+
+      <!-- profile column  -->
+      <ng-container matColumnDef="profile">
+        <th mat-header-cell *matHeaderCellDef>
+          <span translate>USER.PROFILE</span>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
+          <mat-form-field floatLabel="never">
+            <mat-select [formControl]="row.validator.controls['mainProfile']" [placeholder]="'USER.PROFILE'|translate">
+              <mat-option *ngFor="let item of profiles" [value]="item">
+                {{ ('USER.PROFILE_ENUM.' + item) | uppercase |translate }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="row.validator.controls['mainProfile'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- Status column  -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>
+          <span translate>USER.STATUS</span>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
+          <mat-form-field floatLabel="never">
+            <ion-icon matPrefix *ngIf="row.validator.controls['statusId'].value &gt;=0" [name]="statusById[row.validator.controls['statusId'].value]?.icon"></ion-icon>
+
+            <mat-select [formControl]="row.validator.controls['statusId']" [placeholder]="'REFERENTIAL.STATUS'|translate">
+              <mat-select-trigger>
+                <span *ngIf="row.validator.controls['statusId'].value &gt;=0">
+                  {{ statusById[row.validator.controls['statusId'].value]?.label | translate}}</span>
+              </mat-select-trigger>
+              <mat-option *ngFor="let item of statusList" [value]="item.id">
+                <ion-icon [name]="item.icon"></ion-icon>
+                {{ item.label |translate }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="row.validator.controls['statusId'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- username -->
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <span translate>USER.USERNAME</span>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
+          <mat-form-field floatLabel="never">
+            <input matInput [formControl]="row.validator.controls.username" [placeholder]="'USER.USERNAME'|translate"
+                   [readonly]="!row.editing">
+            <mat-error *ngIf="row.validator.controls.username.hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- username extranet -->
+      <ng-container matColumnDef="usernameExtranet">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <span translate>USER.USERNAME_EXTRANET</span>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
+          <mat-form-field floatLabel="never">
+            <input matInput [formControl]="row.validator.controls.usernameExtranet" [placeholder]="'USER.USERNAME_EXTRANET'|translate"
+                   [readonly]="!row.editing">
+            <mat-error *ngIf="row.validator.controls.usernameExtranet.hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- pubkey  -->
+      <ng-container matColumnDef="pubkey">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <span translate>USER.PUBKEY</span>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing" [title]="row.validator.controls['pubkey'].value">
+          <mat-form-field floatLabel="never">
+            <input matInput [formControl]="row.validator.controls['pubkey']" [placeholder]="'USER.PUBKEY'|translate"
+              [readonly]="!row.editing" autocomplete="off">
+            <mat-error *ngIf="row.validator.controls['pubkey'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+            <mat-error *ngIf="row.validator.controls['pubkey'].hasError('pubkey')">
+              <span translate>ERROR.FIELD_NOT_VALID_PUBKEY</span>
+            </mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <!-- Actions buttons column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef >
+          <button mat-icon-button [title]="'COMMON.DISPLAYED_COLUMNS'|translate" (click)="openSelectColumnsModal($event)">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <ng-container *ngIf="inlineEdition">
+            <!-- undo or delete  -->
+            <button mat-icon-button small color="light" *ngIf="row.validator.invalid" [title]="(row.id !== -1 ? 'COMMON.BTN_UNDO': 'COMMON.BTN_DELETE')|translate"
+                    (click)="cancelOrDelete($event, row)">
+              <mat-icon *ngIf="row.id !== -1">undo</mat-icon>
+              <mat-icon *ngIf="row.id === -1">delete_outline</mat-icon>
+            </button>
+            <!-- validate -->
+            <button mat-icon-button small color="light" *ngIf="row.validator.valid && row.id !== -1" [title]="'COMMON.BTN_VALIDATE'|translate"
+                    (click)="confirmEditCreate($event, row)">
+              <mat-icon>check</mat-icon>
+            </button>
+            <!-- add -->
+            <button mat-icon-button small color="light" *ngIf="row.validator.valid && row.id === -1" [title]="'COMMON.BTN_ADD'|translate"
+                    (click)="confirmAndAddRow($event, row)">
+              <mat-icon>add</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+               [class.mat-row-error]="row.validator.invalid"
+               [class.mat-row-dirty]="row.currentData.dirty"
+               [class.mat-row-disabled]="!row.editing"
+               (click)="clickRow($event, row)"></tr>
+    </table>
+
+    <ng-container *ngIf="loadingSubject|async; else noResult">
+      <ion-item>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
     </ng-container>
 
-    <!-- Id Column -->
-    <ng-container matColumnDef="id">
-      <mat-header-cell class="hidden-xs hidden-sm" *matHeaderCellDef mat-sort-header>
-        <app-loading-spinner [loading]="loadingSubject|async"><ion-label>#</ion-label></app-loading-spinner>
-      </mat-header-cell>
-      <mat-cell class="hidden-xs hidden-sm" *matCellDef="let row">{{ row.currentData.id }}</mat-cell>
-    </ng-container>
-
-    <!-- avatar Column -->
-    <ng-container matColumnDef="avatar">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <div class="avatar" *ngIf="row.currentData.avatar; else generateIcon"
-             [ngStyle]="{'background-image':'url('+row.currentData.avatar+')'}"></div>
-        <ng-template #generateIcon>
-          <div class="avatar">
-            <svg width="38" width="38" [data-jdenticon-value]="row.currentData.id"></svg>
-          </div>
-        </ng-template>
-      </mat-cell>
-    </ng-container>
-
-    <!-- lastName  -->
-    <ng-container matColumnDef="lastName">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        <span translate>USER.LAST_NAME</span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-form-field floatLabel="never">
-          <input matInput [formControl]="row.validator.controls['lastName']" [placeholder]="'USER.LAST_NAME'|translate"
-            [readonly]="!row.editing" [appAutofocus]="row == -1 && row.editing">
-          <mat-error *ngIf="row.validator.controls['lastName'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
-          <mat-error *ngIf="row.validator.controls['lastName'].hasError('minlength')">
-            <span>{{'ERROR.FIELD_MIN_LENGTH' | translate: {minLength: 2} }}</span>
-          </mat-error>
-        </mat-form-field>
-
-      </mat-cell>
-
-    </ng-container>
-
-    <!-- firstname -->
-    <ng-container matColumnDef="firstName">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        <span translate>USER.FIRST_NAME</span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
-        <mat-form-field floatLabel="never">
-          <input matInput [formControl]="row.validator.controls['firstName']" [placeholder]="'USER.FIRST_NAME'|translate"
-            [readonly]="!row.editing">
-          <mat-error *ngIf="row.validator.controls['firstName'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
-          <mat-error *ngIf="row.validator.controls['firstName'].hasError('minlength')">
-            <span>{{'ERROR.FIELD_MIN_LENGTH' | translate: {minLength: 2} }}</span>
-          </mat-error>
-        </mat-form-field>
-      </mat-cell>
-    </ng-container>
-
-    <!-- email  -->
-    <ng-container matColumnDef="email">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        <span translate>USER.EMAIL</span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-form-field floatLabel="never">
-          <input matInput [formControl]="row.validator.controls['email']" [placeholder]="'USER.EMAIL'|translate"
-            [readonly]="!row.editing">
-          <mat-error *ngIf="row.validator.controls['email'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
-          <mat-error *ngIf="row.validator.controls['email'].hasError('email')">
-            <span translate>ERROR.FIELD_NOT_VALID_EMAIL</span>
-          </mat-error>
-        </mat-form-field>
-      </mat-cell>
-    </ng-container>
-
-    <!-- additional fields -->
-    <ng-container *ngFor="let definition of additionalFields" [matColumnDef]="definition.key">
-      <mat-header-cell *matHeaderCellDef>
-        <span>{{definition.label|translate}}</span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <app-form-field floatLabel="never"
-                        [definition]="definition"
-                        [formControl]="row.validator.controls[definition.key]"
-                        [required]="definition.extra?.account?.required">
-        </app-form-field>
-      </mat-cell>
-    </ng-container>
-
-    <!-- profile column  -->
-    <ng-container matColumnDef="profile">
-      <mat-header-cell *matHeaderCellDef>
-        <span translate>USER.PROFILE</span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
-        <mat-form-field floatLabel="never">
-          <mat-select [formControl]="row.validator.controls['mainProfile']" [placeholder]="'USER.PROFILE'|translate">
-            <mat-option *ngFor="let item of profiles" [value]="item">
-              {{ ('USER.PROFILE_ENUM.' + item) | uppercase |translate }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="row.validator.controls['mainProfile'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
-        </mat-form-field>
-      </mat-cell>
-    </ng-container>
-
-    <!-- Status column  -->
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef>
-        <span translate>USER.STATUS</span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
-        <mat-form-field floatLabel="never">
-          <ion-icon matPrefix *ngIf="row.validator.controls['statusId'].value &gt;=0" [name]="statusById[row.validator.controls['statusId'].value]?.icon"></ion-icon>
-
-          <mat-select [formControl]="row.validator.controls['statusId']" [placeholder]="'REFERENTIAL.STATUS'|translate">
-            <mat-select-trigger>
-              <span *ngIf="row.validator.controls['statusId'].value &gt;=0">
-                {{ statusById[row.validator.controls['statusId'].value]?.label | translate}}</span>
-            </mat-select-trigger>
-            <mat-option *ngFor="let item of statusList" [value]="item.id">
-              <ion-icon [name]="item.icon"></ion-icon>
-              {{ item.label |translate }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="row.validator.controls['statusId'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
-        </mat-form-field>
-      </mat-cell>
-    </ng-container>
-
-    <!-- pubkey  -->
-    <ng-container matColumnDef="pubkey">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        <span translate>USER.PUBKEY</span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing" [title]="row.validator.controls['pubkey'].value">
-        <mat-form-field floatLabel="never">
-          <input matInput [formControl]="row.validator.controls['pubkey']" [placeholder]="'USER.PUBKEY'|translate"
-            [readonly]="!row.editing" autocomplete="off">
-          <mat-error *ngIf="row.validator.controls['pubkey'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
-          <mat-error *ngIf="row.validator.controls['pubkey'].hasError('pubkey')">
-            <span translate>ERROR.FIELD_NOT_VALID_PUBKEY</span>
-          </mat-error>
-        </mat-form-field>
-      </mat-cell>
-    </ng-container>
-
-    <!-- Actions buttons column -->
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef [hidden]="!inlineEdition">
-        <span></span>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row" [hidden]="!inlineEdition">
-        <!-- undo or delete  -->
-        <button mat-icon-button small color="light" *ngIf="row.validator.invalid" [title]="(row.id !== -1 ? 'COMMON.BTN_UNDO': 'COMMON.BTN_DELETE')|translate"
-                (click)="cancelOrDelete($event, row)">
-          <mat-icon *ngIf="row.id !== -1">undo</mat-icon>
-          <mat-icon *ngIf="row.id === -1">delete_outline</mat-icon>
-        </button>
-        <!-- validate -->
-        <button mat-icon-button small color="light" *ngIf="row.validator.valid && row.id !== -1" [title]="'COMMON.BTN_VALIDATE'|translate"
-                (click)="confirmEditCreate($event, row)">
-          <mat-icon>check</mat-icon>
-        </button>
-        <!-- add -->
-        <button mat-icon-button small color="light" *ngIf="row.validator.valid && row.id === -1" [title]="'COMMON.BTN_ADD'|translate"
-                (click)="confirmAndAddRow($event, row)">
-          <mat-icon>add</mat-icon>
-        </button>
-      </mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"
-             [class.mat-row-error]="row.validator.invalid"
-             [class.mat-row-dirty]="row.currentData.dirty"
-             [class.mat-row-disabled]="!row.editing"
-             (click)="clickRow($event, row)"></mat-row>
-  </mat-table>
-
-  <!-- Paginator  -->
-  <ion-row class="ion-no-padding">
-    <ion-col></ion-col>
-    <ion-col class="ion-no-padding" size="auto">
-      <mat-paginator [length]="totalRowCount" [pageSize]="defaultPageSize" [pageSizeOptions]="defaultPageSizeOptions" showFirstLastButtons>
-      </mat-paginator>
-    </ion-col>
-  </ion-row>
-
+    <ng-template #noResult>
+      <ion-item *ngIf="totalRowCount === 0">
+        <ion-text color="danger" class="text-italic" translate>COMMON.NO_RESULT</ion-text>
+      </ion-item>
+    </ng-template>
+  </div>
 </ion-content>
 
-<ion-footer *ngIf="inlineEdition" hidden-xs hidden-sm hidden-mobile>
-  <form-buttons-bar (onCancel)="onRefresh.emit()" (onSave)="save()" [disabled]="(loadingSubject|async) || !dirty"></form-buttons-bar>
+<ion-footer>
+  <mat-paginator class="mat-paginator-footer"
+                 [length]="totalRowCount" [pageSize]="defaultPageSize"
+                 [pageSizeOptions]="defaultPageSizeOptions" showFirstLastButtons>
+  </mat-paginator>
+
+  <form-buttons-bar *ngIf="!mobile && inlineEdition"
+                    (onCancel)="onRefresh.emit()" (onSave)="save()" [disabled]="(loadingSubject|async) || !dirty"></form-buttons-bar>
 </ion-footer>
 
-<ion-fab slot="fixed" vertical="bottom" horizontal="end" visible-xs visible-sm visible-mobile>
+<ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="mobile">
   <ion-fab-button color="tertiary" (click)="addRow()">
     <ion-icon name="add"></ion-icon>
   </ion-fab-button>

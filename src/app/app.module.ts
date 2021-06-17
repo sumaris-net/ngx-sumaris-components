@@ -173,6 +173,10 @@ import {environment} from '../environments/environment';
       provide: APP_MENU_ITEMS, useValue: [
         {title: 'MENU.HOME', path: '/', icon: 'home'},
 
+        // Admin
+        {title: 'MENU.ADMINISTRATION_DIVIDER', profile: 'ADMIN'},
+        {title: 'MENU.USERS', path: '/admin/users', icon: 'people', profile: 'ADMIN'},
+
         // Settings
         {title: '' /*empty divider*/, cssClass: 'flex-spacer'},
         {title: 'MENU.TESTING', path: '/testing', icon: 'code', color: 'danger', ifProperty: 'sumaris.testing.enable', profile: 'SUPERVISOR'},

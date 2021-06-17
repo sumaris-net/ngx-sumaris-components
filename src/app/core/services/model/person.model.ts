@@ -7,7 +7,7 @@ import {EntityClass} from './entity.decorators';
 
 
 export type UserProfileLabel = 'ADMIN' | 'USER' | 'SUPERVISOR' | 'GUEST';
-export const PRIORITIZED_AUTHORITIES: Readonly<UserProfileLabel[]> = Object.freeze(["ADMIN", "SUPERVISOR", "USER", "GUEST"]);
+export const PRIORITIZED_AUTHORITIES: Readonly<UserProfileLabel[]> = Object.freeze(['ADMIN', 'SUPERVISOR', 'USER', 'GUEST']);
 
 // @dynamic
 @EntityClass({typename: 'PersonVO'})
@@ -24,13 +24,14 @@ export class Person<
   avatar: string;
   creationDate: Date | Moment;
   statusId: number;
-  department: Department;
+  department: Department = null;
+  username: string;
+  usernameExtranet: string;
   profiles: string[];
   mainProfile: string;
 
   constructor(__typename?: string) {
     super(__typename || Person.TYPENAME);
-    this.department = null;
   }
 
   asObject(opts?: ReferentialAsObjectOptions): any {
@@ -60,6 +61,8 @@ export class Person<
     this.email = source.email;
     this.creationDate = fromDateISOString(source.creationDate);
     this.pubkey = source.pubkey;
+    this.username = source.username;
+    this.usernameExtranet = source.usernameExtranet;
     this.avatar = source.avatar;
     this.statusId = source.statusId;
     this.department = source.department && Department.fromObject(source.department) || undefined;

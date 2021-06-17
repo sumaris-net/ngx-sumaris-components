@@ -97,9 +97,12 @@ export abstract class Entity<
 }
 export function isInstanceOf<T>(obj: any, constructor: new (...args: any[]) => T): obj is T {
   if (!obj) return false;
-  // DEBUG
-  //if (obj.constructor.name === (constructor as any).CLASSNAME) console.debug("isInstanceOf() => OK for " + obj.constructor.name, );
-  return obj.constructor.CLASSNAME === (constructor as any).CLASSNAME;
+
+  // -- for DEV only
+  // const result = obj.constructor.CLASSNAME && obj.constructor.CLASSNAME === (constructor as any).name;
+  // console.debug("isInstanceOf() => " + result);
+
+  return obj.constructor.CLASSNAME && obj.constructor.CLASSNAME === (constructor as any).name;
 }
 
 // @dynamic

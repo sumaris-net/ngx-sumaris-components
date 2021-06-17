@@ -28,6 +28,8 @@ export const PersonFragments = {
     updateDate
     creationDate
     profiles
+    username
+    usernameExtranet
     department {
       id
       label
@@ -36,8 +38,7 @@ export const PersonFragments = {
       __typename
     }
     __typename
-  }
-  `
+  }`
 };
 
 // Load persons query
@@ -63,8 +64,8 @@ const PersonQueries = {
 
 const PersonMutations: BaseEntityGraphqlMutations = {
   saveAll: gql`
-    mutation savePersons($persons:[PersonVOInput]){
-      data: savePersons(persons: $persons){
+    mutation savePersons($data:[PersonVOInput]){
+      data: savePersons(persons: $data){
         ...PersonFragment
       }
     }
@@ -192,6 +193,7 @@ export class PersonService extends BaseEntityService<Person, PersonFilter>
   protected asObject(source: Person | any): any {
     if (!source) return undefined;
 
+    console.debug('TODO check isInstanceOf');
     if (!isInstanceOf(source, Person)) {
       source = Person.fromObject(source);
     }

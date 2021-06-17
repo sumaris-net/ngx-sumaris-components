@@ -27,6 +27,17 @@
     background-position: center;
   }
   .mat-column-avatar {
-    max-width: 50px;
+    min-width: 50px;
+  }
+
+  .mat-column-profile {
+    min-width: 110px;
+  }
+  .mat-column-status {
+    min-width: 130px;
+  }
+
+  .mat-column-department {
+    min-width: 150px;
   }
 }
