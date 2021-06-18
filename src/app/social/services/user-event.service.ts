@@ -57,8 +57,8 @@ export class UserEventFilter extends EntityFilter<UserEventFilter, UserEvent> {
 }
 
 const SaveQuery: any = gql`
-  mutation SaveUserEvent($userEvent: UserEventVOInput){
-    saveUserEvent(userEvent: $userEvent){
+  mutation SaveUserEvent($data: UserEventVOInput){
+    data: saveUserEvent(userEvent: $data){
       ...UserEventFragment
     }
   }
@@ -67,7 +67,7 @@ const SaveQuery: any = gql`
 
 const LoadAllQuery: any = gql`
   query UserEvents($filter: UserEventFilterVOInput, $page: PageInput){
-    userEvents(filter: $filter, page: $page){
+    data: userEvents(filter: $filter, page: $page){
       ...LightUserEventFragment
     }
   }
@@ -82,7 +82,7 @@ const DeleteByIdsMutation: any = gql`
 
 const LoadAllWithContentQuery: any = gql`
   query UserEventsWithContent($filter: UserEventFilterVOInput, $page: PageInput){
-    userEvents(filter: $filter, page: $page){
+    data: userEvents(filter: $filter, page: $page){
       ...UserEventFragment
     }
   }
@@ -158,7 +158,7 @@ export class UserEventService
 
     const withContent = options && options.withContent === true;
 
-    return this.mutableWatchQuery<{userEvents: any; userEventCount: number}>({
+    return this.mutableWatchQuery<LoadResult<any>>({
       queryName: withContent ? 'LoadAllWithContent' : 'LoadAll',
       query: withContent ? LoadAllWithContentQuery : LoadAllQuery,
       variables: {
@@ -167,16 +167,15 @@ export class UserEventService
           ...page,
           sortDirection: (page.sortDirection || 'DESC').toUpperCase(),
         },
-        filter
+        filter: filter && filter.asPodObject()
       },
-      arrayFieldName: 'userEvents',
-      totalFieldName: 'userEventCount',
+      arrayFieldName: 'data',
       error: {code: ErrorCodes.LOAD_USER_EVENTS_ERROR, message: 'SOCIAL.ERROR.LOAD_USER_EVENTS_ERROR'},
       fetchPolicy: options && options.fetchPolicy || undefined
     })
       .pipe(
         map(res => {
-          const data = res && (res.userEvents || []).map(UserEvent.fromObject);
+          const data = res && (res.data || []).map(UserEvent.fromObject);
 
           if (now) {
             console.debug(`[user-event-service] ${data.length} user events loaded in ${Date.now() - now}ms`);
@@ -184,7 +183,7 @@ export class UserEventService
           }
           return {
             data,
-            total: res && toNumber(res.userEventCount, data.length)
+            total: res && toNumber(res.total, data.length)
           };
         })
       );
@@ -212,15 +211,15 @@ export class UserEventService
     const now = Date.now();
     if (this._debug) console.debug(`[user-event-service] Saving user event...`, json);
 
-    await this.graphql.mutate<{ saveUserEvent: any }>({
+    await this.graphql.mutate<{ data: any }>({
       mutation: SaveQuery,
       variables: {
-        userEvent: json
+        data: json
       },
       error: { code: ErrorCodes.SAVE_USER_EVENT_ERROR, message: 'SOCIAL.ERROR.SAVE_USER_EVENT_ERROR' },
       update: (proxy, {data}) => {
         // Update entity
-        const savedEntity = data && data.saveUserEvent;
+        const savedEntity = data && data.data;
         if (savedEntity) {
           if (this._debug) console.debug(`[user-event-service] User event saved in ${Date.now() - now}ms`, entity);
           this.copyIdAndUpdateDate(savedEntity, entity);

@@ -80,7 +80,7 @@ export abstract class Entity<
   asObject(opts?: AO): StoreObject {
     const target: any = Object.assign({}, this); //= {...this};
     if (!opts || opts.keepTypename !== true) delete target.__typename;
-    if (opts && opts.keepLocalId === false && target.id < 0) delete target.id;
+    if (target.id == null || (opts && opts.keepLocalId === false && target.id < 0)) delete target.id;
     target.updateDate = toDateISOString(this.updateDate);
     return target;
   }
@@ -98,11 +98,14 @@ export abstract class Entity<
 export function isInstanceOf<T>(obj: any, constructor: new (...args: any[]) => T): obj is T {
   if (!obj) return false;
 
-  // -- for DEV only
-  // const result = obj.constructor.CLASSNAME && obj.constructor.CLASSNAME === (constructor as any).name;
-  // console.debug("isInstanceOf() => " + result);
+  const actualClass = obj.constructor.CLASSNAME || obj.constructor.name;
+  const expectedClass = (constructor as any).CLASSNAME || constructor.name;
+  const result = actualClass && expectedClass && actualClass === expectedClass;
 
-  return obj.constructor.CLASSNAME && obj.constructor.CLASSNAME === (constructor as any).name;
+  // -- for DEV only
+  //console.debug("isInstanceOf() => " + result);
+
+  return result;
 }
 
 // @dynamic

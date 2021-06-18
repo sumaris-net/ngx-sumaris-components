@@ -1,7 +1,8 @@
-import {isEmptyArray} from '../../../shared/functions';
+import {isEmptyArray, isNil} from '../../../shared/functions';
 import {MINIFY_ENTITY_FOR_POD, ReferentialUtils} from './referential.model';
 import {Entity, EntityAsObjectOptions, IEntity, isInstanceOf} from './entity.model';
 import {FilterFn} from '../../../shared/services/entity-service.class';
+import {StoreObject} from '@apollo/client/core';
 
 
 

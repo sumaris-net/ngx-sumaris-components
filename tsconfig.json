@@ -21,12 +21,6 @@
     ],
 
     "paths": {
-      "@app/*": [
-        "src/app/*"
-      ],
-      "@environments/*": [
-        "src/environments/*"
-      ],
       // Force using the RxJS project's version
       "rxjs": ["node_modules/rxjs"],
       "rxjs/*": ["node_modules/rxjs/*"]
