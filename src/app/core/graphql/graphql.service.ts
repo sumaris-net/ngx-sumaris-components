@@ -893,6 +893,7 @@ export class GraphqlService {
       (err.networkError && (
           (err.networkError.error && this.toAppError(err.networkError.error))
           || this.toAppError(err.networkError)
+          || (err.networkError.error && this.createAppErrorByCode(err.networkError.error.status))
           || this.createAppErrorByCode(ErrorCodes.UNKNOWN_NETWORK_ERROR)
         )
       )
