@@ -93,9 +93,9 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
         label: 'CONFIGURATION.OPTIONS.MENU.ITEMS',
         type: 'string'
         // -- FOR DEV
-        /*defaultValue: JSON.stringify([
+        /*,defaultValue: JSON.stringify([
             {title: "Item #1", path: "/settings", icon: "people", after: "MENU.HOME"},
-            {title: "Item #2", path: "/settings", icon: "people", before: "MENU.HOME"}
+            {title: "Item #2", path: "/settings", icon: "people", before: "MENU.LOGOUT"}
         ])*/
     },
     HOME_PARTNERS_DEPARTMENTS: <FormFieldDefinition>{
