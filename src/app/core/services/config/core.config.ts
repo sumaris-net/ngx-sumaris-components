@@ -88,6 +88,16 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
         label: 'CONFIGURATION.OPTIONS.HOME.LOGO_LARGE',
         type: 'string'
     },
+    MENU_ITEMS: <FormFieldDefinition>{
+        key: 'sumaris.menu.items',
+        label: 'CONFIGURATION.OPTIONS.MENU.ITEMS',
+        type: 'string'
+        // -- FOR DEV
+        /*defaultValue: JSON.stringify([
+            {title: "Item #1", path: "/settings", icon: "people", after: "MENU.HOME"},
+            {title: "Item #2", path: "/settings", icon: "people", before: "MENU.HOME"}
+        ])*/
+    },
     HOME_PARTNERS_DEPARTMENTS: <FormFieldDefinition>{
         key: 'sumaris.partner.departments',
         label: 'CONFIGURATION.OPTIONS.HOME.PARTNER_DEPARTMENTS',

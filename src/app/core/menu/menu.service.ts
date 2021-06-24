@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
+import {MenuItem} from './menu.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,6 @@ export class MenuService {
 
   private readonly _toggledSubject = new Subject<void>();
   private readonly _visibleSubject = new Subject<boolean>();
-
-  constructor() { }
 
   get menuToggled$(): Observable<void> {
     return this._toggledSubject.asObservable();

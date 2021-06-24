@@ -3,7 +3,6 @@ import {AlertController, IonSplitPane, MenuController, ModalController} from '@i
 
 import {Router} from '@angular/router';
 import {Account} from '../services/model/account.model';
-import {UserProfileLabel} from '../services/model/person.model';
 import {Configuration} from '../services/model/config.model';
 import {AccountService} from '../services/account.service';
 import {AboutModal} from '../about/modal-about';
@@ -16,69 +15,11 @@ import {ConfigService} from '../services/config.service';
 import {mergeMap, tap} from 'rxjs/operators';
 import {HammerSwipeEvent} from '../../shared/gesture/hammer.utils';
 import {PlatformService} from '../services/platform.service';
-import {IconRef} from '../../shared/types';
 import {ENVIRONMENT} from '../../../environments/environment.class';
 import {MenuService} from './menu.service';
+import {MenuItem, MenuItems} from './menu.model';
+import {CORE_CONFIG_OPTIONS} from '../services/config/core.config';
 
-export interface MenuItem extends IconRef {
-  title: string;
-  path?: string;
-  action?: string | any;
-  icon?: string;
-  matIcon?: string;
-  profile?: UserProfileLabel;
-  exactProfile?: UserProfileLabel;
-  color?: string;
-  cssClass?: string;
-  // A config property, to enable the menu item
-  ifProperty?: string;
-  // A config property, to override the title
-  titleProperty?: string;
-  titleArgs?: {[key: string]: string};
-  children?: MenuItem[];
-}
-
-export class MenuItems {
-  static checkIfVisible(item: MenuItem,
-                        accountService: AccountService,
-                        config: Configuration,
-                        opts?: {
-                          isLogin?: boolean;
-                          debug?: boolean;
-                          logPrefix?: string;
-                        }): boolean {
-    opts = opts || {};
-    if (item.profile) {
-      const hasProfile = accountService.isLogin() && accountService.hasMinProfile(item.profile);
-      if (!hasProfile) {
-        if (opts.debug) console.debug(`${opts && opts.logPrefix || '[menu]'} Hide item '${item.title}': need the min profile '${item.profile}' to access path '${item.path}'`);
-        return false;
-      }
-    }
-
-    else if (item.exactProfile) {
-      const hasExactProfile =  accountService.hasExactProfile(item.exactProfile);
-      if (!hasExactProfile) {
-        if (opts.debug) console.debug(`${opts && opts.logPrefix || '[menu]'} Hide item '${item.title}': need exact profile '${item.exactProfile}' to access path '${item.path}'`);
-        return false;
-      }
-    }
-
-    // If enable by config
-    if (item.ifProperty) {
-      //console.debug("[menu] Checking if property enable ? " + item.ifProperty, config && config.properties);
-      const isEnableByConfig = config && config.properties[item.ifProperty] === 'true';
-      if (!isEnableByConfig) {
-        if (opts.debug) console.debug('[menu] Config property \'' + item.ifProperty + '\' not \'true\' for ', item.path);
-        return false;
-      }
-    }
-
-    return true;
-  }
-}
-
-export const APP_MENU_ROOT = new InjectionToken<MenuItem[]>('menuRoot');
 export const APP_MENU_ITEMS = new InjectionToken<MenuItem[]>('menuItems');
 
 const SPLIT_PANE_SHOW_WHEN = 'lg';
@@ -109,7 +50,7 @@ export class MenuComponent implements OnInit {
 
   @Input() appName: String;
 
-  $filteredItems = new BehaviorSubject<MenuItem[]>(undefined);
+  $items = new BehaviorSubject<MenuItem[]>(undefined);
 
   @Input()
   appVersion: String = this.environment.version;
@@ -130,7 +71,7 @@ export class MenuComponent implements OnInit {
     protected cd: ChangeDetectorRef,
     protected menuService: MenuService,
     @Inject(ENVIRONMENT) protected environment,
-    @Optional() @Inject(APP_MENU_ITEMS) public items: MenuItem[]
+    @Optional() @Inject(APP_MENU_ITEMS) protected items: MenuItem[]
   ) {
 
     this._debug = !environment.production;
@@ -169,8 +110,7 @@ export class MenuComponent implements OnInit {
       )
         .pipe(
           // Wait account service ready (can be restarted)
-          mergeMap(() => this.accountService.ready()),
-          //debounceTime(200)
+          mergeMap(() => this.accountService.ready())
         )
         .subscribe(account => {
           if (this.accountService.isLogin()) {
@@ -211,11 +151,8 @@ export class MenuComponent implements OnInit {
       await this.router.navigate(['']);
     }
 
-    //setTimeout(() => {
     this.loading = false;
     this.detectChanges();
-    //}, 1000);
-
   }
 
   async logout() {
@@ -318,11 +255,41 @@ export class MenuComponent implements OnInit {
   protected refreshMenuItems() {
     if (this._debug) console.debug('[menu] Refreshing menu items...');
 
-    const filteredItems = (this.items || [])
-      .filter((item) => MenuItems.checkIfVisible(item, this.accountService, this._config, {
-        isLogin: this.isLogin,
-        debug: this._debug
-      }))
+    let items = this.items || [];
+
+    // Insert menu items, from the config
+    const configValue: string = this._config && this._config.getProperty(CORE_CONFIG_OPTIONS.MENU_ITEMS);
+    if (isNotNilOrBlank(configValue)) {
+      try {
+        const configItems = JSON.parse(configValue);
+        items = (configItems || []).reduce((res, item) => {
+          if (item.after) {
+            const index = res.findIndex(i => i.title === item.after);
+            if (index !== -1) {
+              return res.slice(0, index+1)
+                .concat(item)
+                .concat(res.slice(index+1))
+            }
+          }
+          if (item.before) {
+            const index = res.findIndex(i => i.title === item.before);
+            if (index !== -1) {
+              return res.slice(0, index)
+                .concat(item)
+                .concat(res.slice(index))
+            }
+          }
+          return res.concat(item);
+        }, items)
+      }
+      catch(err) {
+        console.error(`[menu] Invalid value for option '${CORE_CONFIG_OPTIONS.MENU_ITEMS.key}'. Expected an array of menu item`, err);
+      }
+    }
+
+    const opts = { isLogin: this.isLogin, debug: this._debug };
+    const filteredItems = items
+      .filter(item => MenuItems.checkIfVisible(item, this.accountService, this._config, opts))
       .map(item => {
         // Replace title using properties
         if (isNotNilOrBlank(item.titleProperty) && this._config) {
@@ -332,7 +299,7 @@ export class MenuComponent implements OnInit {
         return item;
       });
 
-    this.$filteredItems.next(filteredItems);
+    this.$items.next(filteredItems);
   }
 
   protected detectChanges() {

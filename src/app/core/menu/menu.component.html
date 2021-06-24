@@ -53,7 +53,7 @@
       <ion-list lines="none">
         <ion-menu-toggle auto-hide="false"
                          [class.flex-spacer]="item.cssClass == 'flex-spacer'"
-                         *ngFor="let item of $filteredItems | async">
+                         *ngFor="let item of $items | async">
 
           <!-- link -->
           <ion-item *ngIf="!loading && item.path"

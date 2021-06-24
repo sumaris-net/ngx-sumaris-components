@@ -22,7 +22,7 @@ import {LocalSettingsService} from '../services/local-settings.service';
 import {debounceTime, distinctUntilChanged, map, startWith} from 'rxjs/operators';
 import {AuthModal} from '../auth/modal/modal-auth';
 import {NetworkService} from '../services/network.service';
-import {MenuItem, MenuItems} from '../menu/menu.component';
+import {MenuItem, MenuItems} from '../menu/menu.model';
 import {ShowToastOptions, Toasts} from '../../shared/toasts';
 import {fadeInAnimation, slideUpDownAnimation} from '../../shared/material/material.animations';
 import {isNotNil, isNotNilOrBlank} from '../../shared/functions';

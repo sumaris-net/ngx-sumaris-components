@@ -147,10 +147,12 @@ export * from './src/app/core/home/home';
 export * from './src/app/core/settings/settings.page';
 export * from './src/app/core/account/account';
 export * from './src/app/core/register/confirm/confirm';
-export * from './src/app/core/menu/menu.component';
-export * from './src/app/core/menu/menu.service';
 export * from './src/app/core/about/modal-about';
 export * from './src/app/core/peer/select-peer.modal';
+export * from './src/app/core/menu/menu.component';
+export * from './src/app/core/menu/menu.model';
+export * from './src/app/core/menu/menu.module';
+export * from './src/app/core/menu/menu.service';
 
 // Core decorator
 export {EntityClass} from "./src/app/core/services/model/entity.decorators";

@@ -20,7 +20,6 @@ import {APP_LOCALES, LocalSettings} from './core/services/model/settings.model';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {APP_CONFIG_OPTIONS} from './core/services/config.service';
 import {IonicStorageModule} from '@ionic/storage';
-import {APP_MENU_ITEMS} from './core/menu/menu.component';
 import {APP_HOME_BUTTONS} from './core/home/home';
 import {CORE_CONFIG_OPTIONS} from './core/services/config/core.config';
 import {APP_TESTING_PAGES} from './shared/material/testing/material.testing.page';
@@ -167,28 +166,6 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
     // Config options definition (Core + trip)
     {provide: APP_CONFIG_OPTIONS, useValue: CORE_CONFIG_OPTIONS},
-
-    // Menu items
-    {
-      provide: APP_MENU_ITEMS, useValue: [
-        {title: 'MENU.HOME', path: '/', icon: 'home'},
-
-        // Admin
-        {title: 'MENU.ADMINISTRATION_DIVIDER', profile: 'ADMIN'},
-        {title: 'MENU.USERS', path: '/admin/users', icon: 'people', profile: 'ADMIN'},
-
-        // Settings
-        {title: '' /*empty divider*/, cssClass: 'flex-spacer'},
-        {title: 'MENU.TESTING', path: '/testing', icon: 'code', color: 'danger', ifProperty: 'sumaris.testing.enable', profile: 'SUPERVISOR'},
-        {title: 'MENU.LOCAL_SETTINGS', path: '/settings', icon: 'settings', color: 'medium'},
-        {title: 'MENU.ABOUT', action: 'about', matIcon: 'help_outline', color: 'medium', cssClass: 'visible-mobile'},
-
-        // Logout
-        {title: 'MENU.LOGOUT', action: 'logout', icon: 'log-out', profile: 'GUEST', color: 'medium hidden-mobile'},
-        {title: 'MENU.LOGOUT', action: 'logout', icon: 'log-out', profile: 'GUEST', color: 'danger visible-mobile'}
-
-      ]
-    },
 
     // Home buttons
     {provide: APP_HOME_BUTTONS, useValue: []},

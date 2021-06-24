@@ -1,11 +1,13 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {ExtraOptions, RouterModule, Routes} from '@angular/router';
 import {HomePage} from './core/home/home';
 import {RegisterConfirmPage} from './core/register/confirm/confirm';
 import {AccountPage} from './core/account/account';
 import {SettingsPage} from './core/settings/settings.page';
 import {AuthGuardService} from './core/services/auth-guard.service';
-import {SHARED_ROUTE_OPTIONS, SharedRoutingModule} from './shared/shared-routing.module';
+import {SharedRoutingModule} from './shared/shared-routing.module';
+import {APP_MENU_ITEMS} from './core/menu/menu.component';
+import {MenuItem} from './core/menu/menu.model';
 
 const routes: Routes = [
   // Core path
@@ -70,14 +72,43 @@ const routes: Routes = [
   }
 ];
 
+// Menu items
+const MENU_ITEMS: MenuItem[] = [
+  {title: 'MENU.HOME', path: '/', icon: 'home'},
+
+  // Admin
+  {title: 'MENU.ADMINISTRATION_DIVIDER', profile: 'ADMIN'},
+  {title: 'MENU.USERS', path: '/admin/users', icon: 'people', profile: 'ADMIN'},
+
+  // Settings
+  {title: '' /*empty divider*/, cssClass: 'flex-spacer'},
+  {title: 'MENU.TESTING', path: '/testing', icon: 'code', color: 'danger', ifProperty: 'sumaris.testing.enable', profile: 'SUPERVISOR'},
+  {title: 'MENU.LOCAL_SETTINGS', path: '/settings', icon: 'settings', color: 'medium'},
+  {title: 'MENU.ABOUT', action: 'about', matIcon: 'help_outline', color: 'medium', cssClass: 'visible-mobile'},
+
+  // Logout
+  {title: 'MENU.LOGOUT', action: 'logout', icon: 'log-out', profile: 'GUEST', color: 'medium hidden-mobile'},
+  {title: 'MENU.LOGOUT', action: 'logout', icon: 'log-out', profile: 'GUEST', color: 'danger visible-mobile'}
+
+];
+
+export const ROUTE_OPTIONS: ExtraOptions = {
+  enableTracing: false,
+  //enableTracing: !environment.production,
+  useHash: false,
+  onSameUrlNavigation: 'reload'
+};
 
 @NgModule({
   imports: [
     SharedRoutingModule,
-    RouterModule.forRoot(routes, SHARED_ROUTE_OPTIONS)
+    RouterModule.forRoot(routes, ROUTE_OPTIONS)
   ],
   exports: [
     RouterModule
+  ],
+  providers: [
+    {provide: APP_MENU_ITEMS, useValue: MENU_ITEMS}
   ]
 })
 export class AppRoutingModule {

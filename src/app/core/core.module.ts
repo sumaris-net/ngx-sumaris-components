@@ -9,7 +9,6 @@ import {SharedModule} from '../shared/shared.module';
 import {EntityMetadataComponent} from './form/entity-metadata.component';
 import {FormButtonsBarComponent} from './form/form-buttons-bar.component';
 import {TableSelectColumnsComponent} from './table/table-select-columns.component';
-import {MenuComponent} from './menu/menu.component';
 import {IonicStorageModule} from '@ionic/storage';
 import {HomePage} from './home/home';
 import {RegisterForm} from './register/form/form-register';
@@ -29,6 +28,7 @@ import {AppInstallUpgradeCard} from './install/install-upgrade-card.component';
 import {AccountToStringPipe, IsLoginAccountPipe} from './services/pipes/account.pipes';
 import {DepartmentToStringPipe} from './services/pipes/department-to-string.pipe';
 import {NgxJdenticonModule} from 'ngx-jdenticon';
+import {AppMenuModule} from './menu/menu.module';
 
 @NgModule({
   imports: [
@@ -38,7 +38,8 @@ import {NgxJdenticonModule} from 'ngx-jdenticon';
     AppGraphQLModule,
     CacheModule,
     IonicStorageModule,
-    NgxJdenticonModule
+    NgxJdenticonModule,
+    AppMenuModule
   ],
 
   declarations: [
@@ -52,7 +53,6 @@ import {NgxJdenticonModule} from 'ngx-jdenticon';
 
     // Home and menu
     HomePage,
-    MenuComponent,
     AboutModal,
 
     // Auth & Register
@@ -80,6 +80,7 @@ import {NgxJdenticonModule} from 'ngx-jdenticon';
     SharedModule,
     RouterModule,
     AppGraphQLModule,
+    AppMenuModule,
 
     // Pipes
     IsOnFieldModePipe,
@@ -95,7 +96,6 @@ import {NgxJdenticonModule} from 'ngx-jdenticon';
     TableSelectColumnsComponent,
     EntityMetadataComponent,
     FormButtonsBarComponent,
-    MenuComponent,
     AboutModal,
     AppPropertiesForm,
     AppListForm,

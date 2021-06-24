@@ -26,7 +26,6 @@ import {MAT_SELECT_SCROLL_STRATEGY} from '@angular/material/select';
 import {SharedDirectivesModule} from './directives/directives.module';
 import {SharedPipesModule} from './pipes/pipes.module';
 import {AppLoadingSpinner} from './form/loading-spinner';
-import {QuicklinkModule} from 'ngx-quicklink';
 import {DateDiffDurationPipe} from './pipes/date-diff-duration.pipe';
 import {LatitudeFormatPipe, LatLongFormatPipe, LongitudeFormatPipe} from './pipes/latlong-format.pipe';
 import {HighlightPipe} from './pipes/highlight.pipe';
@@ -52,7 +51,6 @@ export function scrollFactory(overlay: Overlay): () => CloseScrollStrategy {
     ColorPickerModule,
     TextMaskModule,
     DragDropModule,
-    QuicklinkModule, // See https://web.dev/route-preloading-in-angular/
     MarkdownModule,
 
     // Sub modules
@@ -76,7 +74,6 @@ export function scrollFactory(overlay: Overlay): () => CloseScrollStrategy {
     ColorPickerModule,
     TextMaskModule,
     DragDropModule,
-    QuicklinkModule,
     MarkdownModule,
 
     // Sub-modules
