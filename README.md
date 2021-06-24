@@ -18,6 +18,11 @@ Features :
 
 See the [developer guide](./doc/build.md)
 
+
+## Change log
+
+See the [changes log](./doc/changelog.md)
+
 ## License
 
 Free software, distributed under a [AGPL v3 license](./LICENSE).
