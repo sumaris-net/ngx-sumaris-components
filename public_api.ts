@@ -5,7 +5,7 @@ export * from './src/environments/environment.class';
 // Shared
 export * from './src/app/shared/constants';
 export * from './src/app/shared/shared.module';
-export {SHARED_ROUTE_OPTIONS, SharedRoutingModule} from './src/app/shared/shared-routing.module';
+export {SharedRoutingModule} from './src/app/shared/shared-routing.module';
 
 // Shared material
 export * from './src/app/shared/material/material.module';
