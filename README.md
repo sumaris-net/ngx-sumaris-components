@@ -21,7 +21,7 @@ See the [developer guide](./doc/build.md)
 
 ## Change log
 
-See the [changes log](./doc/changelog.md)
+See the [change log](./doc/changelog.md)
 
 ## License
 
