@@ -7,8 +7,8 @@ import {Department, departmentsToString, departmentToString} from '../model/depa
 @Injectable({providedIn: 'root'})
 export class DepartmentToStringPipe implements PipeTransform {
 
-  transform(value: Department | (Department[]) ): string {
-    if (value instanceof Array) return departmentsToString(value);
+  transform(value: Department | (Department[]), separator?: string): string {
+    if (value instanceof Array) return departmentsToString(value, separator);
     return departmentToString(value);
   }
 }
