@@ -3,7 +3,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort, MatSortable, SortDirection} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
 import {BehaviorSubject, EMPTY, merge, Observable, of, Subject, Subscription} from 'rxjs';
-import {catchError, debounceTime, distinctUntilChanged, filter, mergeMap, startWith, switchMap, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, mergeMap, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {TableElement} from '@e-is/ngx-material-table';
 import {EntitiesTableDataSource} from './entities-table-datasource.class';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -370,6 +370,8 @@ export abstract class AppTable<
                 this.sortActive,
                 this.sortDirection,
                 this._filter
+              ).pipe(
+                takeUntil(this.onRefresh)
               );
             }),
           catchError(err => {
@@ -1027,9 +1029,9 @@ export abstract class AppTable<
   }
 
   protected generateTableId() {
-    const id = this.location.path(true).replace(/[?].*$/g, '').replace(/\/[\d]+/g, '_id') + '_' + this.constructor.name;
+    return this.location.path(true).replace(/[?].*$/g, '').replace(/\/[\d]+/g, '_id') + '_' + this.constructor.name;
     //if (this.debug) console.debug("[table] id = " + id);
-    return id;
+    //return id;
   }
 
   protected async addRowToTable(insertAt?: number): Promise<TableElement<T>> {
