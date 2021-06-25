@@ -370,8 +370,6 @@ export abstract class AppTable<
                 this.sortActive,
                 this.sortDirection,
                 this._filter
-              ).pipe(
-                takeUntil(this.onRefresh)
               );
             }),
           catchError(err => {

@@ -48,7 +48,7 @@ export class EntitiesTableDataSource<
   protected _creating = false;
   protected _saving = false;
   protected _useValidator = false;
-  protected _stopWatchAll$ = new Subject();
+  protected _stopWatching$ = new Subject<boolean>();
   protected _editingRowCount = 0;
 
   $busy = new BehaviorSubject(false);
@@ -95,9 +95,9 @@ export class EntitiesTableDataSource<
   }
 
   ngOnDestroy() {
-    this._stopWatchAll$.next();
+    this._stopWatching$.next(true);
     // Unsubscribe from the subject
-    this._stopWatchAll$.unsubscribe();
+    this._stopWatching$.unsubscribe();
     this.$busy.complete();
     this.$busy.unsubscribe();
   }
@@ -108,13 +108,13 @@ export class EntitiesTableDataSource<
            sortDirection?: SortDirection,
            filter?: Partial<F>): Observable<LoadResult<T>> {
 
-    this._stopWatchAll$.next(); // stop previous watch observable
+    this._stopWatching$.next(true);
     this._editingRowCount = 0;
     this.$busy.next(true);
     return this.dataService.watchAll(offset, size, sortBy, sortDirection, filter, this.serviceOptions as O)
       .pipe(
         // Stop this pipe next time we call watchAll()
-        takeUntil(this._stopWatchAll$),
+        takeUntil(this._stopWatching$),
         catchError(err => this.handleError(err, 'ERROR.LOAD_DATA_ERROR')),
         map((res: LoadResult<T>) => {
           if (this._saving) {
@@ -228,7 +228,7 @@ export class EntitiesTableDataSource<
 
   disconnect(collectionViewer?: CollectionViewer) {
     super.disconnect(collectionViewer);
-    this._stopWatchAll$.next();
+    this._stopWatching$.next();
   }
 
   confirmCreate(row: TableElement<T>) {
