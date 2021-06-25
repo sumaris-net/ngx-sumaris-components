@@ -272,7 +272,7 @@ export abstract class EntityUtils {
         const searchAsPrefix =  path.toLowerCase().endsWith('label') || path.toLowerCase().endsWith('code');
         return new RegExp( searchAsPrefix && asPrefixPattern || anyMatchPattern, flags);
       });
-      return a => !!searchAttribute.find((path, index) => regexps[index].test(EntityUtils.getPropertyByPath(a, path)));
+      return a => searchAttribute.findIndex((path, index) => regexps[index].test(EntityUtils.getPropertyByPath(a, path))) !== -1;
     }
   }
 
