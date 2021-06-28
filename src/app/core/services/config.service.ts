@@ -30,6 +30,8 @@ export const Fragments = {
       id
       label
       name
+      description
+      comments
       properties
       smallLogo
       largeLogo

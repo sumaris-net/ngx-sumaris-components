@@ -19,6 +19,8 @@ export class Software<
 
   label: string;
   name: string;
+  description: string;
+  comments: string;
   creationDate: Date | Moment;
   statusId: number;
   properties: PropertiesMap;
@@ -38,6 +40,8 @@ export class Software<
     super.fromObject(source);
     this.label = source.label;
     this.name = source.name;
+    this.description = source.description;
+    this.comments = source.comments;
     this.creationDate = fromDateISOString(source.creationDate);
     this.statusId = source.statusId;
 

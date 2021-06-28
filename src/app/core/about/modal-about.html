@@ -17,6 +17,21 @@
 
   <ion-list lines="none">
 
+    <!-- Peer info -->
+    <ion-item *ngIf="config$ | async; let config">
+      <span slot="start">&nbsp;</span>
+      <ion-label class="ion-text-wrap" >
+        <h2>
+          <b>{{config.label}}</b> - {{config.name}}
+        </h2>
+        <p *ngIf="config.description">
+          <markdown [data]="config.description"
+                    emoji>
+          </markdown>
+        </p>
+      </ion-label>
+    </ion-item>
+
     <!-- Version info -->
     <ion-item>
       <span slot="start">&nbsp;</span>
