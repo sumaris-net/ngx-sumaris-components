@@ -1,7 +1,7 @@
 import {environment} from '../../../../environments/environment';
 import {Entity, isInstanceOf} from './entity.model';
 
-export function EntityClass(opts?: {
+export function EntityClass(opts: {
   typename: string;
   fromObjectAlwaysNew?: boolean;
   fromObjectReuseStrategy?: 'default' | 'clone';
