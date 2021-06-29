@@ -30,7 +30,7 @@ export function EntityClass(opts: {
         static fromObject(source: any, opts?: any): T {
           if (!source) return undefined;
           if (source instanceof decoratedClass) return (source as any).clone(opts) as T;
-          const target: any = new constructor();
+          const target: any = new decoratedClass();
           target.fromObject(source, opts);
           return target as T;
         }
