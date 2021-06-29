@@ -7,14 +7,9 @@ import {Observable, of} from 'rxjs';
 import {UserEvent, UserEventAction, UserEventTypes} from './model/user-event.model';
 import {SocialFragments} from './social.fragments';
 import {SortDirection} from '@angular/material/sort';
-import {
-  EntitiesServiceWatchOptions,
-  EntityServiceLoadOptions, FilterFn,
-  IEntitiesService, LoadResult,
-  Page
-} from '../../shared/services/entity-service.class';
+import {EntitiesServiceWatchOptions, EntityServiceLoadOptions, FilterFn, IEntitiesService, LoadResult, Page} from '../../shared/services/entity-service.class';
 import {map} from 'rxjs/operators';
-import {isEmptyArray, isNil, isNilOrBlank, isNotNil, toNumber} from '../../shared/functions';
+import {isEmptyArray, isNil, isNilOrBlank, toNumber} from '../../shared/functions';
 import {ShowToastOptions, Toasts} from '../../shared/toasts';
 import {OverlayEventDetail} from '@ionic/core';
 import {ToastController} from '@ionic/angular';
@@ -23,11 +18,11 @@ import {NetworkService} from '../../core/services/network.service';
 import {BaseGraphqlService} from '../../core/services/base-graphql-service.class';
 import {Entity, EntityUtils} from '../../core/services/model/entity.model';
 import {ENVIRONMENT} from '../../../environments/environment.class';
-import {EntityFilter, EntityFilterUtils} from '../../core/services/model/filter.model';
+import {EntityFilter} from '../../core/services/model/filter.model';
 import {EntityClass} from '../../core/services/model/entity.decorators';
 
 // @dynamic
-@EntityClass()
+@EntityClass({typename: 'UserEventVO'})
 export class UserEventFilter extends EntityFilter<UserEventFilter, UserEvent> {
 
   static fromObject: (source: any, opts?: any) => UserEventFilter;

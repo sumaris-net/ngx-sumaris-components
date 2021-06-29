@@ -4,7 +4,7 @@ import {Referential} from '../model/referential.model';
 import {EntityUtils} from '../model/entity.model';
 import {FilterFn} from '../../../shared/services/entity-service.class';
 
-@EntityClass()
+@EntityClass({typename: 'ReferentialFilterVO'})
 export class ReferentialFilter extends EntityFilter<ReferentialFilter, Referential> {
 
   static fromObject: (source: any, opts?: any) => ReferentialFilter;
