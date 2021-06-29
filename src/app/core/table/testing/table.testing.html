@@ -121,7 +121,35 @@
            [matSortDirection]="defaultSortDirection"
            [trackBy]="trackByFn">
 
-      <ng-container matColumnDef="select">
+      <!-- group header cells -->
+
+      <ng-container matColumnDef="top-start" [sticky]="true">
+        <th mat-header-cell *matHeaderCellDef [class.cdk-visually-hidden]="!canEdit" [attr.colspan]="2">
+          <!-- start spacer -->
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="group-1">
+        <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="background-color: whitesmoke; margin-bottom: -1px;">
+          <ion-label translate>{{i18nColumnPrefix + 'GROUP_1'}}</ion-label>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="group-2">
+        <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">
+          <ion-label translate>{{i18nColumnPrefix + 'GROUP_2'}}</ion-label>
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="top-end" [sticky]="true">
+        <th mat-header-cell *matHeaderCellDef>
+          <!-- end spacer -->
+        </th>
+      </ng-container>
+
+      <!-- other cells -->
+
+      <ng-container matColumnDef="select" [sticky]="true">
         <th mat-header-cell *matHeaderCellDef [class.cdk-visually-hidden]="!canEdit">
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
                         [indeterminate]="selection.hasValue() && !isAllSelected()">
@@ -134,7 +162,7 @@
       </ng-container>
 
       <!-- Id column -->
-      <ng-container matColumnDef="id">
+      <ng-container matColumnDef="id" [sticky]="true">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           <ion-label>#</ion-label>
         </th>
@@ -142,7 +170,7 @@
       </ng-container>
 
       <!-- Label column -->
-      <ng-container matColumnDef="label">
+      <ng-container matColumnDef="label" [sticky]="true">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           <ion-label translate>REFERENTIAL.LABEL</ion-label>
         </th>
@@ -239,6 +267,7 @@
         </td>
       </ng-container>
 
+      <tr mat-header-row *matHeaderRowDef="groupColumns;"></tr>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"
           [class.mat-row-error]="row.validator?.invalid"

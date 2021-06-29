@@ -20,6 +20,7 @@ import {ReferentialValidatorService} from '../../services/testing/referential.va
 
 @Component({
   selector: 'app-table-testing',
+  styleUrls: ['table.testing.scss'],
   templateUrl: 'table.testing.html',
   providers: [
     {
@@ -46,6 +47,7 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
   data: Referential[];
   filterForm: FormGroup;
   filterCriteriaCount = 0;
+  groupColumns = ['top-start', 'group-1', 'group-2', 'top-end'];
 
   @Input() enableInfiniteScroll: boolean;
 

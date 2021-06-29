@@ -736,23 +736,23 @@ ion-list {
     mat-cell:first-child,
     mat-footer-cell:first-child,
     mat-header-cell:first-child {
-      padding-right: 8px !important;
+      //padding-right: 8px !important;
     }
 
     // Reuse the first column, to inject a left padding
     .mat-column-select {
-      max-width: 8px !important;
+      /*max-width: 8px !important;
       overflow: hidden;
 
       * {
         display: none !important;
         visibility: hidden !important;
-      }
+      }*/
     }
 
     .mat-column-comments {
-      display: none !important;
-      visibility: hidden !important;
+      /*display: none !important;
+      visibility: hidden !important;*/
     }
   }
 }

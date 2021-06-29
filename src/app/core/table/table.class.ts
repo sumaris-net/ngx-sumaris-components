@@ -454,8 +454,7 @@ export abstract class AppTable<
     this._subscription.unsubscribe();
 
     // Unsubscribe column value changes
-    Object.getOwnPropertyNames(this._cellValueChangesDefs)
-      .forEach(col => this.stopCellValueChanges(col));
+    Object.keys(this._cellValueChangesDefs).forEach(col => this.stopCellValueChanges(col));
     this._cellValueChangesDefs = {};
 
     this.loadingSubject.unsubscribe();
@@ -1086,9 +1085,7 @@ export abstract class AppTable<
           // don't emit if control is disabled
           filter(() => control.enabled)
         )
-        .subscribe((value) => {
-          def.eventEmitter.emit(value);
-        });
+        .subscribe((value) => def.eventEmitter.emit(value));
 
       // Emit the actual value
       if (def.emitInitialValue !== false) {
