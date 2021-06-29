@@ -2,7 +2,7 @@ import {environment} from '../../../../environments/environment';
 import {Entity, isInstanceOf} from './entity.model';
 
 export function EntityClass(opts?: {
-  typename?: string;
+  typename: string;
   fromObjectAlwaysNew?: boolean;
   fromObjectReuseStrategy?: 'default' | 'clone';
 }) {
@@ -44,7 +44,8 @@ export function EntityClass(opts?: {
       static fromObject(source: any, opts?: any): T {
         if (!source) return undefined;
         if (isInstanceOf(source, constructor)) {
-          console.debug('@EntityClass() fromObject() => will recycle existing object: ', source);
+          // DEBUG
+          //console.debug('@EntityClass() fromObject() => will recycle existing object: ', source);
           return source as T;
         }
         const target: any = new constructor();

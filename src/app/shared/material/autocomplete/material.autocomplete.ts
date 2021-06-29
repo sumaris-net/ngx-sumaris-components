@@ -283,7 +283,7 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
 
     // No suggestFn: filter on the given items
     if (!this.suggestFn) {
-      const suggestFromArrayFn: SuggestFn<any, any> = async (value, filter) => 
+      const suggestFromArrayFn: SuggestFn<any, any> = async (value, filter) =>
         // DEBUG
         //console.debug(this.logPrefix + " Calling suggestFromArray with value=", value);
 
@@ -377,7 +377,8 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
 
     this.filteredItems$ = updateFilteredItemsEvents$
       .pipe(
-        tap(value => console.debug(this.logPrefix + ' Received update event: ', value)),
+        // DEBUG
+        //tap(value => console.debug(this.logPrefix + ' Received update event: ', value)),
         switchMap(value => this.suggest(value, this.filter)),
         // Store implicit value (will use it onBlur if not other value selected)
         tap(value => this.updateImplicitValue(value))

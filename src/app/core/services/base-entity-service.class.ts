@@ -72,7 +72,7 @@ export abstract class BaseEntityService<
     IEntitiesService<T, F, WO>,
     IEntityService<T, ID, LO> {
 
-  protected readonly _entityName: string;
+  private readonly _logTypeName: string;
   protected readonly _typename: string;
 
   protected readonly queries: Q;
@@ -106,8 +106,8 @@ export abstract class BaseEntityService<
     });
 
     const obj = new dataType();
-    this._entityName = (dataType as any).CLASSNAME || obj.constructor.name;
-    this._typename = obj.__typename || (this._entityName + 'VO');
+    this._typename = obj.__typename || 'UnknownVO';
+    this._logTypeName = this._typename.endsWith('VO') ? this._typename.substr(0, this._typename.length - 2) : this._typename;
 
     // For DEV only
     this._debug = !environment.production;
@@ -115,7 +115,7 @@ export abstract class BaseEntityService<
 
   watch(id: number, opts?: WO & { query?: any }): Observable<T> {
 
-    if (this._debug) console.debug(`[base-entity-service] Watching ${this._entityName} {${id}}...`);
+    if (this._debug) console.debug(`[base-entity-service] Watching ${this._logTypeName} {${id}}...`);
 
     const query = opts && opts.query || this.queries.load;
     return this.graphql.watchQuery<{data: any}>({
@@ -133,7 +133,7 @@ export abstract class BaseEntityService<
 
   async load(id: ID, opts?: LO & { query?: any }): Promise<T> {
 
-    if (this._debug) console.debug(`[base-entity-service] Loading ${this._entityName} {${id}}...`);
+    if (this._debug) console.debug(`[base-entity-service] Loading ${this._logTypeName} {${id}}...`);
     const query = opts && opts.query || this.queries.load;
 
     const { data } = await this.graphql.query<{data: any}>({
@@ -170,7 +170,7 @@ export abstract class BaseEntityService<
     };
 
     let now = this._debug && Date.now();
-    if (this._debug) console.debug(`[base-entity-service] Watching ${this._entityName}...`, variables);
+    if (this._debug) console.debug(`[base-entity-service] Watching ${this._logTypeName}...`, variables);
 
 
     const withTotal = (!opts || opts.withTotal !== false) && this.queries.loadAllWithTotal && true;
@@ -195,7 +195,7 @@ export abstract class BaseEntityService<
             : (data || []) as T[];
 
           if (now) {
-            console.debug(`[base-entity-service] ${this._entityName} loaded in ${Date.now() - now}ms`, entities);
+            console.debug(`[base-entity-service] ${this._logTypeName} loaded in ${Date.now() - now}ms`, entities);
             now = null;
           }
           return {data: entities, total};
@@ -228,7 +228,7 @@ export abstract class BaseEntityService<
     };
 
     const now = Date.now();
-    if (debug) console.debug(`[base-entity-service] Loading ${this._entityName}...`, variables);
+    if (debug) console.debug(`[base-entity-service] Loading ${this._logTypeName}...`, variables);
 
     const withTotal = (!opts || opts.withTotal !== false) && this.queries.loadAllWithTotal && true;
     const query = (opts && opts.query) // use given query
@@ -243,7 +243,7 @@ export abstract class BaseEntityService<
     const entities = (!opts || opts.toEntity !== false) ?
       (data || []).map(json => this.fromObject(json)) :
       (data || []) as T[];
-    if (debug) console.debug(`[base-entity-service] ${this._entityName} items loaded in ${Date.now() - now}ms`);
+    if (debug) console.debug(`[base-entity-service] ${this._logTypeName} items loaded in ${Date.now() - now}ms`);
     return {
       data: entities,
       total
@@ -267,7 +267,7 @@ export abstract class BaseEntityService<
     });
 
     const now = Date.now();
-    if (this._debug) console.debug(`[base-entity-service] Saving all ${this._entityName}...`, json);
+    if (this._debug) console.debug(`[base-entity-service] Saving all ${this._logTypeName}...`, json);
 
     await this.graphql.mutate<LoadResult<any>>({
       mutation: this.mutations.saveAll,
@@ -294,7 +294,7 @@ export abstract class BaseEntityService<
           opts.update(proxy, {data});
         }
 
-        if (this._debug) console.debug(`[base-entity-service] ${this._entityName} saved in ${Date.now() - now}ms`, entities);
+        if (this._debug) console.debug(`[base-entity-service] ${this._logTypeName} saved in ${Date.now() - now}ms`, entities);
 
       }
     });
@@ -324,7 +324,7 @@ export abstract class BaseEntityService<
     const isNew = isNil(json.id);
 
     const now = Date.now();
-    if (this._debug) console.debug(`[base-entity-service] Saving ${this._entityName}...`, json);
+    if (this._debug) console.debug(`[base-entity-service] Saving ${this._logTypeName}...`, json);
 
     await this.graphql.mutate<{data: any}>({
       refetchQueries: opts && opts.refetchQueries,
@@ -382,7 +382,7 @@ export abstract class BaseEntityService<
 
     const ids = entities.map(t => t.id);
     const now = new Date();
-    if (this._debug) console.debug(`[base-entity-service] Deleting ${this._entityName}...`, ids);
+    if (this._debug) console.debug(`[base-entity-service] Deleting ${this._logTypeName}...`, ids);
 
     await this.graphql.mutate<any>({
       mutation: this.mutations.deleteAll,
@@ -409,7 +409,7 @@ export abstract class BaseEntityService<
           opts.update(proxy, res);
         }
 
-        if (this._debug) console.debug(`[base-entity-service] ${this._entityName} deleted in ${new Date().getTime() - now.getTime()}ms`);
+        if (this._debug) console.debug(`[base-entity-service] ${this._logTypeName} deleted in ${new Date().getTime() - now.getTime()}ms`);
       }
     });
   }
@@ -431,7 +431,7 @@ export abstract class BaseEntityService<
 
     const id = entity.id;
     const now = new Date();
-    if (this._debug) console.debug(`[base-entity-service] Deleting ${this._entityName} {${id}}...`);
+    if (this._debug) console.debug(`[base-entity-service] Deleting ${this._logTypeName} {${id}}...`);
 
     await this.graphql.mutate<any>({
       mutation: this.mutations.delete,
@@ -450,7 +450,7 @@ export abstract class BaseEntityService<
           opts.update(proxy, res);
         }
 
-        if (this._debug) console.debug(`[base-entity-service] ${this._entityName} deleted in ${new Date().getTime() - now.getTime()}ms`);
+        if (this._debug) console.debug(`[base-entity-service] ${this._logTypeName} deleted in ${new Date().getTime() - now.getTime()}ms`);
       }
     });
   }
@@ -468,7 +468,7 @@ export abstract class BaseEntityService<
       id,
       interval: opts && opts.interval || 10 // seconds
     };
-    if (this._debug) console.debug(`[base-entity-service] [WS] Listening for changes on ${this._entityName} {${id}}...`);
+    if (this._debug) console.debug(`[base-entity-service] [WS] Listening for changes on ${this._logTypeName} {${id}}...`);
 
     return this.graphql.subscribe<{data: any}>({
       query: opts && opts.query || this.subscriptions.listenChanges,
@@ -481,10 +481,10 @@ export abstract class BaseEntityService<
       .pipe(
         map(({data}) => {
           const entity = (!opts || opts.toEntity !== false) ? data && this.fromObject(data) : data;
-          if (entity && this._debug) console.debug(`[base-entity-service] [WS] Received changes on ${this._entityName} {${id}}`, entity);
+          if (entity && this._debug) console.debug(`[base-entity-service] [WS] Received changes on ${this._logTypeName} {${id}}`, entity);
 
           // TODO: when missing = deleted ?
-          if (!entity) console.warn(`[base-entity-service] [WS] Received deletion on ${this._entityName} {${id}} - TODO check implementation`);
+          if (!entity) console.warn(`[base-entity-service] [WS] Received deletion on ${this._logTypeName} {${id}} - TODO check implementation`);
 
           return entity;
         })
