@@ -72,8 +72,8 @@ export abstract class BaseEntityService<
     IEntitiesService<T, F, WO>,
     IEntityService<T, ID, LO> {
 
-  private readonly _logTypeName: string;
   protected readonly _typename: string;
+  protected readonly _logTypeName: string;
 
   protected readonly queries: Q;
   protected readonly mutations: Partial<M>;
