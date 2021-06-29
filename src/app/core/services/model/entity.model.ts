@@ -53,9 +53,6 @@ export abstract class Entity<
   FO = any>
   implements IEntity<T, ID, AO, FO> {
 
-  // The final classname (injected by @EntityClass())
-  static CLASSNAME: string;
-
   // The GraphQL typename (injected by @EntityClass())
   static TYPENAME: string;
 
@@ -95,17 +92,16 @@ export abstract class Entity<
     return other && this.id === other.id;
   }
 }
+
+/**
+ * @deprecated use standard instanceof instead
+ * @param obj
+ * @param constructor
+ */
 export function isInstanceOf<T>(obj: any, constructor: new (...args: any[]) => T): obj is T {
   if (!obj) return false;
 
-  const actualClass = obj.constructor.CLASSNAME || obj.constructor.name;
-  const expectedClass = (constructor as any).CLASSNAME || constructor.name;
-  const result = actualClass && expectedClass && actualClass === expectedClass;
-
-  // -- for DEV only
-  //console.debug("isInstanceOf() => " + result);
-
-  return result;
+  return obj instanceof constructor;
 }
 
 // @dynamic

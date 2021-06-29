@@ -25,33 +25,33 @@ export function EntityClass(opts: {
     const typename = opts.typename || `${constructor.name}VO`;
 
     if (opts.fromObjectReuseStrategy === 'clone') {
-      return class extends constructor {
-        static CLASSNAME = constructor.name;
+      const decoratedClass = class extends constructor {
         static TYPENAME = typename;
         static fromObject(source: any, opts?: any): T {
           if (!source) return undefined;
-          if (isInstanceOf(source, constructor)) return (source as any).clone(opts) as T;
+          if (source instanceof decoratedClass) return (source as any).clone(opts) as T;
           const target: any = new constructor();
           target.fromObject(source, opts);
           return target as T;
         }
       };
+      return decoratedClass;
     }
 
-    return class extends constructor {
-      static CLASSNAME = constructor.name;
+    const decoratedClass = class extends constructor {
       static TYPENAME = typename;
       static fromObject(source: any, opts?: any): T {
         if (!source) return undefined;
-        if (isInstanceOf(source, constructor)) {
+        if (source instanceof decoratedClass) {
           // DEBUG
           //console.debug('@EntityClass() fromObject() => will recycle existing object: ', source);
           return source as T;
         }
-        const target: any = new constructor();
+        const target: any = new decoratedClass();
         target.fromObject(source, opts);
         return target as T;
       }
     };
+    return decoratedClass;
   };
 }
