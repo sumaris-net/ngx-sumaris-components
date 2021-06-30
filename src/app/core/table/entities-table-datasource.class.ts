@@ -9,7 +9,7 @@ import {CollectionViewer} from '@angular/cdk/collections';
 import {TableDataSourceOptions} from '@e-is/ngx-material-table/src/app/ngx-material-table/table-data-source';
 import {EntitiesServiceWatchOptions, IEntitiesService, LoadResult} from '../../shared/services/entity-service.class';
 import {firstNotNilPromise} from '../../shared/observables';
-import {isNotEmptyArray, isNotNil, toBoolean} from '../../shared/functions';
+import {isNotEmptyArray, isNotNil, removeEnd, toBoolean} from '../../shared/functions';
 
 
 export declare interface AppTableDataServiceOptions<O extends EntitiesServiceWatchOptions = EntitiesServiceWatchOptions> extends EntitiesServiceWatchOptions {
@@ -41,6 +41,7 @@ export class EntitiesTableDataSource<
     extends TableDataSource<T>
     implements OnDestroy {
 
+  private readonly _logTypeName: string;
   private readonly _options: AppTableDataSourceOptions<T, ID, O>;
   private _loaded = false;
 
@@ -90,6 +91,8 @@ export class EntitiesTableDataSource<
     };
     this._useValidator = isNotNil(validatorService);
 
+    this._logTypeName = removeEnd((new dataType()).__typename || 'UnknownVO', 'VO');
+
     // For DEV ONLY
     this._debug = this._options.debug === true;
   }
@@ -118,12 +121,12 @@ export class EntitiesTableDataSource<
         catchError(err => this.handleError(err, 'ERROR.LOAD_DATA_ERROR')),
         map((res: LoadResult<T>) => {
           if (this._saving) {
-            console.info(`[table-datasource] Service ${this.dataService.constructor.name} sent data, but still saving: skip`);
+            console.info(`[table-datasource] Service ${this._logTypeName} sent data, but still saving: skip`);
           } else if (this._editingRowCount > 0) {
-            console.warn(`[table-datasource] Service ${this.dataService.constructor.name} sent data, while ${this._editingRowCount} rows still editing: skip; Must check the save behavior on the implemented table !`);
+            console.warn(`[table-datasource] Service ${this._logTypeName} sent data, while ${this._editingRowCount} rows still editing: skip; Must check the save behavior on the implemented table !`);
           } else {
             this.$busy.next(false);
-            if (this._debug) console.debug(`[table-datasource] Service ${this.dataService.constructor.name} sent new data: updating datasource...`, res);
+            if (this._debug) console.debug(`[table-datasource] Service ${this._logTypeName} sent new data: updating datasource...`, res);
             this.updateDatasource((res.data || []) as T[]);
           }
           return res;
@@ -264,7 +267,7 @@ export class EntitiesTableDataSource<
   handleError(error: any, message: string): Observable<LoadResult<T>> {
     const errorMsg = error && error.message || error;
     if (this.dataService) {
-      console.error(`${errorMsg} (dataService: ${this.dataService.constructor.name})`, error);
+      console.error(`${errorMsg} (dataService: ${this._logTypeName})`, error);
     }
     else {
       console.error(errorMsg, error);
@@ -275,7 +278,7 @@ export class EntitiesTableDataSource<
 
   handleErrorPromise(error: any, message: string) {
     const errorMsg = error && error.message || error;
-    console.error(`${errorMsg} (dataService: ${this.dataService.constructor.name})`, error);
+    console.error(`${errorMsg} (dataService: ${this._logTypeName})`, error);
     this.$busy.next(false);
     throw new Error(message || errorMsg);
   }

@@ -111,6 +111,11 @@ export function replaceAll(value: string, searchString: any, replacement): strin
   }
   return value;
 }
+
+export function removeEnd(value: string, end: string): string {
+  return value?.endsWith(end || '') ? value.substr(0, value.length - end.length) : value;
+}
+
 /**
  * Replace case change by an underscore (.e.g 'myString' becomes 'my_string')
  *

@@ -2,7 +2,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {ErrorCodes} from './errors';
 
-import {FetchPolicy, MutationUpdaterFn, WatchQueryFetchPolicy} from '@apollo/client/core';
+import {FetchPolicy, MutationUpdaterFn} from '@apollo/client/core';
 import {SortDirection} from '@angular/material/sort';
 
 import {BaseGraphqlService} from './base-graphql-service.class';
@@ -12,7 +12,7 @@ import {PlatformService} from './platform.service';
 import {environment} from '../../../environments/environment';
 import {Entity, EntityAsObjectOptions, EntityUtils} from './model/entity.model';
 import {chainPromises} from '../../shared/observables';
-import {isEmptyArray, isNil, isNotNil, toBoolean} from '../../shared/functions';
+import {isEmptyArray, isNil, isNotNil, removeEnd, toBoolean} from '../../shared/functions';
 import {Directive} from '@angular/core';
 import {RefetchQueryDescription} from '@apollo/client/core/watchQueryOptions';
 import {FetchResult} from '@apollo/client/link/core';
@@ -107,7 +107,7 @@ export abstract class BaseEntityService<
 
     const obj = new dataType();
     this._typename = obj.__typename || 'UnknownVO';
-    this._logTypeName = this._typename.endsWith('VO') ? this._typename.substr(0, this._typename.length - 2) : this._typename;
+    this._logTypeName = removeEnd(this._typename, 'VO');
 
     // For DEV only
     this._debug = !environment.production;
