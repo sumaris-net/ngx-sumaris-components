@@ -360,17 +360,18 @@ mat-option:not(:last-child) {
 
 mat-expansion-panel {
 
-  &.filter-panel {
-    // specific
+  &.filter-panel-floating {
     z-index: 999;
     position: absolute;
-    //top: 60px; if filter button is not in app-toolbar
     top: 0;
     left: 0;
     right: 0;
+  }
+
+  &.filter-panel {
+
     background: var(--ion-color-secondary50);
     color: var(--ion-color-secondary50-contrast);
-
     margin-bottom: 5px;
 
     .form-container {
@@ -388,7 +389,6 @@ mat-expansion-panel {
         line-height: 36px;
       }
     }
-
   }
 
   .mat-expansion-panel-header,
