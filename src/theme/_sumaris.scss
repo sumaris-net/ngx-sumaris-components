@@ -360,14 +360,6 @@ mat-option:not(:last-child) {
 
 mat-expansion-panel {
 
-  &.filter-panel-floating {
-    z-index: 999;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-  }
-
   &.filter-panel {
 
     background: var(--ion-color-secondary50);
@@ -389,6 +381,14 @@ mat-expansion-panel {
         line-height: 36px;
       }
     }
+  }
+
+  &.filter-panel-floating {
+    z-index: 999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
   }
 
   .mat-expansion-panel-header,
