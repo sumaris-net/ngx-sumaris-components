@@ -4,7 +4,6 @@ import {isNotNil} from '../functions';
 @Pipe({
     name: 'isNotEmptyArray'
 })
-@Injectable({providedIn: 'root'})
 export class NotEmptyArrayPipe implements PipeTransform {
 
     transform(val: any[]): any {
@@ -19,7 +18,6 @@ export class NotEmptyArrayPipe implements PipeTransform {
 @Pipe({
   name: 'isEmptyArray'
 })
-@Injectable({providedIn: 'root'})
 export class EmptyArrayPipe implements PipeTransform {
 
   transform(val: any[]): any {
@@ -34,7 +32,6 @@ export class EmptyArrayPipe implements PipeTransform {
 @Pipe({
   name: 'isArrayLength'
 })
-@Injectable({providedIn: 'root'})
 export class ArrayLengthPipe implements PipeTransform {
 
   transform(val: any[], args?: { greaterThan?: number; equals?: number; lessThan?: number }): any {
@@ -56,7 +53,6 @@ export class ArrayLengthPipe implements PipeTransform {
 @Pipe({
   name: 'arrayFirst'
 })
-@Injectable({providedIn: 'root'})
 export class ArrayFirstPipe implements PipeTransform {
 
   transform(val: any[]): any {
@@ -67,7 +63,6 @@ export class ArrayFirstPipe implements PipeTransform {
 @Pipe({
   name: 'arrayPluck'
 })
-@Injectable({providedIn: 'root'})
 export class ArrayPluckPipe implements PipeTransform {
 
   transform<T>(val: T[], opts: { property: string; omitNil?: boolean }): any[] {
@@ -80,10 +75,20 @@ export class ArrayPluckPipe implements PipeTransform {
 @Pipe({
   name: 'arrayIncludes'
 })
-@Injectable({providedIn: 'root'})
 export class ArrayIncludesPipe implements PipeTransform {
 
   transform(val: any[], args): any {
     return val && val.includes(args);
+  }
+}
+
+
+@Pipe({
+  name: 'arrayFilter'
+})
+export class ArrayFilterPipe implements PipeTransform {
+
+  transform(val: any[], filterFn: (any) => boolean): any {
+    return val && val.filter(filterFn);
   }
 }
