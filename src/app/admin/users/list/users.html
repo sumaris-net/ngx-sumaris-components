@@ -61,7 +61,7 @@
   </ion-item>
 
   <!-- search -->
-  <mat-expansion-panel #filterExpansionPanel class="ion-no-padding filter-panel">
+  <mat-expansion-panel #filterExpansionPanel class="ion-no-padding filter-panel filter-panel-floating">
     <form class="form-container ion-padding" [formGroup]="filterForm" (ngSubmit)="onRefresh.emit()">
       <ion-grid>
         <ion-row>
