@@ -1,6 +1,6 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Injector, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AppTable, DEFAULT_PAGE_SIZE, RESERVED_END_COLUMNS, RESERVED_START_COLUMNS} from '../table.class';
-import {Referential} from '../../services/model/referential.model';
+import {DefaultStatusList, Referential} from '../../services/model/referential.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IonInfiniteScroll, ModalController, Platform} from '@ionic/angular';
 import {Location} from '@angular/common';
@@ -49,6 +49,9 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
   filterForm: FormGroup;
   filterCriteriaCount = 0;
   groupColumns = ['top-start', 'group-1', 'group-2', 'top-end'];
+  statusList = DefaultStatusList;
+  statusById;
+
 
   @Input() enableInfiniteScroll: boolean;
 
@@ -67,6 +70,7 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
       ...RESERVED_START_COLUMNS,
       'label',
       'name',
+      'statusId',
       'updateDate',
       'comments',
       ...RESERVED_END_COLUMNS
@@ -84,16 +88,26 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
     this.inlineEdition = true;
     this.i18nColumnPrefix = 'TABLE.TESTING.';
 
-    this.confirmBeforeDelete = false;
+    this.confirmBeforeDelete = true;
+    this.confirmBeforeCancel = false;
+    this.undoableDeletion = false;
     this.saveBeforeDelete = false;
 
     this.saveBeforeSort = true;
     this.saveBeforeFilter = true;
     this.propagateRowError = true;
 
+    // Fill statusById
+    this.statusById = {};
+    this.statusList.forEach((status) => this.statusById[status.id] = status);
+
     this.filterForm = formBuilder.group({
       searchText: [null]
     });
+
+    this.onStartEditingRow.subscribe(row => {
+      row.validator.patchValue({entityName: 'TestVO'}, {emitEvent: false});
+    })
   }
 
   get hasMoreData(): boolean {

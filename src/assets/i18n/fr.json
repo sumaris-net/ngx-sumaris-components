@@ -515,6 +515,8 @@
     "ACTION_IMMEDIATE": "Cette action est irreversible.<br/><br/><b>Êtes-vous sûr</b> de vouloir continuer ?",
     "DELETE_ROW": "<b>Êtes-vous sûr</b> de vouloir supprimer cette ligne ?",
     "DELETE_ROWS": "<b>Êtes-vous sûr</b> de vouloir supprimer ces lignes ?",
+    "CANCEL_ROW": "<b>Êtes-vous sûr</b> de vouloir annuler les modifications sur cette ligne ?",
+    "CANCEL_ROWS": "<b>Êtes-vous sûr</b> de vouloir annuler les modifications sur ces lignes ?",
     "SEND_DEBUG_DATA": "Voulez-vous envoyer ces données à l'administrateur, afin qu'il vous aide ?"
   },
   "INFO": {
@@ -537,7 +539,10 @@
       "UPDATE_DATE": "Date MAJ",
       "COMMENTS": "Commentaires",
       "GROUP_1": "Groupe 1",
-      "GROUP_2": "Groupe 2"
+      "GROUP_2": "Groupe 2",
+      "STATUS": "Etat de saisie",
+      "STATUS_ID": "Etat de saisie",
+      "ENTITY_NAME": "Type d'entité"
     }
   }
 }

@@ -163,7 +163,8 @@ export class SharedValidators {
   }
 
   static translateError(translateFn: (key: string, obj?: any) => string, errorKey: string, errorContent?: any) {
-    const i18nKey = 'ERROR.FIELD_' + changeCaseToUnderscore(errorKey).toUpperCase();
+    const underscoreUppercaseKey = changeCaseToUnderscore(errorKey).toUpperCase();
+    const i18nKey = 'ERROR.FIELD_' + underscoreUppercaseKey;
     const i18nMessage = translateFn(i18nKey, errorContent);
     if (i18nKey !== i18nMessage) return i18nMessage;
     if (typeof errorContent === 'string') return errorContent;
@@ -171,7 +172,7 @@ export class SharedValidators {
     // Not translated: show error
     console.error(`[validator] Cannot translate error key '${errorKey}'. Please override translateError() in your validator`);
 
-    return changeCaseToUnderscore(errorKey);
+    return underscoreUppercaseKey;
   }
 }
 

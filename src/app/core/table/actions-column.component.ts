@@ -12,11 +12,13 @@ export class ActionsColumnComponent implements OnInit, OnDestroy {
 
   @Input() stickyEnd = true;
   @Input() optionsTitle = 'COMMON.BTN_OPTIONS';
+  @Input('class') classList: string;
 
-  @Output() optionsClick = new EventEmitter<UIEvent>();
-  @Output() cancelOrDeleteClick = new EventEmitter<{ event: UIEvent; row: TableElement<any> }>();
+  @Output() optionsClick = new EventEmitter<Event>();
+  @Output() cancelOrDeleteClick = new EventEmitter<{ event: Event; row: TableElement<any> }>();
+  @Output() confirmAndAddClick = new EventEmitter<{ event: Event; row: TableElement<any> }>();
 
-  constructor(public table: MatTable<any>,
+  constructor(private table: MatTable<any>,
               private cd: ChangeDetectorRef) {
     if (!table) throw new Error(`[actions-column] this column component must be inside a MatTable component`);
   }

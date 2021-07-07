@@ -44,6 +44,14 @@
               (click)="deleteSelection($event)" >
         <mat-icon>delete</mat-icon>
       </button>
+
+      <!-- duplicate -->
+      <button mat-icon-button
+              *ngIf="canEdit && selection.selected | isArrayLength: {equals: 1}"
+              [title]="'COMMON.BTN_DUPLICATE'|translate"
+              (click)="duplicateRow($event, selection.selected[0])" >
+        <mat-icon>file_copy</mat-icon>
+      </button>
     </ng-template>
   </ion-buttons>
 </ion-toolbar>
@@ -195,6 +203,30 @@
         </td>
       </ng-container>
 
+      <!-- Status column  -->
+      <ng-container matColumnDef="statusId">
+        <th mat-header-cell *matHeaderCellDef>
+          <span translate>USER.STATUS</span>
+        </th>
+        <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
+          <mat-form-field floatLabel="never">
+            <ion-icon matPrefix *ngIf="row.validator.controls['statusId'].value &gt;=0" [name]="statusById[row.validator.controls['statusId'].value]?.icon"></ion-icon>
+
+            <mat-select [formControl]="row.validator.controls['statusId']" [placeholder]="i18nColumnPrefix + 'STATUS_ID'|translate">
+              <mat-select-trigger>
+                <span *ngIf="row.validator.controls['statusId'].value &gt;=0">
+                  {{ statusById[row.validator.controls['statusId'].value]?.label | translate}}</span>
+              </mat-select-trigger>
+              <mat-option *ngFor="let item of statusList" [value]="item.id">
+                <ion-icon [name]="item.icon"></ion-icon>
+                {{ item.label |translate }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="row.validator.controls['statusId'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
       <!-- Creation date column -->
       <ng-container matColumnDef="updateDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -237,35 +269,10 @@
       </ng-container>
 
       <!-- Actions buttons column -->
-      <ng-container matColumnDef="actions" stickyEnd>
-        <th mat-header-cell *matHeaderCellDef>
-          <button mat-icon-button
-                  [title]=" 'COMMON.DISPLAYED_COLUMNS'|translate"
-                  (click)="openSelectColumnsModal($event)">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-        </th>
-        <td mat-cell *matCellDef="let row">
-          <ion-icon name="star" color="accent"
-                    *ngIf="!row.editing"
-                    class="visible-dirty"></ion-icon>
-
-          <!-- undo or delete  -->
-          <button mat-icon-button color="light"
-                  *ngIf="row.editing && row.validator?.dirty"
-                  [title]="(row.id !== -1 ? 'COMMON.BTN_UNDO': 'COMMON.BTN_DELETE')|translate"
-                  (click)="cancelOrDelete($event, row)">
-            <mat-icon *ngIf="row.id !== -1">undo</mat-icon>
-            <mat-icon *ngIf="row.id === -1">delete_outline</mat-icon>
-          </button>
-          <!-- add -->
-          <button mat-icon-button color="light" *ngIf="row.validator?.valid && row.id === -1"
-                  [title]="'COMMON.BTN_ADD'|translate"
-                  (click)="confirmAndAddRow($event, row)">
-            <mat-icon>add</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+      <app-actions-column (optionsClick)="openSelectColumnsModal($event)"
+                          (cancelOrDeleteClick)="cancelOrDelete($event.event, $event.row)"
+                          (confirmAndAddClick)="confirmAndAdd($event.event, $event.row)">
+      </app-actions-column>
 
       <tr mat-header-row *matHeaderRowDef="groupColumns;"></tr>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

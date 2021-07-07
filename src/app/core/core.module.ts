@@ -29,6 +29,7 @@ import {AccountToStringPipe, IsLoginAccountPipe} from './services/pipes/account.
 import {DepartmentToStringPipe} from './services/pipes/department-to-string.pipe';
 import {NgxJdenticonModule} from 'ngx-jdenticon';
 import {AppMenuModule} from './menu/menu.module';
+import {ActionsColumnComponent} from './table/actions-column.component';
 
 @NgModule({
   imports: [
@@ -70,6 +71,7 @@ import {AppMenuModule} from './menu/menu.module';
 
     // Other components
     TableSelectColumnsComponent,
+    ActionsColumnComponent,
     EntityMetadataComponent,
     FormButtonsBarComponent,
     AppPropertiesForm,
@@ -94,6 +96,7 @@ import {AppMenuModule} from './menu/menu.module';
     AuthForm,
     AuthModal,
     TableSelectColumnsComponent,
+    ActionsColumnComponent,
     EntityMetadataComponent,
     FormButtonsBarComponent,
     AboutModal,

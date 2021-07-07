@@ -143,6 +143,7 @@ export * from './src/app/core/table/table.utils';
 export * from './src/app/core/table/memory-table.class';
 export * from './src/app/core/table/entities-table-datasource.class';
 export * from './src/app/core/table/table-select-columns.component';
+export * from './src/app/core/table/actions-column.component';
 export * from './src/app/core/home/home';
 export * from './src/app/core/settings/settings.page';
 export * from './src/app/core/account/account';

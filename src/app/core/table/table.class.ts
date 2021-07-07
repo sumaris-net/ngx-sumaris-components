@@ -3,7 +3,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort, MatSortable, SortDirection} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';
 import {BehaviorSubject, combineLatest, EMPTY, merge, Observable, of, Subject, Subscription} from 'rxjs';
-import {catchError, debounceTime, distinctUntilChanged, filter, map, mergeMap, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, first, map, mergeMap, startWith, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {TableElement} from '@e-is/ngx-material-table';
 import {EntitiesTableDataSource} from './entities-table-datasource.class';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -19,12 +19,12 @@ import {TranslateService} from '@ngx-translate/core';
 import {PlatformService} from '../services/platform.service';
 import {MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions, MatAutocompleteFieldConfig} from '../../shared/material/autocomplete/material.autocomplete';
 import {CompletableEvent, createPromiseEventEmitter, emitPromiseEvent} from '../../shared/events';
-import {isEmptyArray, isNil, isNotEmptyArray, isNotNil, toBoolean} from '../../shared/functions';
+import {changeCaseToUnderscore, isEmptyArray, isNil, isNotNil, toBoolean} from '../../shared/functions';
 import {firstFalsePromise} from '../../shared/observables';
 import {ShowToastOptions, Toasts} from '../../shared/toasts';
 import {Alerts} from '../../shared/alerts';
 import {SharedValidators} from '../../shared/validator/validators';
-import {AppTableUtils} from './table.utils';
+import {CdkColumnDef} from '@angular/cdk/table';
 
 export const SETTINGS_DISPLAY_COLUMNS = 'displayColumns';
 export const SETTINGS_SORTED_COLUMN = 'sortedColumn';
@@ -75,7 +75,7 @@ export abstract class AppTable<
   } = {};
 
   protected _enabled = true;
-  protected _$destroy = new Subject();
+  protected _destroy$ = new Subject();
   protected _autocompleteConfigHolder: MatAutocompleteConfigHolder;
   protected allowRowDetail = true;
   protected translate: TranslateService;
@@ -86,10 +86,11 @@ export abstract class AppTable<
   displayedColumns: string[];
   totalRowCount: number|null = null;
   visibleRowCount: number;
-  dirtySubject = new BehaviorSubject<boolean>(false);
+
   loadingSubject = new BehaviorSubject<boolean>(true);
-  errorSubject = new BehaviorSubject<string>(undefined);
   savingSubject = new BehaviorSubject<boolean>(false);
+  dirtySubject = new BehaviorSubject<boolean>(false);
+  errorSubject = new BehaviorSubject<string>(undefined);
 
   get error(): string {
     return this.errorSubject.value;
@@ -131,7 +132,10 @@ export abstract class AppTable<
   @Input() inlineEdition: boolean;
   @Input() focusFirstColumn = false;
   @Input() confirmBeforeDelete = false;
+  @Input() confirmBeforeCancel = false;
+  @Input() undoableDeletion = false;
   @Input() saveBeforeDelete: boolean;
+  @Input() keepEditedRowOnSave: boolean;
   @Input() saveBeforeSort: boolean;
   @Input() saveBeforeFilter: boolean;
   @Input() propagateRowError = false;
@@ -168,28 +172,25 @@ export abstract class AppTable<
   @Output() onConfirmEditCreateRow = new EventEmitter<TableElement<T>>();
   @Output() onCancelOrDeleteRow = new EventEmitter<TableElement<T>>();
   @Output() onBeforeDeleteRows = createPromiseEventEmitter<boolean, {rows: TableElement<T>[]}>();
+  @Output() onBeforeCancelRows = createPromiseEventEmitter<boolean, {rows: TableElement<T>[]}>();
   @Output() onBeforeSave = createPromiseEventEmitter<{confirmed: boolean; save: boolean}, {action: SaveActionType; valid: boolean}>();
   @Output() onAfterDeletedRows = new EventEmitter<TableElement<T>[]>();
   @Output() onSort = new EventEmitter<any>();
   @Output() onDirty = new EventEmitter<boolean>();
   @Output() onError = new EventEmitter<string>();
 
-  @Output()
   get dirty(): boolean {
     return this.dirtySubject.value;
   }
 
-  @Output()
   get valid(): boolean {
     return this.editedRow && this.editedRow.editing ? this.editedRow.validator?.valid : true;
   }
 
-  @Output()
   get invalid(): boolean {
     return this.editedRow && this.editedRow.editing ? this.editedRow.validator?.invalid : false;
   }
 
-  @Output()
   get pending(): boolean {
     return this.editedRow && this.editedRow.editing ? this.editedRow.validator?.pending : false;
   }
@@ -375,6 +376,7 @@ export abstract class AppTable<
     this.saveBeforeDelete = toBoolean(this.saveBeforeDelete, !this.readOnly); // force to false when readonly
     this.saveBeforeSort = toBoolean(this.saveBeforeSort, !this.readOnly); // force to false when readonly
     this.saveBeforeFilter = toBoolean(this.saveBeforeFilter, !this.readOnly); // force to false when readonly
+    this.keepEditedRowOnSave = toBoolean(this.keepEditedRowOnSave, this.inlineEdition);
 
     // Check ask user confirmation is possible
     if (this.confirmBeforeDelete && !this.alertCtrl) throw Error('Missing \'alertCtrl\' or \'injector\' in component\'s constructor.');
@@ -395,23 +397,31 @@ export abstract class AppTable<
 
     // Propagate error to event emitter
     this.registerSubscription(this.errorSubject
-      .pipe(filter(_ => this.onError.observers.length > 0))
       .subscribe(value => this.onError.emit(value)));
+
+    // Propagate dirty to event emitter
+    this.registerSubscription(this.dirtySubject
+      .subscribe(value => this.onDirty.emit(value)));
 
     // Propagate row dirty state to table
     this.registerSubscription(
       this.onStartEditingRow
         .pipe(
           filter(row => row.validator && true),
-          switchMap(row => row.validator.valueChanges
+          mergeMap(row => row.validator.valueChanges
             .pipe(
-              takeUntil(combineLatest([
-                this.onStartEditingRow,
-                this._$destroy])
+              takeUntil(
+                // Stop if next another row, or destroying
+                combineLatest([
+                  this.onStartEditingRow,
+                  this._destroy$
+                ])
               ),
               map(() => row.validator?.dirty),
               filter(dirty => dirty === true),
-              distinctUntilChanged()
+              first(),
+              // DEBUG
+              //tap(() => console.debug("Propagate row's dirty to table..."))
             ))
         )
         .subscribe(() => this.markAsDirty())
@@ -529,6 +539,7 @@ export abstract class AppTable<
     this._cellValueChangesDefs = {};
 
     this.loadingSubject.unsubscribe();
+    this.savingSubject.unsubscribe();
     this.errorSubject.unsubscribe();
     this.dirtySubject.unsubscribe();
 
@@ -539,14 +550,15 @@ export abstract class AppTable<
     this.onConfirmEditCreateRow.unsubscribe();
     this.onCancelOrDeleteRow.unsubscribe();
     this.onBeforeDeleteRows.unsubscribe();
+    this.onBeforeCancelRows.unsubscribe();
     this.onBeforeSave.unsubscribe();
     this.onAfterDeletedRows.unsubscribe();
     this.onSort.unsubscribe();
     this.onDirty.unsubscribe();
     this.onError.unsubscribe();
 
-    this._$destroy.next();
-    this._$destroy.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.unsubscribe();
 
     if (this._dataSource) {
       this._dataSource.ngOnDestroy();
@@ -559,6 +571,14 @@ export abstract class AppTable<
       this._dataSource = datasource;
       if (this._initialized) this.listenDatasource(datasource);
     }
+  }
+
+  addColumnDef(column: CdkColumnDef) {
+    this.table.addColumnDef(column);
+  }
+
+  removeColumnDef(column: CdkColumnDef) {
+    this.table.removeColumnDef(column);
   }
 
   setFilter(filter: F, opts?: { emitEvent: boolean }) {
@@ -589,11 +609,10 @@ export abstract class AppTable<
     }
   }
 
-  confirmAndAddRow(event?: any, row?: TableElement<T>): boolean {
+  confirmAndAdd(event?: Event, row?: TableElement<T>): boolean {
     if (!this.confirmEditCreate(event, row)) {
       return false;
     }
-
     // Add row
     return this.addRow(event);
   }
@@ -660,7 +679,7 @@ export abstract class AppTable<
     return false;
   }
 
-  cancelOrDelete(event: any, row: TableElement<T>) {
+  cancelOrDelete(event: Event, row: TableElement<T>) {
     if (row.id === -1) {
       this.deleteNewRow(event, row);
     } else {
@@ -668,8 +687,8 @@ export abstract class AppTable<
     }
   }
 
-  addRow(event?: any, insertAt?: number): boolean {
-    /*if (this.debug) */console.debug('[table] Asking for new row...');
+  addRow(event?: Event, insertAt?: number): boolean {
+    if (this.debug) console.debug('[table] Asking for new row...');
     if (!this._enabled) return false;
 
     // Use modal if inline edition is disabled
@@ -694,25 +713,90 @@ export abstract class AppTable<
     }
 
     this.resetError();
+
     if (!this.confirmEditCreate()) {
       throw {code: ErrorCodes.TABLE_INVALID_ROW_ERROR, message: 'ERROR.TABLE_INVALID_ROW_ERROR'};
     }
 
-    if (this.debug) console.debug('[table] Calling dataSource.save()...');
+    // Keep edited row id
+    const editedRowId = this.keepEditedRowOnSave && this.editedRow?.id;
+
     try {
+      // Mark as saving
+      this.markAsSaving();
+
+      // Calling service save()
+      if (this.debug) console.debug('[table] Calling dataSource.save()...');
       const isOK = await this._dataSource.save();
+
       if (isOK) this.markAsPristine();
+
       return isOK;
     } catch (err) {
       if (this.debug) console.debug('[table] dataSource.save() return an error:', err);
-      this.error = err && err.message || err;
+      this.setError(err && err.message || err);
       this.markForCheck();
       throw err;
     }
+    finally {
+      this.markAsSaved();
+
+      // Restoring previous row
+      if (isNotNil(editedRowId)) {
+        if (editedRowId !== -1) {
+          this.dataSource.waitIdle()
+            .then(() => this.dataSource.getRow(editedRowId))
+            // Select by row id
+            .then(row => row && this.clickRow(null, row))
+        } else {
+          // TODO: find a way to restore the row (find it by data ?)
+        }
+      }
+    }
   }
 
-  cancel(event?: UIEvent) {
+  cancel(event?: UIEvent, confirm?: boolean) {
+
+    // Check confirmation
+    if (this.dirty && !confirm && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
+      event?.stopPropagation();
+      this.canCancelRows().then(confirm => {
+        // If confirmed, loop
+        if (confirm) this.cancel(null, true);
+      });
+      return;
+    }
+
     this.onRefresh.emit();
+  }
+
+  async duplicateRow(event?: Event, row?: TableElement<T>) {
+    event?.stopPropagation();
+
+    row = row || this.singleSelectedRow;
+    if (!row || !this.confirmEditCreate(event, row)) {
+      return false;
+    }
+
+    const newRow = await this.addRowToTable(row.id + 1);
+    const json = {...row.currentData, id: null};
+
+    if (newRow.validator) {
+      newRow.validator.patchValue(json);
+      newRow.validator.markAsDirty();
+    }
+    else {
+      if (newRow.currentData?.fromObject) {
+        newRow.currentData.fromObject(json);
+      }
+      else {
+        newRow.currentData = json;
+      }
+      this.markAsDirty();
+    }
+
+    // select
+    this.clickRow(undefined, newRow);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -749,10 +833,9 @@ export abstract class AppTable<
     if (this.readOnly) {
       throw {code: ErrorCodes.TABLE_READ_ONLY, message: 'ERROR.TABLE_READ_ONLY'};
     }
-    if (event) {
-      if (event.defaultPrevented) return 0; // Skip
-      event.preventDefault();
-    }
+    if (event?.defaultPrevented) return 0; // SKip
+    event?.preventDefault();
+
     if (!this._enabled) return 0;
     if (this.loading || isEmptyArray(rows)) return 0;
 
@@ -918,6 +1001,13 @@ export abstract class AppTable<
 
   /* -- protected method -- */
 
+  /**
+   * return the selected row if unique in selection
+   */
+  protected get singleSelectedRow(): TableElement<T> {
+    return this.selection.selected?.length === 1 ? this.selection.selected[0] : undefined;
+  }
+
   protected async canDeleteRows(rows: TableElement<T>[]): Promise<boolean> {
 
     // Check using emitter
@@ -937,7 +1027,36 @@ export abstract class AppTable<
 
     // Ask user confirmation
     if (this.confirmBeforeDelete) {
-      return this.askDeleteConfirmation();
+      return this.askDeleteConfirmation(null, rows);
+    }
+    return true;
+  }
+
+  protected async canCancelRows(rows?: TableElement<T>[]): Promise<boolean> {
+
+    // Get dirty rows
+    rows = rows || (await this.dataSource.getRows()).filter(row => row.validator?.dirty);
+
+    if (isEmptyArray(rows)) return true; // No dirty: OK
+
+    // Check using emitter
+    if (this.onBeforeCancelRows.observers.length > 0) {
+      try {
+        const isCancel = await emitPromiseEvent(this.onBeforeCancelRows, 'canCancel', {
+          detail: {rows}
+        });
+        if (!isCancel) return false;
+      }
+      catch (err) {
+        if (err === 'CANCELLED') return false; // User cancel
+        console.error('Error while checking if can cancel rows', err);
+        throw err;
+      }
+    }
+
+    // Ask user confirmation
+    if (this.confirmBeforeCancel) {
+      return this.askCancelConfirmation(null, rows);
     }
     return true;
   }
@@ -1102,7 +1221,7 @@ export abstract class AppTable<
   }
 
   protected getI18nColumnName(columnName: string) {
-    return this.i18nColumnPrefix + columnName.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
+    return this.i18nColumnPrefix + changeCaseToUnderscore(columnName).toUpperCase();
   }
 
   protected generateTableId() {
@@ -1179,8 +1298,17 @@ export abstract class AppTable<
     // Should be override by subclasses, depending on ChangeDetectionStrategy
   }
 
-  protected async askDeleteConfirmation(event?: UIEvent): Promise<boolean> {
+  protected async askDeleteConfirmation(event?: UIEvent, rows?: TableElement<T>[]): Promise<boolean> {
+    if (this.undoableDeletion) {
+      // Special message, for undoable deletion
+      return Alerts.askConfirmation(rows?.length === 1 ? 'CONFIRM.DELETE_ROW' : 'CONFIRM.DELETE_ROWS', this.alertCtrl, this.translate, event);
+    }
+    // Immediate deletion action
     return Alerts.askActionConfirmation(this.alertCtrl, this.translate, true, event);
+  }
+
+  protected async askCancelConfirmation(event?: UIEvent, rows?: TableElement<T>[]): Promise<boolean> {
+    return Alerts.askConfirmation(rows?.length === 1 ? 'CONFIRM.CANCEL_ROW' : 'CONFIRM.CANCEL_ROWS', this.alertCtrl, this.translate, event);
   }
 
   protected async askRestoreConfirmation(event?: UIEvent): Promise<boolean> {
@@ -1201,15 +1329,21 @@ export abstract class AppTable<
 
     separator = separator || ', ';
     const errors = AppFormUtils.getFormErrors(row.validator);
-    const i18nErrors = errors && Object.keys(errors).reduce((res, columnName) => {
-      const i18nColumnName = this.translate.instant(this.getI18nColumnName(columnName));
-      const columnErrors = Object.keys(errors[columnName]).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
+    const i18nErrors = errors && Object.keys(errors).reduce((res, fieldName) => {
+      const i18nFieldName = this.translate.instant(this.getI18nFieldName(fieldName));
+      const columnErrors = Object.keys(errors[fieldName]).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
       if (isEmptyArray(columnErrors)) return res;
       // Add separator
       if (res.length) res += separator;
-      return res + i18nColumnName + ": " + columnErrors.join(separator);
+      return res + i18nFieldName + ": " + columnErrors.join(separator);
     }, "");
     return i18nErrors;
+  }
+
+  protected getI18nFieldName(fieldName: string) {
+    // Use columns has default name
+    // Can be override by subclasses, to resolve all field name
+    return this.getI18nColumnName(fieldName);
   }
 
   protected getI18nError(errorKey: string, errorContent?: any): string {
@@ -1249,29 +1383,38 @@ export abstract class AppTable<
     this.visibleRowCount--;
   }
 
-  private cancelOrDeleteExistingRow(event: UIEvent, row: TableElement<T>, confirm?: boolean) {
+  private cancelOrDeleteExistingRow(event: Event, row: TableElement<T>, confirm?: boolean) {
 
-    event?.stopPropagation();
+    const deletion = row.id === -1;
 
-    // Ask user confirmation
-    if (!confirm && (this.confirmBeforeDelete || this.onBeforeDeleteRows.observers.length > 0)) {
+    // Ask user confirmation, when delete
+    if (deletion && !confirm && (this.confirmBeforeDelete || this.onBeforeDeleteRows.observers.length > 0)) {
       event.stopPropagation();
       this.canDeleteRows([row])
-        .then(canDelete => {
-          if (!canDelete) return; // Skip
-          // Loop with confirmation
-          this.cancelOrDeleteExistingRow(event, row, true);
+        .then(confirm => {
+          // If confirmed, loop
+          if (confirm) this.cancelOrDeleteExistingRow(event, row, true);
+        });
+      return;
+    }
+    // Ask user confirmation, if cancel
+    else if (!deletion && !confirm && row.validator?.dirty && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
+      event.stopPropagation();
+      this.canCancelRows([row])
+        .then(confirm => {
+          // If confirmed, loop
+          if (confirm) this.cancelOrDeleteExistingRow(event, row, true);
         });
       return;
     }
 
-    const editing = row.editing;
+    const keepEditing = !deletion && row.editing;
     this.editedRow = undefined; // unselect row
     this._dataSource.cancelOrDelete(row);
     this.onCancelOrDeleteRow.next(row);
 
     // Mark row as pristine
-    const markRowAsPristine = this.dataSource?.options.keepOriginalDataAfterConfirm === true;
+    const markRowAsPristine = !deletion && this.dataSource?.options.keepOriginalDataAfterConfirm === true;
     if (markRowAsPristine) {
       row.validator?.markAsPristine();
       // Check if table is now pristine
@@ -1279,7 +1422,7 @@ export abstract class AppTable<
     }
 
     // Restore editing state
-    if (editing) {
+    if (keepEditing) {
       this.editRow(undefined, row);
     }
   }
@@ -1308,8 +1451,7 @@ export abstract class AppTable<
 
     // Cleaning previous subscription on datasource
     if (isNotNil(this._dataSourceSubscription)) {
-      //if (this.debug)
-      console.debug('[table] Many call to listenDatasource(): Cleaning previous subscriptions...');
+      if (this.debug) console.debug('[table] Many call to listenDatasource(): Cleaning previous subscriptions...');
       this._dataSourceSubscription.unsubscribe();
       this._subscription.remove(this._dataSourceSubscription);
     }
