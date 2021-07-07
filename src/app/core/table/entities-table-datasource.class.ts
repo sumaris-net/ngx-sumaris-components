@@ -2,13 +2,13 @@ import {TableDataSource, TableElement, ValidatorService} from '@e-is/ngx-materia
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {Entity, IEntity} from '../services/model/entity.model';
 import {ErrorCodes} from '../services/errors';
-import {catchError, map, takeUntil} from 'rxjs/operators';
+import {catchError, debounceTime, map, takeUntil} from 'rxjs/operators';
 import {Directive, OnDestroy} from '@angular/core';
 import {SortDirection} from '@angular/material/sort';
 import {CollectionViewer} from '@angular/cdk/collections';
 import {TableDataSourceOptions} from '@e-is/ngx-material-table/src/app/ngx-material-table/table-data-source';
 import {EntitiesServiceWatchOptions, IEntitiesService, LoadResult} from '../../shared/services/entity-service.class';
-import {firstNotNilPromise} from '../../shared/observables';
+import {firstFalsePromise, firstNotNilPromise} from '../../shared/observables';
 import {isNotEmptyArray, isNotNil, removeEnd, toBoolean} from '../../shared/functions';
 
 
@@ -87,6 +87,7 @@ export class EntitiesTableDataSource<
     this._options = {
       dataServiceOptions: {},
       debug: config && config.suppressErrors === false,
+      keepOriginalDataAfterConfirm: false,
       ...config
     };
     this._useValidator = isNotNil(validatorService);
@@ -232,6 +233,14 @@ export class EntitiesTableDataSource<
   disconnect(collectionViewer?: CollectionViewer) {
     super.disconnect(collectionViewer);
     this._stopWatching$.next();
+  }
+
+  waitIdle(debounceTimeMs?: number): Promise<any> {
+    return firstFalsePromise(this.$busy
+      .asObservable()
+      .pipe(
+        debounceTime(debounceTimeMs || 100) // if not started yet, wait
+      ));
   }
 
   confirmCreate(row: TableElement<T>) {

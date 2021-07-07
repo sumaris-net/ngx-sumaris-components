@@ -24,6 +24,7 @@ import {firstFalsePromise} from '../../shared/observables';
 import {ShowToastOptions, Toasts} from '../../shared/toasts';
 import {Alerts} from '../../shared/alerts';
 import {SharedValidators} from '../../shared/validator/validators';
+import {AppTableUtils} from './table.utils';
 
 export const SETTINGS_DISPLAY_COLUMNS = 'displayColumns';
 export const SETTINGS_SORTED_COLUMN = 'sortedColumn';
@@ -793,8 +794,8 @@ export abstract class AppTable<
     }
   }
 
-  // todo: rename to editRow
-  onEditRow(event: MouseEvent|undefined, row: TableElement<T>): boolean {
+  protected editRow(event: MouseEvent|undefined, row: TableElement<T>): boolean {
+
     if (!this._enabled) return false;
     if (this.editedRow === row) return true; // Already the edited row
     if (event?.defaultPrevented) return false;
@@ -812,8 +813,16 @@ export abstract class AppTable<
   }
 
   clickRow(event: MouseEvent|undefined, row: TableElement<T>): boolean {
+    if (this.loading) {
+      // Wait while loading, and loop
+      if (this.debug) console.debug("[table] Waiting before apply clickRow() (datasource is busy)...");
+      this.dataSource?.waitIdle().then(() => this.clickRow(event, row));
+      return false;
+    }
+
     // DEBUG
-    console.debug("[table] Detect click on row");
+    //console.debug("[table] Detect click on row");
+
     if (row.id === -1 || row.editing) return true; // Already in edition
     if (event?.defaultPrevented) return false; // Cancelled by event
     if (this.loading) return false; // Already busy
@@ -837,14 +846,13 @@ export abstract class AppTable<
 
       this.markAsLoading();
       this.openRow(row.currentData.id, row)
-        .then(() => {
-          this.markAsLoaded();
-        });
+        .then(() => this.markAsLoaded());
 
       return true;
     }
 
-    return this.onEditRow(event, row);
+    // Start editing row
+    return this.editRow(event, row);
   }
 
   moveRow(id: number, direction: number) {
@@ -1261,14 +1269,19 @@ export abstract class AppTable<
     this.editedRow = undefined; // unselect row
     this._dataSource.cancelOrDelete(row);
     this.onCancelOrDeleteRow.next(row);
+
     // Mark row as pristine
-    row.validator?.markAsPristine();
+    const markRowAsPristine = this.dataSource?.options.keepOriginalDataAfterConfirm === true;
+    if (markRowAsPristine) {
+      row.validator?.markAsPristine();
+      // Check if table is now pristine
+      this.checkIfPristine();
+    }
 
     // Restore editing state
-    if (editing) this.onEditRow(undefined, row);
-
-    // Check if table is now pristine
-    this.checkIfPristine();
+    if (editing) {
+      this.editRow(undefined, row);
+    }
   }
 
   private async checkIfPristine(opts?: { emitEvent?: boolean; }) {
