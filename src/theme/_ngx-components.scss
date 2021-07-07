@@ -756,18 +756,13 @@ ion-list {
     // Reserve space for row dirty border
     border-left: 4px solid transparent;
 
-    .visible-dirty {
-      visibility: hidden;
-      display: none;
-    }
-
     &.mat-row-dirty {
       border-left: 4px solid var(--ion-color-warning);
 
-      .mat-column-actions .visible-dirty {
+      // Resize the dirty icon (in the 'actions' column)
+      .mat-column-actions mat-icon.dirty-icon,
+      .mat-column-actions ion-icon.dirty-icon {
         width: 40px;
-        visibility: visible;
-        display: block;
       }
     }
   }

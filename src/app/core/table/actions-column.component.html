@@ -1,0 +1,22 @@
+<ng-container matColumnDef="actions" [stickyEnd]="stickyEnd">
+  <th mat-header-cell *matHeaderCellDef>
+    <button mat-icon-button
+            *ngIf="optionsClick.observers | isNotEmptyArray"
+            [title]="optionsTitle | translate"
+            (click)="optionsClick.emit($event)">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <ng-content select="[matHeaderCell]"></ng-content>
+  </th>
+  <td mat-cell *matCellDef="let row">
+    <ion-icon *ngIf="!row.editing && row.validator?.dirty" name="star" color="accent" class="dirty-icon"></ion-icon>
+    <button mat-icon-button color="light"
+            *ngIf="row.editing && row.validator?.dirty"
+            [title]="row.id !== -1 ? 'COMMON.BTN_UNDO' : 'COMMON.BTN_DELETE' | translate"
+            (click)="cancelOrDeleteClick.emit({event: $event, row: row})">
+      <mat-icon *ngIf="row.id !== -1">undo</mat-icon>
+      <mat-icon *ngIf="row.id === -1">delete_outline</mat-icon>
+    </button>
+    <ng-content select="[matCell]"></ng-content>
+  </td>
+</ng-container>

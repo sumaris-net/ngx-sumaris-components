@@ -285,7 +285,7 @@ export interface FormErrors {
   [key: string]: ValidationErrors;
 }
 
-function getFormErrors(control: AbstractControl, controlName?: string, result?: FormErrors): FormErrors {
+export function getFormErrors(control: AbstractControl, controlName?: string, result?: FormErrors): FormErrors {
   if (!control || control.valid) return undefined;
 
   result = result || {};

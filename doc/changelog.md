@@ -35,3 +35,7 @@
 - [enh] ValidatorService: add function getI18nErrors(control)
 - [enh] AppTable: add outputs 'onDirty', 'onError'
 - [enh] AppTable: 
+
+## 0.4.1
+
+- [enh] Add new component 'app-actions-columns'
