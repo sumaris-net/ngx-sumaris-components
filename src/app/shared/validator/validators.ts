@@ -2,7 +2,7 @@ import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Va
 import * as momentImported from 'moment';
 const moment = momentImported;
 import {DATE_ISO_PATTERN, PUBKEY_REGEXP} from '../constants';
-import {isEmptyArray, isNil, isNilOrBlank, isNotNil, isNotNilOrBlank, isNotNilOrNaN, toBoolean} from '../functions';
+import {changeCaseToUnderscore, isEmptyArray, isNil, isNilOrBlank, isNotNil, isNotNilOrBlank, isNotNilOrNaN, toBoolean} from '../functions';
 import {Moment} from 'moment';
 import {fromDateISOString} from '../dates';
 
@@ -162,6 +162,17 @@ export class SharedValidators {
     }
   }
 
+  static translateError(translateFn: (key: string, obj?: any) => string, errorKey: string, errorContent?: any) {
+    const i18nKey = 'ERROR.FIELD_' + changeCaseToUnderscore(errorKey).toUpperCase();
+    const i18nMessage = translateFn(i18nKey, errorContent);
+    if (i18nKey !== i18nMessage) return i18nMessage;
+    if (typeof errorContent === 'string') return errorContent;
+
+    // Not translated: show error
+    console.error(`[validator] Cannot translate error key '${errorKey}'. Please override translateError() in your validator`);
+
+    return changeCaseToUnderscore(errorKey);
+  }
 }
 
 // @dynamic

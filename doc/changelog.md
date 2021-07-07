@@ -27,3 +27,11 @@
 ## 0.3.5
 
 - [enh] Add new pipe `arrayFilter` to be able to filter an array, in HTML templates
+
+## 0.4.0
+
+- [enh] CSS: change style of error row (use warning color)
+- [enh] CSS: new class '.visible-dirty' (e.g. `<ion-icon name="star" class="visible-dirty"></ion-icon>` in the `actions` column)
+- [enh] ValidatorService: add function getI18nErrors(control)
+- [enh] AppTable: add outputs 'onDirty', 'onError'
+- [enh] AppTable: 

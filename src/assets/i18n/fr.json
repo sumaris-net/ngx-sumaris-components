@@ -527,5 +527,17 @@
     "UPDATE_APP": "<b>Veuillez mettre à jour {{name}}</b>",
     "UPDATE_APP_TO_VERSION": "<b>Veuillez mettre à jour {{name}}</b> (en v{{version}} ou +)",
     "UPDATE_APP_HELP": "Cette mise à jour est <b>nécessaire pour se connecter correctement</b> au nœud réseau. En cas de problème pour l'installation, veuillez <b>contacter votre administrateur</b>."
+  },
+  "TABLE": {
+    "TESTING": {
+      "SEARCH_TEXT": "Recherche: code, libellé",
+      "LABEL": "Code",
+      "NAME": "Libellé",
+      "CREATION_DATE": "Date création",
+      "UPDATE_DATE": "Date MAJ",
+      "COMMENTS": "Commentaires",
+      "GROUP_1": "Groupe 1",
+      "GROUP_2": "Groupe 2"
+    }
   }
 }

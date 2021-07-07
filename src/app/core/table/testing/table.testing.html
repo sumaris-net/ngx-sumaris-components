@@ -72,7 +72,7 @@
               <input matInput
                      formControlName="searchText"
                      autocomplete="off"
-                     [placeholder]="'REFERENTIAL.LIST.FILTER.SEARCH_TEXT'|translate">
+                     [placeholder]="'TABLE.TESTING.SEARCH_TEXT'|translate">
               <button mat-icon-button matSuffix tabindex="-1"
                       type="button"
                       (click)="clearControlValue($event, filterForm.controls.searchText)"
@@ -123,7 +123,7 @@
 
       <!-- group header cells -->
 
-      <ng-container matColumnDef="top-start" [sticky]="true">
+      <ng-container matColumnDef="top-start" sticky>
         <th mat-header-cell *matHeaderCellDef [class.cdk-visually-hidden]="!canEdit" [attr.colspan]="2">
           <!-- start spacer -->
         </th>
@@ -141,15 +141,13 @@
         </th>
       </ng-container>
 
-      <ng-container matColumnDef="top-end" [sticky]="true">
+      <ng-container matColumnDef="top-end" sticky>
         <th mat-header-cell *matHeaderCellDef>
           <!-- end spacer -->
         </th>
       </ng-container>
 
-      <!-- other cells -->
-
-      <ng-container matColumnDef="select" [sticky]="true">
+      <ng-container matColumnDef="select" sticky>
         <th mat-header-cell *matHeaderCellDef [class.cdk-visually-hidden]="!canEdit">
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
                         [indeterminate]="selection.hasValue() && !isAllSelected()">
@@ -162,7 +160,7 @@
       </ng-container>
 
       <!-- Id column -->
-      <ng-container matColumnDef="id" [sticky]="true">
+      <ng-container matColumnDef="id" sticky>
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           <ion-label>#</ion-label>
         </th>
@@ -170,13 +168,13 @@
       </ng-container>
 
       <!-- Label column -->
-      <ng-container matColumnDef="label" [sticky]="true">
+      <ng-container matColumnDef="label" sticky>
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          <ion-label translate>REFERENTIAL.LABEL</ion-label>
+          <ion-label translate>TABLE.TESTING.LABEL</ion-label>
         </th>
         <td mat-cell *matCellDef="let row">
           <mat-form-field floatLabel="never">
-            <input matInput [formControl]="row.validator.controls['label']" [placeholder]="'REFERENTIAL.LABEL'|translate"
+            <input matInput [formControl]="row.validator.controls['label']" [placeholder]="'TABLE.TESTING.LABEL'|translate"
                    [appAutofocus]="row.id == -1 && row.editing" [readonly]="!row.editing">
             <mat-error *ngIf="row.validator.controls['label'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
           </mat-form-field>
@@ -186,11 +184,11 @@
       <!-- Name column -->
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          <ion-label translate>REFERENTIAL.NAME</ion-label>
+          <ion-label translate>TABLE.TESTING.NAME</ion-label>
         </th>
         <td mat-cell *matCellDef="let row" [class.mat-form-field-disabled]="!row.editing">
           <mat-form-field floatLabel="never">
-            <input matInput [formControl]="row.validator?.controls.name" [placeholder]="'REFERENTIAL.NAME'|translate"
+            <input matInput [formControl]="row.validator?.controls.name" [placeholder]="'TABLE.TESTING.NAME'|translate"
                    [readonly]="!row.editing">
             <mat-error *ngIf="row.validator?.controls.name.hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
           </mat-form-field>
@@ -200,14 +198,14 @@
       <!-- Creation date column -->
       <ng-container matColumnDef="updateDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          <ion-label translate>REFERENTIAL.UPDATE_DATE</ion-label>
+          <ion-label translate>TABLE.TESTING.UPDATE_DATE</ion-label>
         </th>
         <td mat-cell *matCellDef="let row" class="mat-form-field-disabled">
           <ion-text class="ion-text-end" color="medium" *ngIf="row.id!==-1">
-            <small [matTooltip]="'REFERENTIAL.CREATION_DATE'|translate" *ngIf="row.currentData.creationDate; let creationDate">
+            <small [matTooltip]="'TABLE.TESTING.CREATION_DATE'|translate" *ngIf="row.currentData.creationDate; let creationDate">
               <ion-icon name="calendar"></ion-icon> {{ creationDate | dateFormat: {time: true} }}
             </small><br/>
-            <small [matTooltip]="'REFERENTIAL.UPDATE_DATE'|translate" *ngIf="row.currentData.updateDate; let updateDate">
+            <small [matTooltip]="'TABLE.TESTING.UPDATE_DATE'|translate" *ngIf="row.currentData.updateDate; let updateDate">
               <ion-icon name="time-outline"></ion-icon> {{ updateDate | dateFormat: {time: true} }}
             </small>
           </ion-text>
@@ -217,13 +215,17 @@
       <!-- Comment column -->
       <ng-container matColumnDef="comments">
         <th mat-header-cell *matHeaderCellDef>
-          <ion-label translate>REFERENTIAL.COMMENTS</ion-label>
+          <ion-label translate>TABLE.TESTING.COMMENTS</ion-label>
         </th>
         <td mat-cell *matCellDef="let row">
           <mat-form-field floatLabel="never" *ngIf="row.editing; else iconComment">
-            <textarea matInput [formControl]="row.validator?.controls.comments"
-                      [placeholder]="'REFERENTIAL.COMMENTS'|translate"
-                      [readonly]="!row.editing"></textarea>
+            <!--<textarea matInput [formControl]="row.validator?.controls.comments"
+                      [placeholder]="'TABLE.TESTING.COMMENTS'|translate"
+                      [readonly]="!row.editing"></textarea>-->
+
+            <input type="text" matInput [formControl]="row.validator?.controls.comments"
+                      [placeholder]="'TABLE.TESTING.COMMENTS'|translate"
+                      [readonly]="!row.editing">
           </mat-form-field>
 
           <ng-template #iconComment>
@@ -235,7 +237,7 @@
       </ng-container>
 
       <!-- Actions buttons column -->
-      <ng-container matColumnDef="actions">
+      <ng-container matColumnDef="actions" stickyEnd>
         <th mat-header-cell *matHeaderCellDef>
           <button mat-icon-button
                   [title]=" 'COMMON.DISPLAYED_COLUMNS'|translate"
@@ -244,19 +246,17 @@
           </button>
         </th>
         <td mat-cell *matCellDef="let row">
+          <ion-icon name="star" color="accent"
+                    *ngIf="!row.editing"
+                    class="visible-dirty"></ion-icon>
+
           <!-- undo or delete  -->
           <button mat-icon-button color="light"
-                  *ngIf="row.validator?.invalid"
+                  *ngIf="row.editing && row.validator?.dirty"
                   [title]="(row.id !== -1 ? 'COMMON.BTN_UNDO': 'COMMON.BTN_DELETE')|translate"
                   (click)="cancelOrDelete($event, row)">
             <mat-icon *ngIf="row.id !== -1">undo</mat-icon>
             <mat-icon *ngIf="row.id === -1">delete_outline</mat-icon>
-          </button>
-          <!-- validate -->
-          <button mat-icon-button color="light" *ngIf="row.validator?.valid && row.id !== -1"
-                  [title]="'COMMON.BTN_VALIDATE'|translate"
-                  (click)="confirmEditCreate($event, row)">
-            <mat-icon>check</mat-icon>
           </button>
           <!-- add -->
           <button mat-icon-button color="light" *ngIf="row.validator?.valid && row.id === -1"
@@ -293,15 +293,11 @@
                          (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content
         loadingSpinner="circles"
-        loadingText="Chargement...">
+        [loadingText]="'COMMON.LOADING_DOTS'|translate">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
-
-
 </ion-content>
-
-
 
 <ion-footer>
   <!-- Paginator  -->
@@ -315,13 +311,12 @@
                     (onCancel)="load()"
                     (onSave)="save()" [disabled]="(loadingSubject|async) || !dirty">
     <!-- error -->
-    <ion-item *ngIf="error" lines="none">
+    <ion-item *ngIf="error$|async" lines="none">
       <ion-icon color="danger" slot="start" name="alert-circle"></ion-icon>
       <ion-label color="danger" [innerHTML]="error|translate"></ion-label>
     </ion-item>
   </form-buttons-bar>
 </ion-footer>
-
 
 <ion-fab slot="fixed" vertical="bottom" horizontal="end"
          *ngIf="canEdit && mobile">

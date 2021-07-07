@@ -16,6 +16,7 @@ import {debounceTime, filter, tap} from 'rxjs/operators';
 import {MatExpansionPanel} from '@angular/material/expansion';
 import Timeout = NodeJS.Timeout;
 import {ReferentialValidatorService} from '../../services/testing/referential.validator';
+import {StatusIds} from '../../services/model/model.enum';
 
 
 @Component({
@@ -81,13 +82,14 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
 
     this.autoLoad = false;
     this.inlineEdition = true;
-    this.i18nColumnPrefix = 'REFERENTIAL.';
+    this.i18nColumnPrefix = 'TABLE.TESTING.';
 
     this.confirmBeforeDelete = false;
     this.saveBeforeDelete = false;
 
     this.saveBeforeSort = true;
     this.saveBeforeFilter = true;
+    this.propagateRowError = true;
 
     this.filterForm = formBuilder.group({
       searchText: [null]
@@ -252,9 +254,11 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
         id,
         label: 'CODE-' + id,
         name: 'Name #' + id,
+        statusId: StatusIds.ENABLE,
         comments: 'My comment #' + id,
         creationDate: fromUnixMsTimestamp(Date.now() - i * 60 * 1000),
-        updateDate: fromUnixMsTimestamp(Date.now() - i * 60 * 1000)
+        updateDate: fromUnixMsTimestamp(Date.now() - i * 60 * 1000),
+        entityName: 'TestVO'
       });
       result.push(item);
     }

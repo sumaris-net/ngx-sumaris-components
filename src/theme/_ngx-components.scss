@@ -115,7 +115,7 @@ html {
 // Main Menu
 // --------------------------------------------------
 .split-pane-md.split-pane-visible > .split-pane-side {
-  max-width: 300px !important;
+  max-width: $app-menu-width !important;
 }
 
 ion-menu.menu-side-left {
@@ -135,11 +135,11 @@ ion-menu.menu-side-left {
 // --------------------------------------------------
 .form-container,
 form.form-container {
-  color: rgba(0, 0, 0, 0.87);
+  color: $app-form-color;
 
   .mat-form-field-disabled,
   .mat-input-element:disabled {
-    color: rgba(0, 0, 0, 0.55) !important;
+    color: $app-form-color-disabled !important;
   }
 
   mat-form-field,
@@ -450,54 +450,65 @@ ion-list {
 // --------------------------------------------------
 // Material Table
 // --------------------------------------------------
+
+.table-container {
+  max-width: 100%;
+  max-height: 100%;
+  overflow-x: auto;
+}
+
+
 .mat-table {
   min-width: 100%;
-  --mat-cell-vertical-padding: 4px;
-  /*.mat-cell, .mat-header-cell, .mat-footer-cell {
-    padding: 0 10px;
-  }*/
+  --mat-cell-vertical-padding: $app-table-cell-vertical-padding;
 
-  .mat-header-cell.disabled {
+  .mat-header-cell {
+    color: var(--ion-color-primary);
+
+    &.disabled {
       color: var(--ion-color-medium, grey);
+    }
+
+    &.cdk-drag-preview {
+      color: var(--ion-color-primary100);
+      border-bottom-width: 0;
+
+      .mat-sort-header-arrow {
+        display: none;
+      }
+    }
+
+    // force invisible
+    &.cdk-visually-hidden {
+      position: absolute !important;
+    }
+
+    & > ion-label,
+    & > mat-label,
+    & button > ion-label,
+    & button > mat-label {
+      margin-top: 0;
+      margin-bottom: 0;
+      text-align: start;
+    }
   }
 
-  .mat-header-cell > ion-label,
-  .mat-header-cell > mat-label,
-  .mat-header-cell button > ion-label,
-  .mat-header-cell button > mat-label {
-    margin-top: 0;
-    margin-bottom: 0;
-    text-align: start;
-  }
 
-  .mat-header-cell > ion-label[text-wrap],
-  .mat-header-cell button > ion-label[text-wrap] {
-    white-space: normal;
-    word-wrap: break-word;
-  }
-
-  .mat-header-cell[align-self-center] > ion-label,
-  .mat-header-cell[align-self-center] > mat-label,
-  .mat-header-cell[align-self-center] button > ion-label,
-  .mat-header-cell[align-self-center] button > mat-label,
-  .mat-row[align-self-center] {
-    text-align: center;
-    align-self: center;
+  .mat-header-row {
+    height: var(--app-table-header-height, 52px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .mat-header-row,
   .mat-row {
-    --mat-cell-vertical-padding: 8px;
+    --mat-cell-vertical-padding: #{$app-table-cell-vertical-padding};
+    --mat-row-max-height: #{$app-table-row-max-height};
 
-    border-left: 2px solid transparent;
-    max-height: 52px;
-    /*z-index: 999;*/
-    padding: 0 0 0 5px !important;
+    max-height: var(--mat-row-max-height);
 
     .mat-header-cell,
     .mat-cell {
       padding-inline-start: var(--mat-cell-vertical-padding);
-      //border-left: 1px solid rgba(0, 0, 0, 0.12);
     }
 
     .mat-column-select {
@@ -507,7 +518,36 @@ ion-list {
 
     .mat-column-id {
       min-width: 50px;
-      max-width: 80px;
+      max-width: 90px;
+
+      &.code {
+        min-width: 150px;
+        max-width: 150px;
+      }
+      &.mat-table-sticky {
+        border-right: 1px solid rgba(0, 0, 0, 0.08);
+      }
+    }
+
+
+    .mat-cell-date {
+      min-width: 128px;
+      max-width: 128px;
+
+      input {
+        max-width: 120px;
+        overflow: visible !important;
+      }
+    }
+
+    .mat-cell-date-time {
+      min-width: 145px;
+      min-width: 180px;
+
+      input {
+        max-width: 120px;
+        overflow: visible !important;
+      }
     }
 
     .mat-column-comments {
@@ -515,16 +555,12 @@ ion-list {
     }
 
     .mat-column-actions {
-      min-width: 40px;
-    }
+      width: 40px;
+      max-width: 40px;
+      padding-inline-start: 0 !important; // No start padding
 
-    .mat-cell-date-time {
-      //min-width: 145px;
-      min-width: 180px;
-
-      input {
-        max-width: 120px;
-        overflow: visible !important;
+      &.mat-table-sticky {
+        border-left: 1px solid rgba(0, 0, 0, 0.08);
       }
     }
 
@@ -715,52 +751,115 @@ ion-list {
     }
   }
 
-  .mat-row.mat-row-dirty {
-    border-left: 2px solid var(--ion-color-primary-tint, var(--ion-color-primary));
+  // Dirty row
+  .mat-row {
+    // Reserve space for row dirty border
+    border-left: 4px solid transparent;
+
+    .visible-dirty {
+      visibility: hidden;
+      display: none;
+    }
+
+    &.mat-row-dirty {
+      border-left: 4px solid var(--ion-color-warning);
+
+      .mat-column-actions .visible-dirty {
+        width: 40px;
+        visibility: visible;
+        display: block;
+      }
+    }
   }
 
   .mat-row.mat-row-error {
-    margin-top: -1px;
-    border: 2px dashed var(--ion-color-danger);
+    background-color: var(--ion-color-warning-tint);
+
+    &.mat-row-disabled:hover {
+      background-color: var(--ion-color-warning-shade) !important;
+    }
   }
 
   .mat-row-height-auto {
     max-height: unset !important;
   }
-}
 
+  // Make smaller row
+  &.compact {
 
-@media screen and (max-width: $screen-sm-max) {
-  mat-table {
+    .mat-row {
 
-    mat-cell:first-child,
-    mat-footer-cell:first-child,
-    mat-header-cell:first-child {
-      //padding-right: 8px !important;
-    }
+      height: 33px;
 
-    // Reuse the first column, to inject a left padding
-    .mat-column-select {
-      /*max-width: 8px !important;
-      overflow: hidden;
+      ion-label {
+        display: inline-block;
+        margin-top: 5px;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
 
-      * {
-        display: none !important;
-        visibility: hidden !important;
-      }*/
-    }
+      .mat-badge-content {
+        top: -2px;
+      }
 
-    .mat-column-comments {
-      /*display: none !important;
-      visibility: hidden !important;*/
+      .mat-icon-button {
+        height: 32px;
+        width: 32px;
+        line-height: 32px;
+      }
+
+      .mat-form-field-underline {
+        bottom: 6px !important;
+      }
+
+      .mat-form-field {
+
+        .mat-form-field-wrapper {
+          max-height: 32px;
+
+          .mat-form-field-flex {
+
+            .mat-form-field-infix {
+              max-height: 32px;
+              padding-top: 0;
+              border-top-width: 10px;
+
+              .mat-form-field-label-wrapper {
+
+                .mat-form-field-label {
+                  top: 12px;
+                }
+              }
+
+              .mat-checkbox {
+                display: block;
+                position: absolute;
+                top: -2px;
+
+                .mat-checkbox-ripple {
+                  height: 32px;
+                  width: 32px;
+                  left: calc(50% - 16px);
+                  top: calc(50% - 16px);
+                }
+              }
+            }
+          }
+
+          // make click on mat-error transfer to input
+          .mat-form-field-subscript-wrapper {
+            pointer-events: none;
+          }
+
+          mat-error {
+            margin-top: 10px;
+          }
+        }
+      }
     }
   }
-}
-
-.table-container {
-  max-width: 100%;
-  max-height: 100%;
-  overflow-x: auto;
 }
 
 .mat-paginator-footer {
@@ -785,13 +884,7 @@ ion-list {
 
 }
 
-html {
-  --form-button-bar-height: 56px;
-}
-
 html.plt-mobile {
-
-  --form-button-bar-height: 0;
 
   .mat-paginator-footer {
     .mat-paginator-outer-container {
@@ -820,6 +913,9 @@ html.plt-mobile {
   flex: 1 1 auto;
 }
 
+ion-toolbar {
+  --min-height: var(--ion-toolbar-height, 56px);
+}
 ion-toolbar[translucent] {
   --background: transparent !important;
 }

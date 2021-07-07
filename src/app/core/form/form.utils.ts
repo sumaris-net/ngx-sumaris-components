@@ -156,7 +156,6 @@ export class AppFormUtils {
   static isControlHasInput = isControlHasInput;
   static setCalculatedValue = setCalculatedValue;
   static resetCalculatedValue = resetCalculatedValue;
-
 }
 
 /**
@@ -247,7 +246,7 @@ export function getFormValueFromEntity(source: any, form: FormGroup): { [key: st
 }
 
 export function logFormErrors(control: AbstractControl, logPrefix?: string, path?: string) {
-  if (control.valid) return;
+  if (!control || control.valid) return;
   logPrefix = logPrefix || '';
   // Form group
   if (control instanceof FormGroup) {
@@ -285,8 +284,9 @@ export function logFormErrors(control: AbstractControl, logPrefix?: string, path
 export interface FormErrors {
   [key: string]: ValidationErrors;
 }
-export function getFormErrors(control: AbstractControl, controlName?: string, result?: FormErrors): FormErrors {
-  if (control.valid) return undefined;
+
+function getFormErrors(control: AbstractControl, controlName?: string, result?: FormErrors): FormErrors {
+  if (!control || control.valid) return undefined;
 
   result = result || {};
 

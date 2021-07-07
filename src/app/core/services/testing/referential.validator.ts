@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {AbstractControlOptions, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Referential} from '../model/referential.model';
 import {AppValidatorService} from '../validator/base.validator.class';
+import {StatusIds} from '../model/model.enum';
 
 @Injectable()
 export class ReferentialValidatorService<T extends Referential = Referential>
