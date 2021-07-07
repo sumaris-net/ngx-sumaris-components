@@ -540,9 +540,7 @@
       "COMMENTS": "Commentaires",
       "GROUP_1": "Groupe 1",
       "GROUP_2": "Groupe 2",
-      "STATUS": "Etat de saisie",
-      "STATUS_ID": "Etat de saisie",
-      "ENTITY_NAME": "Type d'entité"
+      "STATUS_ID": "Etat de saisie"
     }
   }
 }
