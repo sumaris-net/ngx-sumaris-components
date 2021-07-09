@@ -48,27 +48,37 @@
               </ion-row>
             </mat-option>
 
-            <!-- No item option -->
-            <mat-option *ngIf="matSelectItems$ | async | isEmptyArray" class="ion-no-padding">
-              <ion-row class="ion-no-padding">
-                <ion-col class="ion-no-padding">
-                  <ion-label><i>{{noResultMessage | translate}}</i></ion-label>
-                </ion-col>
-              </ion-row>
-            </mat-option>
+            <ng-container *ngIf="filteredItems$ | async; let items">
+              <!-- No item option -->
+              <mat-option *ngIf="items | isEmptyArray" class="ion-no-padding">
+                <ion-row class="ion-no-padding">
+                  <ion-col class="ion-no-padding">
+                    <ion-label><i>{{noResultMessage | translate}}</i></ion-label>
+                  </ion-col>
+                </ion-row>
+              </mat-option>
 
-            <!-- options -->
-            <mat-option class="ion-no-padding"
-                        *ngFor="let item of matSelectItems$ | async" [value]="item">
-              <ion-row [classList]="item.classList">
-                <ion-col *ngFor="let path of displayAttributes; index as i;"
-                         [size]="displayColumnSizes[i]">
-                  <ion-text>{{item | propertyGet: path }}</ion-text>
-                </ion-col>
-              </ion-row>
-            </mat-option>
+              <!-- options -->
+              <mat-option *ngFor="let item of items" [value]="item" class="ion-no-padding">
+                <ion-row [classList]="item.classList">
+                  <ion-col *ngFor="let path of displayAttributes; index as i;"
+                           [size]="displayColumnSizes[i]">
+                    <ion-text>{{item | propertyGet: path }}</ion-text>
+                  </ion-col>
+                </ion-row>
+              </mat-option>
+
+              <!-- More item -->
+              <a class="ion-padding mat-option "
+                          *ngIf="canFetchMore"
+                          (click)="_fetchMore$.emit($event)" >
+                <ion-label color="primary" style="width: 100%;">
+                  <span translate>COMMON.BTN_SHOW_MORE</span>
+                  <mat-icon class="ion-color-primary">expand_more</mat-icon>
+                </ion-label>
+              </a>
+            </ng-container>
           </mat-select>
-
         </ng-template>
 
         <!--
@@ -77,7 +87,7 @@
         -->
         <ng-template #searchableTemplate>
           <input matInput #matInputText type="text"
-                 [matAutocomplete]="autoCombo"
+                 [matAutocomplete]="autoComplete"
                  [matAutocompletePosition]="matAutocompletePosition"
                  [formControl]="formControl"
                  [placeholder]="placeholder"
@@ -88,10 +98,12 @@
                  (click)="onClick.emit($event)"
                  (blur)="onBlur.emit($event)"
                  (focus)="filterInputTextFocusEvent($event)"
-                 (keyup.arrowdown)="!autoCombo.showPanel && onDropButtonClick.emit($event)">
+                 (keyup.arrowdown)="!autoComplete.showPanel && onDropButtonClick.emit($event)">
+
+
 
           <!-- autocomplete -->
-          <mat-autocomplete #autoCombo="matAutocomplete"
+          <mat-autocomplete #autoComplete="matAutocomplete"
                             autoActiveFirstOption
                             [displayWith]="displayWith"
                             [class]="classList"
@@ -104,28 +116,32 @@
               </ion-col>
             </ion-row>
 
-            <!-- No item option -->
-            <mat-option *ngIf="filteredItems$ | async | isEmptyArray" class="ion-no-padding" [disabled]="true">
-              <ion-row class="ion-no-padding">
-                <ion-col class="ion-no-padding">
-                  <ion-label><i>{{noResultMessage | translate}}</i></ion-label>
-                </ion-col>
-              </ion-row>
-            </mat-option>
+            <ng-container *ngIf="filteredItems$ | async; let items">
+              <!-- No item option -->
+              <mat-option *ngIf="items | isEmptyArray" class="ion-no-padding" [disabled]="true">
+                <ion-row class="ion-no-padding">
+                  <ion-col class="ion-no-padding">
+                    <ion-label><i>{{noResultMessage | translate}}</i></ion-label>
+                  </ion-col>
+                </ion-row>
+              </mat-option>
 
-            <mat-option *ngFor="let item of (filteredItems$ | async)" [value]="item" class="ion-no-padding" >
-              <ion-row [classList]="item.classList">
-                <ion-col *ngFor="let path of displayAttributes; index as i;"
-                         [size]="displayColumnSizes[i]">
-                  <ion-text [innerHTML]="item | propertyGet: path | highlight: formControl.value"></ion-text>
-                </ion-col>
-              </ion-row>
-            </mat-option>
+              <mat-option *ngFor="let item of items" [value]="item" class="ion-no-padding" >
+                <ion-row [classList]="item.classList">
+                  <ion-col *ngFor="let path of displayAttributes; index as i;"
+                           [size]="displayColumnSizes[i]">
+                    <ion-text [innerHTML]="item | propertyGet: path | highlight: formControl.value"></ion-text>
+                  </ion-col>
+                </ion-row>
+              </mat-option>
 
-            <!-- More item
-            <mat-option *ngIf="items.length < itemCount" class="ion-no-padding" [disabled]="true">
-              Afficher plus
-            </mat-option> -->
+              <!-- More item -->
+              <mat-option class="ion-padding" disabled
+                          *ngIf="canFetchMore"
+                          (ngInit)="_listenAutocompleteScroll(fetchMoreThreshold)" >
+                <ion-skeleton-text [animated]="true" style="width: 100%"></ion-skeleton-text>
+              </mat-option>
+            </ng-container>
           </mat-autocomplete>
         </ng-template>
 
@@ -161,4 +177,37 @@
       <ng-content select="[matAfter]"></ng-content>
     </ion-col>
   </ion-row>
+
+
 </ion-grid>
+
+<ng-template #after>
+  <ng-content select="[matAfter]"></ng-content>
+</ng-template>
+
+
+<ng-template #error>
+  <ng-content select="[matError]"></ng-content>
+</ng-template>
+
+<ng-template #options let-items="items">
+  <!-- No item option -->
+  <mat-option *ngIf="items | isEmptyArray" class="ion-no-padding">
+    <ion-row class="ion-no-padding">
+      <ion-col class="ion-no-padding">
+        <ion-label><i>{{noResultMessage | translate}}</i></ion-label>
+      </ion-col>
+    </ion-row>
+  </mat-option>
+
+  <!-- options -->
+  <mat-option class="ion-no-padding"
+              *ngFor="let item of items" [value]="item">
+    <ion-row [classList]="item.classList">
+      <ion-col *ngFor="let path of displayAttributes; index as i;"
+               [size]="displayColumnSizes[i]">
+        <ion-text>{{item | propertyGet: path }}</ion-text>
+      </ion-col>
+    </ion-row>
+  </mat-option>
+</ng-template>

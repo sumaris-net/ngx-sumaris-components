@@ -247,25 +247,6 @@ export class GraphqlService {
     });
   }
 
-  watchQuery<T, V = EmptyObject>(opts: WatchQueryOptions<V>): Observable<T> {
-    return this.apollo.watchQuery<T, V>({
-      query: opts.query,
-      variables: opts.variables,
-      fetchPolicy: opts.fetchPolicy || (this._defaultFetchPolicy as FetchPolicy) || undefined,
-      notifyOnNetworkStatusChange: true
-    })
-      .valueChanges
-      .pipe(
-        catchError(error => this.onApolloError<T>(error, opts.error)),
-        map(({data, errors}) => {
-          if (errors) {
-            throw errors[0];
-          }
-          return data;
-        })
-      );
-  }
-
   queryRefValuesChanges<T, V = EmptyObject>(queryRef: QueryRef<T, V>, opts: WatchQueryOptions<V>): Observable<T> {
     return queryRef
       .valueChanges
@@ -278,6 +259,11 @@ export class GraphqlService {
           return data;
         })
       );
+  }
+
+  watchQuery<T, V = EmptyObject>(opts: WatchQueryOptions<V>): Observable<T> {
+    const queryRef: QueryRef<T, V> = this.watchQueryRef(opts);
+    return this.queryRefValuesChanges(queryRef, opts);
   }
 
   async mutate<T, V = EmptyObject>(opts: MutateQueryOptions<T, V>): Promise<T> {

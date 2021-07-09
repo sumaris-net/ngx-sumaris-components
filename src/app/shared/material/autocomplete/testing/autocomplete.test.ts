@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SharedValidators} from '../../../validator/validators';
 import {MatAutocompleteConfigHolder} from '../material.autocomplete';
-import {isNotNil, suggestFromArray} from '../../../functions';
+import {isNil, isNotNil, suggestFromArray} from '../../../functions';
 import {BehaviorSubject} from 'rxjs';
 import {LoadResult} from '../../../services/entity-service.class';
 import Timer = NodeJS.Timer;
@@ -19,8 +19,20 @@ const FAKE_ENTITIES = [
   {id: 3, label: 'CCC', name: 'Item C', description: 'Very long description C', comments: 'Very very long comments... again for C'}
 ];
 
-function deepCopy(values?: Entity[]): Entity[] {
-  return (values || FAKE_ENTITIES).map(entity => Object.assign({}, entity));
+function deepCopy(values?: Entity[], size?: number): Entity[] {
+  if (isNil(size)) {
+    return (values || FAKE_ENTITIES).map(entity => Object.assign({}, entity));
+  }
+
+  let result = [];
+  let i = 1;
+  while (result.length < size) {
+    result = result.concat((values || FAKE_ENTITIES).map(entity => {
+      const name = entity.name + ' #' + i;
+      return {...entity, id: i++, name};
+    }));
+  }
+  return result.slice(0, size);
 }
 
 @Component({
@@ -29,7 +41,7 @@ function deepCopy(values?: Entity[]): Entity[] {
 })
 export class AutocompleteTestPage implements OnInit {
 
-  _items = deepCopy(FAKE_ENTITIES);
+  _items = deepCopy(FAKE_ENTITIES, 100);
   $items = new BehaviorSubject<Entity[]>(undefined);
 
   form: FormGroup;
@@ -39,7 +51,7 @@ export class AutocompleteTestPage implements OnInit {
   memoryAutocompleteFieldName = 'entity-$items';
   memoryTimer: Timer;
 
-  mode: 'mobile'|'desktop'|'memory'|'temp' = 'temp';
+  mode: 'mobile'|'desktop'|'memory'|'temp' = 'mobile';
 
   constructor(
     protected formBuilder: FormBuilder
@@ -59,12 +71,13 @@ export class AutocompleteTestPage implements OnInit {
     this.autocompleteFields.add('entity-suggestFn', {
       suggestFn: (value, filter) => this.suggest(value, filter),
       attributes: ['label', 'name'],
-      displayWith: this.entityToString
+      displayWith: this.entityToString,
+      showAllOnFocus: false
     });
 
     // From items array
     this.autocompleteFields.add('entity-items', {
-      items: FAKE_ENTITIES.slice(),
+      items: this._items.slice(),
       attributes: ['label', 'name'],
       displayWith: this.entityToString
     });
@@ -116,8 +129,7 @@ export class AutocompleteTestPage implements OnInit {
   }
 
   async loadItems() {
-    const items = deepCopy(FAKE_ENTITIES);
-    this.$items.next(items);
+    this.$items.next(this._items.slice());
   }
 
   entityToString(item: any) {
@@ -125,10 +137,25 @@ export class AutocompleteTestPage implements OnInit {
   }
 
   async suggest(value: any, filter?: any): Promise<LoadResult<any>> {
-    return suggestFromArray(this._items, value, {
+    filter = {offset: 0, size: 30, ...filter};
+    const res = suggestFromArray(this._items, value, {
       ...filter,
       searchAttributes: ['label', 'name']
     });
+    // Simulate a size = 30
+
+    const total = res.total || res.data.length;
+    const end = filter.offset + res.data.length
+    if (end < total) {
+      filter = {...filter, offset: end};
+      return {
+        total,
+        data: res.data,
+        fetchMore: (variables) => this.suggest(value, {...filter, ...variables})
+      };
+    }
+
+    return res;
   }
 
   doSubmit(event) {

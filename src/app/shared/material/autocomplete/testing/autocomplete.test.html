@@ -35,7 +35,7 @@
 
   <form class="form-container" [formGroup]="form" (ngSubmit)="doSubmit($event)">
 
-    <ion-grid *ngIf="mode === 'temp'">
+    <!--<ion-grid *ngIf="mode === 'temp'">
       <ion-row>
         <ion-col>
           <ion-card>
@@ -65,7 +65,7 @@
       </ion-row>
 
 
-    </ion-grid>
+    </ion-grid>-->
 
 
     <ion-grid *ngIf="mode === 'memory'">
@@ -158,7 +158,7 @@
                                       [config]="autocompleteFields.get('entity-$items')"
                                       [mobile]="true"
                                       [compareWith]="compareWithFn"
-                                      [logPrefix]="'[combo-mobile-2]'"
+                                      [logPrefix]="'[combo-mobile-observable]'"
               ></mat-autocomplete-field>
             </ion-card-content>
           </ion-card>
@@ -282,7 +282,34 @@
         <ion-col><ion-text><h4>Desktop mode</h4></ion-text></ion-col>
       </ion-row>
       <ion-row>
-        <ion-col>
+
+
+        <ion-col size="6">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                <ion-text color="primary">
+                  items from suggest function
+                </ion-text>
+              </ion-card-title>
+              <ion-card-subtitle>
+                <ion-text color="medium">
+                  <small><pre>suggest: (value, filter) => LoadResult&lt;any&gt;</pre></small>
+                </ion-text>
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <mat-autocomplete-field formControlName="entity"
+                                      [config]="autocompleteFields.get('entity-items-filter')"
+                                      [mobile]="false"
+                                      [compareWith]="compareWithFn"
+                                      [logPrefix]="'[combo-desktop-suggest]'"
+              ></mat-autocomplete-field>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="6">
           <ion-card>
             <ion-card-header>
               <ion-card-title>
@@ -297,12 +324,12 @@
               </ion-card-subtitle>
             </ion-card-header>
             <ion-card-content>
-            <mat-autocomplete-field formControlName="entity"
-                                    [config]="autocompleteFields.get('entity-items')"
-                                    [logPrefix]="'[combo-desktop-1]'"
-                                    [compareWith]="compareWithFn"
-                                    [mobile]="false"
-            ></mat-autocomplete-field>
+              <mat-autocomplete-field formControlName="entity"
+                                      [config]="autocompleteFields.get('entity-items')"
+                                      [logPrefix]="'[combo-desktop-array-1]'"
+                                      [compareWith]="compareWithFn"
+                                      [mobile]="false"
+              ></mat-autocomplete-field>
             </ion-card-content>
           </ion-card>
         </ion-col>

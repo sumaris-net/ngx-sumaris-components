@@ -13,11 +13,13 @@ import {IonicModule} from '@ionic/angular';
 import {SharedPipesModule} from '../../pipes/pipes.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {SharedDirectivesModule} from '../../directives/directives.module';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
   imports: [
     CommonModule,
     IonicModule,
+    ScrollingModule,
     ReactiveFormsModule,
     SharedPipesModule,
     SharedDirectivesModule,

@@ -126,27 +126,48 @@ export function changeCaseToUnderscore(value: string): string {
   return value.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
 }
 
-export function suggestFromArray<T = any>(items: T[], value: any, options?: {
+export function suggestFromArray<T = any>(items: T[], value: any, opts?: {
+  offset?: 0;
+  size?: 0;
   searchAttribute?: string;
   searchAttributes?: string[];
 }): LoadResult<T> {
   if (isNotNil(value) && typeof value === 'object') return {data: [value]};
-  value = (typeof value === 'string' && value !== '*') && value.toUpperCase() || undefined;
-  if (isNilOrBlank(value)) return {data: items};
-  const keys = options && (options.searchAttribute && [options.searchAttribute] || options.searchAttributes) || ['label'];
 
-  // If wildcard, search using regexp
-  if ((value as string).indexOf('*') !== -1) {
-    value = (value as string).replace('*', '.*');
-    return {
-      data: items.filter(v => keys.findIndex(key => matchUpperCase(getPropertyByPathAsString(v, key), value)) !== -1)
-    };
+  value = (typeof value === 'string' && value !== '*') && value.toUpperCase() || undefined;
+
+  // Filter items
+  if (isNotNilOrBlank(value) && items) {
+    const keys = opts && (opts.searchAttribute && [opts.searchAttribute] || opts.searchAttributes) || ['label'];
+
+    // If wildcard, search using regexp
+    let filteredItems: T[];
+    if ((value as string).indexOf('*') !== -1) {
+      value = (value as string).replace('*', '.*');
+      items = items.filter(v => keys.findIndex(key => matchUpperCase(getPropertyByPathAsString(v, key), value)) !== -1);
+    } else {
+      // If wildcard, search using startsWith
+      items = items.filter(v => keys.findIndex(key => startsWithUpperCase(getPropertyByPathAsString(v, key), value)) !== -1);
+    }
   }
 
-  // If wildcard, search using startsWith
+  // Truncate if need
+  const total = items?.length || 0;
+  if (opts) {
+    if (opts.offset > 0) {
+      items = items.slice(opts.offset);
+    }
+    if (isNotNil(opts.size)) {
+      items = items.slice(0, opts.size);
+    }
+  }
+
   return {
-    data: (items || []).filter(v => keys.findIndex(key => startsWithUpperCase(getPropertyByPathAsString(v, key), value)) !== -1)
+    data: items,
+    total
   };
+
+
 }
 
 export function suggestFromStringArray(values: string[], value: any, options?: {

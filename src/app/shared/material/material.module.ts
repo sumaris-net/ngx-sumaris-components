@@ -28,7 +28,7 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
-import {SharedMatAutocompleteModule} from './autocomplete/autocomplete.module';
+import {SharedMatAutocompleteModule} from './autocomplete/material.autocomplete.module';
 import {SharedMatLatLongModule} from './latlong/material.latlong.module';
 import {SharedMatDateTimeModule} from './datetime/datetime.module';
 import {SharedMatDurationModule} from './duration/duration.module';

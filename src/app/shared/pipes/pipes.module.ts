@@ -16,6 +16,7 @@ import {MapGetPipe, MapKeysPipe, MapValuesPipe} from './maps.pipe';
 import {IsNilOrBlankPipe, IsNotNilOrBlankPipe} from './string.pipes';
 import {TranslatablePipe, TranslateContextPipe} from './translate-context.pipe';
 import {PropertyGetPipe} from './properties.pipe';
+import {NgInitDirective} from './ng-init.pipe';
 
 @NgModule({
   imports: [
@@ -52,6 +53,7 @@ import {PropertyGetPipe} from './properties.pipe';
     IsNotNilOrBlankPipe,
     TranslateContextPipe,
     TranslatablePipe,
+    NgInitDirective
   ],
   exports: [
     PropertyGetPipe,
@@ -82,6 +84,7 @@ import {PropertyGetPipe} from './properties.pipe';
     ArrayFilterPipe,
     TranslateContextPipe,
     TranslatablePipe,
+    NgInitDirective
   ]
 })
 export class SharedPipesModule {

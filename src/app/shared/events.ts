@@ -1,4 +1,6 @@
 import {EventEmitter} from '@angular/core';
+import {fromEvent, Observable} from 'rxjs';
+import {filter} from 'rxjs/operators';
 
 export interface PromiseEventPayload<T = any> {
   success: (T) => void;
@@ -39,3 +41,45 @@ export interface CompletableEvent extends Event {
   target: EventTarget & { complete?: () => void };
 }
 
+/**
+ * Listen end of scroll.
+ * <p>
+ *   The threshold distance from the bottom of the content to call the infinite output event when scrolled.
+ *   The threshold value can be either a percent, or in pixels.
+ *   For example, use the value of 10% for the infinite output event to get called when the user has scrolled
+ *   10% from the bottom of the page. Use the value 100px when the scroll is within 100 pixels from the bottom of the page.
+ * </p>
+ * @param element
+ * @param threshold default to '15%'
+ */
+export function fromScrollEndEvent(element: HTMLElement, threshold?: string): Observable<any> {
+
+  threshold = threshold || '15%';
+  let isEnd: () => boolean;
+
+  // Listen using percentage
+  if (threshold.endsWith('%')) {
+    const thresholdRatio = parseInt(threshold.slice(0, threshold.length - 1)) / 100;
+    isEnd = () => {
+      const endPosRatio = 1 - (element.scrollTop + element.offsetHeight) / element.scrollHeight;
+      return endPosRatio < thresholdRatio;
+    };
+  }
+
+  // Listen using pixels
+  else if (threshold.endsWith('px')) {
+    const thresholdPx = parseInt(threshold.slice(0, threshold.length - 2));
+    isEnd = () => {
+      const endPosPx = element.scrollHeight - (element.scrollTop + element.offsetHeight);
+      return endPosPx < thresholdPx;
+    };
+  }
+  else {
+    throw new Error('Invalid argument \'threshold\'. Expected value unit: \'px\' or \'%\' ')
+  }
+
+  return fromEvent(element, 'scroll')
+    .pipe(
+      filter(() => isEnd())
+    );
+}

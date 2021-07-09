@@ -17,7 +17,9 @@ import {Directive} from '@angular/core';
 import {RefetchQueryDescription} from '@apollo/client/core/watchQueryOptions';
 import {FetchResult} from '@apollo/client/link/core';
 import {EntityFilter, EntityFilterUtils} from './model/filter.model';
+import {DocumentNode} from 'graphql';
 
+export type MutableWatchQueriesUpdatePolicy = 'update-cache' | 'refetch-queries';
 
 export interface BaseEntityGraphqlQueries {
   load?: any;
@@ -44,8 +46,10 @@ export interface BaseEntityServiceOptions<
   mutations?: Partial<M>;
   subscriptions?: Partial<S>;
   equalsFn?: (e1: T, e2: T) => boolean;
+  isNewFn?: (e: T) => boolean;
   defaultSortBy?: keyof T;
   defaultSortDirection?: SortDirection;
+  watchQueriesUpdatePolicy?: MutableWatchQueriesUpdatePolicy;
 }
 
 export interface EntitySaveOptions {
@@ -79,9 +83,11 @@ export abstract class BaseEntityService<
   protected readonly mutations: Partial<M>;
   protected readonly subscriptions: Partial<S>;
   protected readonly equalsFn: (e1: T, e2: T) => boolean;
+  protected readonly isNewFn: (e: T) => boolean;
 
   protected readonly defaultSortBy: keyof T;
   protected readonly defaultSortDirection: SortDirection;
+  protected readonly watchQueriesUpdatePolicy: MutableWatchQueriesUpdatePolicy;
 
   protected constructor(
     protected graphql: GraphqlService,
@@ -95,8 +101,10 @@ export abstract class BaseEntityService<
     this.mutations = options.mutations || <Partial<M>>{};
     this.subscriptions = options.subscriptions || <Partial<S>>{};
     this.equalsFn = options.equalsFn || ((e1, e2) => EntityUtils.equals(e1, e2, 'id'));
+    this.isNewFn = options.isNewFn || ((e) => EntityUtils.isNotEmpty(e, 'id'));
     this.defaultSortBy = options.defaultSortBy || 'id';
     this.defaultSortDirection = options.defaultSortDirection || 'asc';
+    this.watchQueriesUpdatePolicy = options.watchQueriesUpdatePolicy || 'update-cache';
 
     platform.ready().then(() => {
       // No limit for updatable watch queries, if desktop
@@ -115,7 +123,7 @@ export abstract class BaseEntityService<
 
   watch(id: number, opts?: WO & { query?: any }): Observable<T> {
 
-    if (this._debug) console.debug(`[base-entity-service] Watching ${this._logTypeName} {${id}}...`);
+    if (this._debug) console.debug(this._logPrefix + `Watching ${this._logTypeName} {${id}}...`);
 
     const query = opts && opts.query || this.queries.load;
     return this.graphql.watchQuery<{data: any}>({
@@ -133,14 +141,12 @@ export abstract class BaseEntityService<
 
   async load(id: ID, opts?: LO & { query?: any }): Promise<T> {
 
-    if (this._debug) console.debug(`[base-entity-service] Loading ${this._logTypeName} {${id}}...`);
+    if (this._debug) console.debug(this._logPrefix + `Loading ${this._logTypeName} {${id}}...`);
     const query = opts && opts.query || this.queries.load;
 
     const { data } = await this.graphql.query<{data: any}>({
       query,
-      variables: {
-        id
-      },
+      variables: { id },
       fetchPolicy: opts && (opts.fetchPolicy as FetchPolicy) || undefined,
       error: {code: ErrorCodes.LOAD_DATA_ERROR, message: 'REFERENTIAL.ERROR.LOAD_DATA_ERROR'}
     });
@@ -170,8 +176,7 @@ export abstract class BaseEntityService<
     };
 
     let now = this._debug && Date.now();
-    if (this._debug) console.debug(`[base-entity-service] Watching ${this._logTypeName}...`, variables);
-
+    if (this._debug) console.debug(this._logPrefix + `Watching ${this._logTypeName}...`, variables);
 
     const withTotal = (!opts || opts.withTotal !== false) && this.queries.loadAllWithTotal && true;
     const query = (opts && opts.query) // use given query
@@ -195,7 +200,7 @@ export abstract class BaseEntityService<
             : (data || []) as T[];
 
           if (now) {
-            console.debug(`[base-entity-service] ${this._logTypeName} loaded in ${Date.now() - now}ms`, entities);
+            console.debug(this._logPrefix + `${this._logTypeName} loaded in ${Date.now() - now}ms`, entities);
             now = null;
           }
           return {data: entities, total};
@@ -228,7 +233,7 @@ export abstract class BaseEntityService<
     };
 
     const now = Date.now();
-    if (debug) console.debug(`[base-entity-service] Loading ${this._logTypeName}...`, variables);
+    if (debug) console.debug(this._logPrefix + `Loading ${this._logTypeName}...`, variables);
 
     const withTotal = (!opts || opts.withTotal !== false) && this.queries.loadAllWithTotal && true;
     const query = (opts && opts.query) // use given query
@@ -243,7 +248,7 @@ export abstract class BaseEntityService<
     const entities = (!opts || opts.toEntity !== false) ?
       (data || []).map(json => this.fromObject(json)) :
       (data || []) as T[];
-    if (debug) console.debug(`[base-entity-service] ${this._logTypeName} items loaded in ${Date.now() - now}ms`);
+    if (debug) console.debug(this._logPrefix + `${this._logTypeName} items loaded in ${Date.now() - now}ms`);
     return {
       data: entities,
       total
@@ -261,40 +266,47 @@ export abstract class BaseEntityService<
         .map(entity => (() => this.save(entity, opts))));
     }
 
+    let hasNewEntities = false;
     const json = entities.map(entity => {
+      hasNewEntities = hasNewEntities || this.isNewFn(entity);
       this.fillDefaultProperties(entity);
       return this.asObject(entity);
     });
 
     const now = Date.now();
-    if (this._debug) console.debug(`[base-entity-service] Saving all ${this._logTypeName}...`, json);
+    if (this._debug) console.debug(this._logPrefix + `Saving all ${this._logTypeName}...`, json);
 
     await this.graphql.mutate<LoadResult<any>>({
       mutation: this.mutations.saveAll,
+      refetchQueries: this.getRefetchQueriesForMutation(opts),
+      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
       variables: {
         data: json
       },
       error: {code: ErrorCodes.SAVE_DATA_ERROR, message: 'ERROR.SAVE_DATA_ERROR'},
       update: (proxy, {data}) => {
-        if (data && data.data) {
+        const savedEntities = data && data.data;
+        if (savedEntities) {
           // Update entities (id and update date)
           entities.forEach(entity => {
-            const savedEntity = data.data.find(e => this.equalsFn(e, entity));
+            const savedEntity = savedEntities.find(e => this.equalsFn(e, entity));
             this.copyIdAndUpdateDate(savedEntity, entity);
           });
 
-          // Update the cache
-          this.insertIntoMutableCachedQuery(proxy, {
-            query: this.queries.loadAll,
-            data: data.data
-          });
+          if (hasNewEntities && this.watchQueriesUpdatePolicy === 'update-cache') {
+            // Update the cache
+            this.insertIntoMutableCachedQueries(proxy, {
+              queries: this.getLoadQueries(),
+              data: savedEntities
+            });
+          }
         }
 
         if (opts && opts.update) {
           opts.update(proxy, {data});
         }
 
-        if (this._debug) console.debug(`[base-entity-service] ${this._logTypeName} saved in ${Date.now() - now}ms`, entities);
+        if (this._debug) console.debug(`${this._logTypeName} saved in ${Date.now() - now}ms`, entities);
 
       }
     });
@@ -321,15 +333,15 @@ export abstract class BaseEntityService<
     // Transform into json
     const json = this.asObject(entity);
 
-    const isNew = isNil(json.id);
+    const isNew = this.isNewFn(json);
 
     const now = Date.now();
-    if (this._debug) console.debug(`[base-entity-service] Saving ${this._logTypeName}...`, json);
+    if (this._debug) console.debug(this._logPrefix + `Saving ${this._logTypeName}...`, json);
 
     await this.graphql.mutate<{data: any}>({
-      refetchQueries: opts && opts.refetchQueries,
-      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
       mutation: this.mutations.save,
+      refetchQueries: this.getRefetchQueriesForMutation(opts),
+      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
       variables: {
         data: json
       },
@@ -339,17 +351,14 @@ export abstract class BaseEntityService<
         const savedEntity = data && data.data;
         this.copyIdAndUpdateDate(savedEntity, entity);
 
-        if (this._debug) console.debug(`[base-entity-service] ${entity.__typename} saved in ${Date.now() - now}ms`, entity);
+        if (this._debug) console.debug(this._logPrefix + `${entity.__typename} saved in ${Date.now() - now}ms`, entity);
 
-        // Update the cache
-        if (isNew) {
-          this.insertIntoMutableCachedQuery(proxy, {
-            query: this.queries.loadAll,
+        // Insert into the cache
+        if (isNew && this.watchQueriesUpdatePolicy === 'update-cache') {
+          this.insertIntoMutableCachedQueries(proxy, {
+            queries: this.getLoadQueries(),
             data: savedEntity
           });
-
-          // TODO BLA: should also clean referential ref queries ?
-          // How to clean
         }
 
         if (opts && opts.update) {
@@ -382,25 +391,20 @@ export abstract class BaseEntityService<
 
     const ids = entities.map(t => t.id);
     const now = new Date();
-    if (this._debug) console.debug(`[base-entity-service] Deleting ${this._logTypeName}...`, ids);
+    if (this._debug) console.debug(this._logPrefix + `Deleting ${this._logTypeName}...`, ids);
 
     await this.graphql.mutate<any>({
       mutation: this.mutations.deleteAll,
-      variables: {
-        ids
-      },
+      refetchQueries: this.getRefetchQueriesForMutation(opts),
+      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
+      variables: { ids },
       error: {code: ErrorCodes.DELETE_DATA_ERROR, message: 'ERROR.DELETE_DATA_ERROR'},
       update: (proxy, res) => {
+
         // Remove from cache
-        if (this.queries.loadAll) {
-          this.removeFromMutableCachedQueryByIds(proxy, {
-            query: this.queries.loadAll,
-            ids
-          });
-        }
-        if (this.queries.loadAllWithTotal) {
-          this.removeFromMutableCachedQueryByIds(proxy, {
-            query: this.queries.loadAllWithTotal,
+        if (this.watchQueriesUpdatePolicy === 'update-cache') {
+          this.removeFromMutableCachedQueriesByIds(proxy, {
+            queries: this.getLoadQueries(),
             ids
           });
         }
@@ -409,7 +413,7 @@ export abstract class BaseEntityService<
           opts.update(proxy, res);
         }
 
-        if (this._debug) console.debug(`[base-entity-service] ${this._logTypeName} deleted in ${new Date().getTime() - now.getTime()}ms`);
+        if (this._debug) console.debug(this._logPrefix + `${this._logTypeName} deleted in ${new Date().getTime() - now.getTime()}ms`);
       }
     });
   }
@@ -417,9 +421,7 @@ export abstract class BaseEntityService<
   /**
    * Delete a referential entity
    */
-  async delete(entity: T, opts?: Partial<{
-    update: MutationUpdaterFn<any>;
-  }> | any): Promise<any> {
+  async delete(entity: T, opts?: EntitySaveOptions | any): Promise<any> {
     if (!this.mutations.delete) {
       if (!this.mutations.deleteAll) throw new Error('Not implemented');
       const data = await this.deleteAll([entity], opts);
@@ -431,26 +433,29 @@ export abstract class BaseEntityService<
 
     const id = entity.id;
     const now = new Date();
-    if (this._debug) console.debug(`[base-entity-service] Deleting ${this._logTypeName} {${id}}...`);
+    if (this._debug) console.debug(this._logPrefix + `Deleting ${this._logTypeName} {${id}}...`);
 
     await this.graphql.mutate<any>({
       mutation: this.mutations.delete,
-      variables: {
-        id
-      },
+      refetchQueries: this.getRefetchQueriesForMutation(opts),
+      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
+      variables: { id },
       error: {code: ErrorCodes.DELETE_DATA_ERROR, message: 'ERROR.DELETE_DATA_ERROR'},
       update: (proxy, res) => {
+
         // Remove from cache
-        this.removeFromMutableCachedQueryByIds(proxy, {
-          query: this.queries.loadAll,
-          ids: [id]
-        });
+        if (this.watchQueriesUpdatePolicy === 'update-cache') {
+          this.removeFromMutableCachedQueriesByIds(proxy, {
+            queries: this.getLoadQueries(),
+            ids: [id]
+          });
+        }
 
         if (opts && opts.update) {
           opts.update(proxy, res);
         }
 
-        if (this._debug) console.debug(`[base-entity-service] ${this._logTypeName} deleted in ${new Date().getTime() - now.getTime()}ms`);
+        if (this._debug) console.debug(this._logPrefix + `${this._logTypeName} deleted in ${new Date().getTime() - now.getTime()}ms`);
       }
     });
   }
@@ -468,7 +473,7 @@ export abstract class BaseEntityService<
       id,
       interval: opts && opts.interval || 10 // seconds
     };
-    if (this._debug) console.debug(`[base-entity-service] [WS] Listening for changes on ${this._logTypeName} {${id}}...`);
+    if (this._debug) console.debug(this._logPrefix + `[WS] Listening for changes on ${this._logTypeName} {${id}}...`);
 
     return this.graphql.subscribe<{data: any}>({
       query: opts && opts.query || this.subscriptions.listenChanges,
@@ -481,10 +486,10 @@ export abstract class BaseEntityService<
       .pipe(
         map(({data}) => {
           const entity = (!opts || opts.toEntity !== false) ? data && this.fromObject(data) : data;
-          if (entity && this._debug) console.debug(`[base-entity-service] [WS] Received changes on ${this._logTypeName} {${id}}`, entity);
+          if (entity && this._debug) console.debug(this._logPrefix + `[WS] Received changes on ${this._logTypeName} {${id}}`, entity);
 
-          // TODO: when missing = deleted ?
-          if (!entity) console.warn(`[base-entity-service] [WS] Received deletion on ${this._logTypeName} {${id}} - TODO check implementation`);
+          // TODO: missing = deleted ?
+          if (!entity) console.warn(this._logPrefix + `[WS] Received deletion on ${this._logTypeName} {${id}} - TODO check implementation`);
 
           return entity;
         })
@@ -519,6 +524,23 @@ export abstract class BaseEntityService<
   protected asObject(entity: T, opts?: EntityAsObjectOptions): any {
     // Can be override by subclasses
     return entity.asObject(opts);
+  }
+
+  protected getRefetchQueriesForMutation(opts?: EntitySaveOptions): ((result: FetchResult<{data: any}>) => RefetchQueryDescription) | RefetchQueryDescription {
+    if (opts && opts.refetchQueries) return opts.refetchQueries;
+
+    // Skip if update policy not used refecth queries
+    if (this.watchQueriesUpdatePolicy !== 'refetch-queries') return undefined;
+
+    const queries = this.getLoadQueries();
+    if (!queries.length) return undefined; // Skip if empty
+
+    // Find the refetch queries definition
+    return this.findRefetchQueries({queries});
+  }
+
+  protected getLoadQueries(): DocumentNode[] {
+    return [this.queries.loadAll, this.queries.loadAllWithTotal].filter(isNotNil);
   }
 
 }

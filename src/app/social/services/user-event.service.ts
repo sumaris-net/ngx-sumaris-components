@@ -221,14 +221,14 @@ export class UserEventService
 
           // Add to cache
           if (isNew) {
-            this.insertIntoMutableCachedQuery(proxy,{
+            this.insertIntoMutableCachedQueries(proxy,{
               query: LoadAllQuery,
               data: {
                 ...savedEntity,
                 content: null
               }
             });
-            this.insertIntoMutableCachedQuery(proxy,{
+            this.insertIntoMutableCachedQueries(proxy,{
               query: LoadAllWithContentQuery,
               data: savedEntity
             });
@@ -266,11 +266,11 @@ export class UserEventService
       },
       update: (proxy) => {
         // Remove from caches
-        this.removeFromMutableCachedQueryByIds(proxy, {
+        this.removeFromMutableCachedQueriesByIds(proxy, {
           query: LoadAllQuery,
           ids
         });
-        this.removeFromMutableCachedQueryByIds(proxy, {
+        this.removeFromMutableCachedQueriesByIds(proxy, {
           query: LoadAllWithContentQuery,
           ids
         });

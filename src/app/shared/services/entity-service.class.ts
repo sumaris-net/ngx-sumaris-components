@@ -2,6 +2,7 @@ import {Observable} from 'rxjs';
 import {FetchPolicy, WatchQueryFetchPolicy} from '@apollo/client/core';
 import {SortDirection} from '@angular/material/sort';
 import {Directive, OnDestroy} from '@angular/core';
+import {EmptyObject} from 'apollo-angular/types';
 
 export declare interface Page {
   offset: number;
@@ -10,10 +11,13 @@ export declare interface Page {
   sortDirection?: SortDirection;
 }
 
+export declare type FetchMoreFn<R, V = EmptyObject> = (variables?: V) => Promise<R>;
+
 export declare interface LoadResult<T> {
   data: T[];
   total?: number;
   errors?: any[];
+  fetchMore?: FetchMoreFn<LoadResult<T>>;
 }
 
 export declare type SuggestFn<T, F> = (value: any, filter?: F, sortBy?: string, sortDirection?: SortDirection) => Promise<T[] | LoadResult<T>>;
@@ -35,11 +39,11 @@ export declare interface EntityServiceLoadOptions {
 export declare interface IEntityService<
   T,
   ID = any,
-  O = EntityServiceLoadOptions> {
+  LO = EntityServiceLoadOptions> {
 
   load(
     id: ID,
-    opts?: O
+    opts?: LO
   ): Promise<T>;
 
   save(data: T, opts?: any): Promise<T>;
@@ -75,9 +79,9 @@ export declare interface IEntitiesService<T, F, O extends EntitiesServiceWatchOp
     options?: O
   ): Observable<LoadResult<T>>;*/
 
-  saveAll(data: T[], options?: any): Promise<T[]>;
+  saveAll(data: T[], opts?: any): Promise<T[]>;
 
-  deleteAll(data: T[], options?: any): Promise<any>;
+  deleteAll(data: T[], opts?: any): Promise<any>;
 
   asFilter(filter: Partial<F>): F;
 }
