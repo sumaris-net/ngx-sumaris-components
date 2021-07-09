@@ -293,7 +293,7 @@ export class EntityStore<
     }
 
     // Copy some data, BEFORE to call markAsPristine() to allow parallel changes
-    const dirtyIndexes = this.isByIdMode && Object.values(this._statusById)
+    const dirtyIndexes = this.isByIdMode && Array.from(this._statusById.values())
       .filter(s => !opts.skipIfPristine || (s && s.dirty))
       .map(s => s.index);
     const entities = this._cache.slice(); // Copy cached entities
