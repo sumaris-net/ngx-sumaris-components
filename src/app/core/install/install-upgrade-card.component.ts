@@ -212,22 +212,50 @@ export class AppInstallUpgradeCard implements OnInit, OnDestroy {
   }
 
   private getAllInstallLinks(config: Configuration): InstallAppLink[] {
-    const result = [];
+    const result: InstallAppLink[] = [];
 
     // Android
     {
+      // Get URL (from config, or environment)
       let url = config.getProperty(CORE_CONFIG_OPTIONS.ANDROID_INSTALL_URL);
-      const name: string = isNotNilOrBlank(url) && config.label || this.environment.defaultAppName || 'SUMARiS';
-      let version;
-      const filename = name;
-      if (isNilOrBlank(url)) {
-        url = this.environment.defaultAndroidInstallUrl || null;
-      }
-      else {
-        version = config.getProperty(CORE_CONFIG_OPTIONS.APP_MIN_VERSION);
-      }
+      if (isNilOrBlank(url)) url = this.environment.defaultAndroidInstallUrl || null;
 
-      result.push({ name, url, platform: 'android', version });
+      // Compute App name
+      const name: string = isNotNilOrBlank(url) && config.label || this.environment.defaultAppName || 'SUMARiS';
+
+      if (url) {
+        let downloadFilename: string;
+        let version;
+
+        // Get file name
+        const filename = this.getFilename(url);
+        version = config.getProperty(CORE_CONFIG_OPTIONS.APP_MIN_VERSION);
+
+        // OK, this is a downloadable APK file (e.g. NOT a link to a playstore)
+        if (filename?.endsWith('.apk')) {
+
+          // Get the file version (if any)
+          const versionMatches = /-v([1-9][0-9]*\.[0-9]+\.(:?(:?alpha|beta|rc)?[0-9]*))/i.exec(filename);
+          version = versionMatches && versionMatches[1] || version;
+
+          // Compute a new file name, with the version
+          if (isNotNilOrBlank(name)) {
+            downloadFilename = `${name}-${version}.apk`;
+          }
+
+          else {
+            downloadFilename = filename;
+
+            // Replace 'latest' with the app min version
+            if (downloadFilename.indexOf('latest')) {
+              version = config.getProperty(CORE_CONFIG_OPTIONS.APP_MIN_VERSION);
+              downloadFilename = downloadFilename.replace('latest', version);
+            }
+          }
+        }
+
+        result.push({ name, url, platform: 'android', version, downloadFilename });
+      }
     }
 
     // iOS - TODO
@@ -238,7 +266,19 @@ export class AppInstallUpgradeCard implements OnInit, OnDestroy {
     return result;
   }
 
+  protected getFilename(url: string): string {
+    if (!url) return;
+    // Get last part (or all string, if no '/')
+    let filename = url.substring(url.lastIndexOf('/')+1);
 
+    const queryParamIndex = filename.indexOf('?');
+    if (queryParamIndex !== -1) {
+      // Remove query params
+      return filename.substring(0, queryParamIndex);
+    }
+
+    return filename;
+  }
 
   protected markForCheck() {
     this.cd.markForCheck();

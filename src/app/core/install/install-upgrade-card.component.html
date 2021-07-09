@@ -94,9 +94,19 @@
         <ion-col size="auto">
 
           <!-- Download button -->
-          <ion-button color="tertiary" class="ion-float-end" download [href]="link.url">
+          <ion-button *ngIf="link.downloadFilename; else redirectButton"
+                      [download]="link.downloadFilename"
+                      [href]="link.url"
+                      color="tertiary" class="ion-float-end" >
             <ion-label translate>COMMON.BTN_DOWNLOAD</ion-label>
           </ion-button>
+
+          <!-- Redirect button -->
+          <ng-template #redirectButton>
+            <ion-button [href]="link.url" rel="external" color="tertiary" class="ion-float-end" target="_blank">
+              <ion-label translate>COMMON.BTN_SHOW_MORE</ion-label>
+            </ion-button>
+          </ng-template>
         </ion-col>
       </ion-row>
 
