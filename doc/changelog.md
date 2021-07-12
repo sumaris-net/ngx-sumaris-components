@@ -49,3 +49,8 @@
 
 - [enh] AppTable: add `options` (with property `interactive`) in `deleteRow()` and `deleteRows()`
   Used to avoid user confirmation, when deletion has been confirmed elsewhere
+
+## 0.4.4
+
+- [enh] Rename `<form-buttons-bar>` into `<app-form-buttons-bar>`
+- [enh] Export more CSS variables: `--app-paginator-height`, `app-form-buttons-bar-height`
