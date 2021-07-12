@@ -241,5 +241,5 @@
 </ion-content>
 
 <ion-footer hidden-xs hidden-sm hidden-mobile>
-  <form-buttons-bar (onCancel)="cancel()" (onSave)="save($event)" [disabled]="!form.dirty || saving"></form-buttons-bar>
+  <app-form-buttons-bar (onCancel)="cancel()" (onSave)="save($event)" [disabled]="!form.dirty || saving"></app-form-buttons-bar>
 </ion-footer>

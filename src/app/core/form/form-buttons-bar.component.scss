@@ -1,6 +1,7 @@
 :host {
   width: 100%;
   ion-toolbar {
+    height: var(--app-form-buttons-bar-height);
     padding: 0 6px; // Add a left/right padding
   }
   ion-col {

@@ -106,15 +106,18 @@
 
   --mat-toolbar-height: #{$mat-toolbar-height-desktop};
   --mat-paginator-height: #{$mat-paginator-height};
+  --mat-paginator-height: #{$mat-paginator-height};
   --ion-toolbar-height: #{$mat-toolbar-height-mobile};
 
   --app-table-header-height: #{$app-table-header-height};
   --app-toolbar-height: #{$app-toolbar-height};
-  --app-footer-height: var(--ion-toolbar-height);
-  --app-paginator-height: var(--mat-paginator-height);
+  --app-paginator-height: #{$app-paginator-height};
+  --app-form-buttons-bar-height: #{$app-form-buttons-bar-height};
+  --app-footer-height: var(--app-form-buttons-bar-height);
 
   &.plt-mobile {
-    --mat-toolbar-height: $mat-toolbar-height-mobile; // 56px;
+    --mat-toolbar-height: #{$mat-toolbar-height-mobile};
+    --app-form-buttons-bar-height: 0;
     --app-footer-height: 0;
   }
 

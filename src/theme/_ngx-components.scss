@@ -858,25 +858,24 @@ ion-list {
 }
 
 .mat-paginator-footer {
-
+  height: var(--app-paginator-height);
   background-color: whitesmoke;
 
   .mat-paginator-outer-container {
-    height: 34px;
+    height: var(--app-paginator-height);
     overflow-y: hidden;
     .mat-paginator-container {
-      height: 34px;
+      height: var(--app-paginator-height);
       min-height: unset;
       margin-top: 10px;
 
       button {
-        height: 34px;
-        width: 34px;
-        line-height: 34px;
+        height: var(--app-paginator-height);
+        width: var(--app-paginator-height);
+        line-height: var(--app-paginator-height);
       }
     }
   }
-
 }
 
 html.plt-mobile {

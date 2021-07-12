@@ -314,7 +314,7 @@
                  showFirstLastButtons>
   </mat-paginator>
 
-  <form-buttons-bar *ngIf="canEdit && !mobile"
+  <app-form-buttons-bar *ngIf="canEdit && !mobile"
                     (onCancel)="load()"
                     (onSave)="save()" [disabled]="(loadingSubject|async) || !dirty">
     <!-- error -->
@@ -322,7 +322,7 @@
       <ion-icon color="danger" slot="start" name="alert-circle"></ion-icon>
       <ion-label color="danger" [innerHTML]="error|translate"></ion-label>
     </ion-item>
-  </form-buttons-bar>
+  </app-form-buttons-bar>
 </ion-footer>
 
 <ion-fab slot="fixed" vertical="bottom" horizontal="end"

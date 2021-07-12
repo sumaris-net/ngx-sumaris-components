@@ -365,8 +365,8 @@
                  [pageSizeOptions]="defaultPageSizeOptions" showFirstLastButtons>
   </mat-paginator>
 
-  <form-buttons-bar *ngIf="!mobile && inlineEdition"
-                    (onCancel)="onRefresh.emit()" (onSave)="save()" [disabled]="(loadingSubject|async) || !dirty"></form-buttons-bar>
+  <app-form-buttons-bar *ngIf="!mobile && inlineEdition"
+                    (onCancel)="onRefresh.emit()" (onSave)="save()" [disabled]="(loadingSubject|async) || !dirty"></app-form-buttons-bar>
 </ion-footer>
 
 <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="mobile">

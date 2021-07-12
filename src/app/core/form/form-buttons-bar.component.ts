@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 import {Hotkeys} from '../../shared/hotkeys/hotkeys.service';
 import {Subscription} from 'rxjs';
 import {filter} from 'rxjs/operators';
-import {ToolbarToken} from '../../shared/toolbar/toolbar';
 
 export abstract class FormButtonsBarToken {
   abstract onCancel: EventEmitter<Event>;
@@ -12,7 +11,7 @@ export abstract class FormButtonsBarToken {
 }
 
 @Component({
-  selector: 'form-buttons-bar',
+  selector: 'app-form-buttons-bar',
   templateUrl: './form-buttons-bar.component.html',
   styleUrls: ['./form-buttons-bar.component.scss'],
   providers: [
