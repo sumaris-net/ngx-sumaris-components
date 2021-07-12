@@ -1,5 +1,4 @@
-//@use './ionic/ionic.mixins';
-//@use './ionic/ionic.functions.color';
+@import "globals";
 
 @mixin font-size($size) {
   font-size: calculateRem($size);
