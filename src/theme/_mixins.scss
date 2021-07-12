@@ -115,6 +115,8 @@
 
 @mixin css-variables-to-root-mobile() {
   --mat-toolbar-height: #{$mat-toolbar-height-mobile};
-  --app-form-buttons-bar-height: 0;
-  --app-footer-height: 0;
+
+  // Disable form footer, in mobile
+  --app-form-buttons-bar-height: 0px;
+  --app-footer-height: 0px;
 }
