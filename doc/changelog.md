@@ -39,3 +39,8 @@
 ## 0.4.1
 
 - [enh] Add new component 'app-actions-columns'
+
+## 0.4.2
+
+- [enh] LoadResult class: Add a `fetchMore()` function
+- [enh] Autocomplete field: Add infinite scroll, using `LoadResult.fetchMore()`
