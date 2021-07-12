@@ -44,3 +44,8 @@
 
 - [enh] LoadResult class: Add a `fetchMore()` function
 - [enh] Autocomplete field: Add infinite scroll, using `LoadResult.fetchMore()`
+
+## 0.4.3
+
+- [enh] AppTable: add `options` (with property `interactive`) in `deleteRow()` and `deleteRows()`
+  Used to avoid user confirmation, when deletion has been confirmed elsewhere

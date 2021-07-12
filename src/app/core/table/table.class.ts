@@ -824,12 +824,24 @@ export abstract class AppTable<
     return this.deleteRows(event, this.selection.selected);
   }
 
-  async deleteRow(event: UIEvent|null, row: TableElement<T>): Promise<boolean> {
-    const deleteCount = await this.deleteRows(event, [row]);
+  /**
+   *
+   * @param event
+   * @param row
+   * @param opts Use interactive=false to avoid user interaction (e.g. user confirmation)
+   */
+  async deleteRow(event: UIEvent|null, row: TableElement<T>, opts?: {interactive?: boolean;}): Promise<boolean> {
+    const deleteCount = await this.deleteRows(event, [row], opts);
     return deleteCount === 1;
   }
 
-  async deleteRows(event: UIEvent|null, rows: TableElement<T>[]): Promise<number> {
+  /**
+   *
+   * @param event
+   * @param rows
+   * @param opts Use interactive=false to avoid user interaction (e.g. user confirmation)
+   */
+  async deleteRows(event: UIEvent|null, rows: TableElement<T>[], opts?: {interactive?: boolean;}): Promise<number> {
     if (this.readOnly) {
       throw {code: ErrorCodes.TABLE_READ_ONLY, message: 'ERROR.TABLE_READ_ONLY'};
     }
@@ -840,7 +852,7 @@ export abstract class AppTable<
     if (this.loading || isEmptyArray(rows)) return 0;
 
     // Check if can delete
-    const canDelete = await this.canDeleteRows(rows);
+    const canDelete = await this.canDeleteRows(rows, opts);
     if (!canDelete) return 0; // Cannot delete
 
     // If data need to be saved first: do it
@@ -1008,7 +1020,7 @@ export abstract class AppTable<
     return this.selection.selected?.length === 1 ? this.selection.selected[0] : undefined;
   }
 
-  protected async canDeleteRows(rows: TableElement<T>[]): Promise<boolean> {
+  protected async canDeleteRows(rows: TableElement<T>[], opts?: { interactive?: boolean; }): Promise<boolean> {
 
     // Check using emitter
     if (this.onBeforeDeleteRows.observers.length > 0) {
@@ -1026,7 +1038,7 @@ export abstract class AppTable<
     }
 
     // Ask user confirmation
-    if (this.confirmBeforeDelete) {
+    if (this.confirmBeforeDelete && (!opts || opts.interactive !== false)) {
       return this.askDeleteConfirmation(null, rows);
     }
     return true;

@@ -55,7 +55,7 @@ export interface BaseEntityServiceOptions<
 export interface EntitySaveOptions {
   refetchQueries?: ((result: FetchResult<{data: any}>) => RefetchQueryDescription) | RefetchQueryDescription;
   awaitRefetchQueries?: boolean;
-  update?: MutationUpdaterFn<{ data: any }>;
+  update?: MutationUpdaterFn<{ data: any; }>;
 }
 
 
