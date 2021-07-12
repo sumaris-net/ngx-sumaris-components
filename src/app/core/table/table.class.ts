@@ -679,11 +679,11 @@ export abstract class AppTable<
     return false;
   }
 
-  cancelOrDelete(event: Event, row: TableElement<T>) {
+  cancelOrDelete(event: Event, row: TableElement<T>, opts?: { interactive?: boolean; }) {
     if (row.id === -1) {
       this.deleteNewRow(event, row);
     } else {
-      this.cancelOrDeleteExistingRow(event, row);
+      this.cancelOrDeleteExistingRow(event, row, opts);
     }
   }
 
@@ -755,14 +755,14 @@ export abstract class AppTable<
     }
   }
 
-  cancel(event?: UIEvent, confirm?: boolean) {
+  cancel(event?: UIEvent, opts?: { interactive?: boolean; }) {
 
     // Check confirmation
-    if (this.dirty && !confirm && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
+    if ((!opts || opts.interactive !== false) && this.dirty && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
       event?.stopPropagation();
       this.canCancelRows().then(confirm => {
         // If confirmed, loop
-        if (confirm) this.cancel(null, true);
+        if (confirm) this.cancel(null, {interactive: false});
       });
       return;
     }
@@ -1044,7 +1044,7 @@ export abstract class AppTable<
     return true;
   }
 
-  protected async canCancelRows(rows?: TableElement<T>[]): Promise<boolean> {
+  protected async canCancelRows(rows?: TableElement<T>[], opts?: { interactive?: boolean; }): Promise<boolean> {
 
     // Get dirty rows
     rows = rows || (await this.dataSource.getRows()).filter(row => row.validator?.dirty);
@@ -1067,7 +1067,7 @@ export abstract class AppTable<
     }
 
     // Ask user confirmation
-    if (this.confirmBeforeCancel) {
+    if (this.confirmBeforeCancel && (!opts || opts.interactive !== false)) {
       return this.askCancelConfirmation(null, rows);
     }
     return true;
@@ -1395,27 +1395,28 @@ export abstract class AppTable<
     this.visibleRowCount--;
   }
 
-  private cancelOrDeleteExistingRow(event: Event, row: TableElement<T>, confirm?: boolean) {
+  private cancelOrDeleteExistingRow(event: Event, row: TableElement<T>, opts?: { interactive?: boolean; }) {
 
     const deletion = row.id === -1;
+    const confirmed = (!opts || opts.interactive !== false);
 
     // Ask user confirmation, when delete
-    if (deletion && !confirm && (this.confirmBeforeDelete || this.onBeforeDeleteRows.observers.length > 0)) {
+    if (deletion && !confirmed && (this.confirmBeforeDelete || this.onBeforeDeleteRows.observers.length > 0)) {
       event.stopPropagation();
-      this.canDeleteRows([row])
+      this.canDeleteRows([row], opts)
         .then(confirm => {
           // If confirmed, loop
-          if (confirm) this.cancelOrDeleteExistingRow(event, row, true);
+          if (confirm) this.cancelOrDeleteExistingRow(event, row, {interactive: false});
         });
       return;
     }
     // Ask user confirmation, if cancel
-    else if (!deletion && !confirm && row.validator?.dirty && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
+    else if (!deletion && !confirmed && row.validator?.dirty && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
       event.stopPropagation();
-      this.canCancelRows([row])
+      this.canCancelRows([row], opts)
         .then(confirm => {
           // If confirmed, loop
-          if (confirm) this.cancelOrDeleteExistingRow(event, row, true);
+          if (confirm) this.cancelOrDeleteExistingRow(event, row, {interactive: false});
         });
       return;
     }
