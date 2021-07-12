@@ -10,4 +10,8 @@
 // --------------------------------------------------
 :root {
   @include css-variables-to-root();
+
+  .plt-mobile {
+    @include css-variables-to-root-mobile();
+  }
 }

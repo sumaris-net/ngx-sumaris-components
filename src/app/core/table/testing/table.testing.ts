@@ -54,6 +54,7 @@ export class TableTestingPage extends AppTable<Referential, ReferentialFilter>
 
 
   @Input() enableInfiniteScroll: boolean;
+  @Input() useSticky = true;
 
   constructor(protected route: ActivatedRoute,
               protected router: Router,

@@ -155,7 +155,7 @@
         </th>
       </ng-container>
 
-      <ng-container matColumnDef="select" sticky>
+      <ng-container matColumnDef="select" [sticky]="useSticky" [class.mat-column-sticky]="useSticky">
         <th mat-header-cell *matHeaderCellDef [class.cdk-visually-hidden]="!canEdit">
           <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
                         [indeterminate]="selection.hasValue() && !isAllSelected()">
@@ -168,7 +168,7 @@
       </ng-container>
 
       <!-- Id column -->
-      <ng-container matColumnDef="id" sticky>
+      <ng-container matColumnDef="id" [sticky]="useSticky" [class.mat-column-sticky]="useSticky">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           <ion-label>#</ion-label>
         </th>
@@ -176,7 +176,7 @@
       </ng-container>
 
       <!-- Label column -->
-      <ng-container matColumnDef="label" sticky>
+      <ng-container matColumnDef="label">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           <ion-label translate>TABLE.TESTING.LABEL</ion-label>
         </th>
