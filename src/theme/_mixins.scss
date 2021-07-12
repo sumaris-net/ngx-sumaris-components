@@ -113,7 +113,7 @@
   --app-footer-height: var(--app-form-buttons-bar-height);
 }
 
-css-variables-to-root-mobile {
+@mixin css-variables-to-root-mobile() {
   --mat-toolbar-height: #{$mat-toolbar-height-mobile};
   --app-form-buttons-bar-height: 0;
   --app-footer-height: 0;
