@@ -22,7 +22,7 @@
       <span slot="start">&nbsp;</span>
       <ion-label class="ion-text-wrap" >
         <h2>
-          <b>{{config.label}}</b> - {{config.name}}
+          <b>{{config.label}}</b> - <span [innerHTML]="config.name"></span>
         </h2>
         <p *ngIf="config.description">
           <markdown [data]="config.description"
