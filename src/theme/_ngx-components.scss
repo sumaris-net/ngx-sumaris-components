@@ -269,7 +269,7 @@ mat-option {
 }
 
 mat-option:not(:last-child) {
-  border-bottom: 1px solid $light-border;
+  border-bottom: 1px solid #{$app-select-option-border-color};
 }
 
 .mat-select-panel {
@@ -327,7 +327,7 @@ mat-option:not(:last-child) {
     font-weight: 500;
     height: 20px;
     line-height: 20px;
-    border-bottom: 1px solid $light-border;
+    border-bottom: 1px solid #{$app-select-option-border-color};
 
     ion-col {
       white-space: nowrap;
@@ -496,7 +496,7 @@ ion-list {
 
   .mat-header-row {
     height: var(--app-table-header-height, 52px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #{$app-table-border-color};
   }
 
   .mat-header-row,
@@ -525,7 +525,7 @@ ion-list {
         max-width: 150px;
       }
       &.mat-column-sticky {
-        border-right: 1px solid rgba(0, 0, 0, 0.08);
+        border-right: 1px solid #{$app-table-border-color};
       }
     }
 
@@ -560,7 +560,7 @@ ion-list {
       padding-inline-start: 0 !important; // No start padding
 
       &.mat-column-sticky {
-        border-left: 1px solid rgba(0, 0, 0, 0.08);
+        border-left: 1px solid #{$app-table-border-color};
       }
     }
 
