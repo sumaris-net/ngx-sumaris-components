@@ -10,7 +10,7 @@
 // hue.
 // Angular material palette
 // Custom
-$accent: #ff4081;
+$accent: #ff4081 !default;
 
 // Configure screen size (using ionic screen size)
 $mat-xsmall: 'max-width: #{$screen-xs-max}';
@@ -70,5 +70,4 @@ $candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-
 
 // Expose some existing variables
 $mat-tab-link-height: 48px !default;
-$mat-mobile-screen-max: 599px;
 
