@@ -5,16 +5,16 @@ $ionicons-font-path: '~ionicons/dist/fonts';
 // --------------------------------------------------
 // Responsive variables
 // --------------------------------------------------
-$screen-xxs-max: 400px;
-$screen-xs: 401px;
-$screen-xs-max: 575px;
-$screen-sm: 576px;
-$screen-sm-max: 767px;
-$screen-md: 768px;
-$screen-md-max: 991px;
-$screen-lg: 992px;
-$screen-lg-max: 1199px;
-$screen-xl: 1200px;
+$screen-xxs-max: 400px !default;
+$screen-xs: 401px !default;
+$screen-xs-max: 575px !default;
+$screen-sm: 576px !default;
+$screen-sm-max: 767px !default;
+$screen-md: 768px !default;
+$screen-md-max: 991px !default;
+$screen-lg: 992px !default;
+$screen-lg-max: 1199px !default;
+$screen-xl: 1200px !default;
 $screen-breakpoints: (
   xs: 0,
   sm: $screen-sm,
@@ -31,28 +31,29 @@ $app-direction: ltr !default;
 // Theme Colors
 // --------------------------------------------------
 // Ionic colors
-$primary: #144391;
-$primary100: #718dbc;
-$primary900: #0e2e63;
-$secondary: #75C4FD;
-$secondary50: #d2edfe;
-$secondary100: #abdbfe;
-$secondary900: #5086ad;
-$tertiary: #5b5ef4;
-$accent: #ff4081;
-$success: #10dc60;
-$warning: #ffce00;
-$danger: #f53d3d;
-$danger100: #f98989;
-$danger900: #a82a2a;
-$light: #f4f5f8;
-$medium: #989aa2;
-$dark: #222428;
+$primary:     #144391 !default;
+$primary100:  #718dbc !default;
+$primary900:  #0e2e63 !default;
+$secondary:   #75C4FD !default;
+$secondary50: #d2edfe !default;
+$secondary100: #abdbfe !default;
+$secondary900: #5086ad !default;
+$tertiary:    #5b5ef4 !default;
+$accent:      #ff4081 !default;
+$success:     #10dc60 !default;
+$warning:     #ffce00 !default;
+$danger:      #f53d3d !default;
+$danger100:   #f98989 !default;
+$danger900:   #a82a2a !default;
+$light:       #f4f5f8 !default;
+$medium:      #989aa2 !default;
+$dark:        #222428 !default;
 // User defined colors
 $transparent: transparent;
-$lightBorder: rgba(0, 0, 0, .12);
+$light-border: rgba(0, 0, 0, .12);
+
 // Main background color
-$background-color: #fff;
+$background-color: #fff !default;
 // Text color
 $dark-primary-text: rgba(black, 0.87);
 $dark-secondary-text: rgba(black, 0.54);
@@ -69,10 +70,10 @@ $ripple-background-color: var(--ion-ripple-background-color, #000) !default;
 
 // Default padding
 // --------------------------------------------------
-$ion-grid-column-padding: 5px;
-$ion-grid-padding: 16px;
-$ion-padding: 16px;
-$ion-margin: 16px;
+$ion-grid-column-padding: 5px !default;
+$ion-grid-padding: 16px !default;
+$ion-padding: 16px !default;
+$ion-margin: 16px !default;
 
 // --------------------------------------------------
 // Default General Colors

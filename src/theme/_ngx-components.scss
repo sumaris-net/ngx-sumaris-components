@@ -269,7 +269,7 @@ mat-option {
 }
 
 mat-option:not(:last-child) {
-  border-bottom: 1px solid $lightBorder;
+  border-bottom: 1px solid $light-border;
 }
 
 .mat-select-panel {
@@ -327,7 +327,7 @@ mat-option:not(:last-child) {
     font-weight: 500;
     height: 20px;
     line-height: 20px;
-    border-bottom: 1px solid $lightBorder;
+    border-bottom: 1px solid $light-border;
 
     ion-col {
       white-space: nowrap;
