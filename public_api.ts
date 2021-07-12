@@ -11,7 +11,7 @@ export {SharedRoutingModule} from './src/app/shared/shared-routing.module';
 export * from './src/app/shared/material/material.module';
 export * from './src/app/shared/material/boolean/boolean.module';
 export {MatBooleanField} from './src/app/shared/material/boolean/material.boolean';
-export * from './src/app/shared/material/autocomplete/autocomplete.module';
+export * from './src/app/shared/material/autocomplete/material.autocomplete.module';
 export {MatAutocompleteField, MatAutocompleteFieldConfig, MatAutocompleteConfigHolder, MatAutocompleteFieldAddOptions} from './src/app/shared/material/autocomplete/material.autocomplete';
 export * from './src/app/shared/material/chips/chips.module';
 export * from './src/app/shared/material/chips/material.chips';
