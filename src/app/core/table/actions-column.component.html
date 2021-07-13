@@ -46,7 +46,7 @@
 
         <!-- next button -->
         <button style="color: transparent; width: 0; padding: 0; margin: 0;"
-                *ngIf="canPrevious && row.validator.valid"
+                *ngIf="canBackward && row.validator.valid"
                 (focus)="this.forward.emit({event: $event, row: row})">
         </button>
       </ng-template>
@@ -57,15 +57,9 @@
       <!-- dirty icon -->
       <ion-icon *ngIf="row.validator?.dirty" name="star" color="accent" class="dirty-icon"></ion-icon>
 
-      <!-- next button -->
+      <!-- backward button -->
       <button mat-icon-button style="color: transparent; width: 0; padding: 0; margin: 0;"
-              *ngIf="canNext"
-              (focus)="this.forward.emit({event: $event, row: row})">
-      </button>
-
-      <!-- previous button -->
-      <button mat-icon-button style="color: transparent; width: 0; padding: 0; margin: 0;"
-              *ngIf="canPrevious"
+              *ngIf="canBackward"
               (focus)="this.backward.emit({event: $event, row: row})">
       </button>
     </ng-template>

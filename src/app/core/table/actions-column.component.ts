@@ -16,8 +16,8 @@ export class ActionsColumnComponent implements OnInit, OnDestroy {
   @Input() stickyEnd = false;
   @Input() canCancel: boolean;
   @Input() canDelete: boolean;
-  @Input() canPrevious: boolean;
-  @Input() canNext: boolean;
+  @Input() canBackward: boolean;
+  @Input() canForward: boolean;
   @Input() canConfirmAndAdd: boolean;
   @Input() optionsTitle = 'COMMON.BTN_OPTIONS';
   @Input('class') classList: string;
@@ -39,8 +39,8 @@ export class ActionsColumnComponent implements OnInit, OnDestroy {
     this.canCancel = toBoolean(this.canCancel, this.cancelOrDeleteClick.observers.length > 0);
     this.canDelete = toBoolean(this.canDelete, this.cancelOrDeleteClick.observers.length > 0);
     this.canConfirmAndAdd = toBoolean(this.canConfirmAndAdd, this.confirmAndAddClick.observers.length > 0);
-    this.canPrevious = toBoolean(this.canPrevious, this.backward.observers.length > 0);
-    this.canNext = toBoolean(this.canNext, this.forward.observers.length > 0);
+    this.canBackward = toBoolean(this.canBackward, this.backward.observers.length > 0);
+    this.canForward = toBoolean(this.canForward, this.forward.observers.length > 0);
   }
 
   ngOnDestroy() {
