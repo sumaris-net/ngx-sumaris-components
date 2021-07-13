@@ -70,7 +70,7 @@
 
               <!-- More item -->
               <a class="ion-padding mat-option "
-                          *ngIf="canFetchMore"
+                          *ngIf="_moreItemsCount"
                           (click)="_fetchMore$.emit($event)" >
                 <ion-label color="primary" style="width: 100%;">
                   <span translate>COMMON.BTN_SHOW_MORE</span>

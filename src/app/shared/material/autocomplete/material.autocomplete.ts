@@ -140,7 +140,7 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
   }
 
   get canFetchMore(): boolean {
-    return this._onFetchMoreCallback && true;
+    return this._onFetchMoreCallback && this._moreItemsCount > 0;
   }
 
   @Input() compareWith: (o1: any, o2: any) => boolean;
@@ -390,7 +390,7 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     // Fetch more events
     const fetchMoreItemsChanges = this._fetchMore$
       .pipe(
-        tap(event => event?.preventDefault()),
+        tap(event => event?.preventDefault()), // Avoid to close the mat-select
         filter(() => this.canFetchMore),
         mergeMap(() => this.fetchMore()),
         // DEBUG
