@@ -51,9 +51,10 @@ export class ActionsColumnComponent implements OnInit, OnDestroy {
     this.cancelOrDeleteClick.unsubscribe();
     this.confirmAndAddClick.complete();
     this.confirmAndAddClick.unsubscribe();
+    this.backward.complete();
+    this.backward.unsubscribe();
     this.forward.complete();
     this.forward.unsubscribe();
-
   }
 
 }
