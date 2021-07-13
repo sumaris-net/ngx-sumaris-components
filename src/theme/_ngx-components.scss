@@ -510,7 +510,9 @@ ion-list {
 
     .mat-header-cell,
     .mat-cell {
-      //padding-inline-start: var(--mat-cell-vertical-padding);
+      &.ion-padding-start {
+        padding-inline-start: var(--mat-cell-vertical-padding);
+      }
     }
 
     .mat-column-select {
@@ -577,12 +579,19 @@ ion-list {
       font-style: italic;
     }
 
-    /* Special case if cell need left padding (e.g. tables with odd/event style - like BatchGroupsTable) */
-    .mat-header-cell.content-padding-left,
-    .mat-cell.content-padding-left {
-      // Add left padding in labels
+    /* Add a start padding to content (but not the cell itself) (e.g. tables with odd/event style - like BatchGroupsTable) */
+    .mat-header-cell.mat-cell-content-start-padding,
+    .mat-cell.mat-cell-content-start-padding {
+      // Reset start padding here (only apply cell's content)
+      padding-inline-start: 0;
+
+      // Add left padding in labels, div, etc
       & > ion-label,
-      & > mat-label {
+      & > mat-label,
+      & > ion-text,
+      & > div,
+      & > span,
+      & > .ion-padding-start {
         padding: 0 var(--mat-cell-vertical-padding, 8px);
       }
 
