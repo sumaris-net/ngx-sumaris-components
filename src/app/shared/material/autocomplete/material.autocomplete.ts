@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, forwardRef, HostBinding, Input, OnDestroy, OnInit, Optional, Output, Provider, ViewChild} from '@angular/core';
 import {ControlValueAccessor, FormControl, FormGroupDirective, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {BehaviorSubject, isObservable, merge, Observable, of, Subject, Subscription, timer} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, mergeMap, mergeScan, startWith, switchMap, takeUntil, takeWhile, tap, throttleTime} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, mergeMap, startWith, switchMap, takeUntil, takeWhile, tap} from 'rxjs/operators';
 import {FetchMoreFn, LoadResult, SuggestFn, SuggestService} from '../../services/entity-service.class';
 import {changeCaseToUnderscore, getPropertyByPath, isNil, isNilOrBlank, isNotNil, isNotNilOrBlank, joinPropertiesPath, sleep, suggestFromArray, toBoolean, toNumber} from '../../functions';
 import {focusInput, InputElement, selectInputContent} from '../../inputs';
@@ -11,7 +11,6 @@ import {FloatLabelType} from '@angular/material/form-field';
 import {MatSelect} from '@angular/material/select';
 import {MatAutocomplete} from '@angular/material/autocomplete';
 import {fromScrollEndEvent} from '../../events';
-import {start} from 'repl';
 
 
 export declare interface MatAutocompleteFieldConfig<T = any, F = any> {
@@ -125,6 +124,8 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
   private _reload$ = new Subject<any>();
 
   _tabindex: number;
+  _moreItemsCount: number;
+  _moreItemsHeight: string;
   matSelectItems$: Observable<any[]>;
   inputItems$ = new BehaviorSubject<any[]>(undefined);
   filteredItems$ = new BehaviorSubject<any[]>(undefined);
@@ -169,7 +170,8 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
   @Input() matAutocompletePosition: 'auto' | 'above' | 'below' = 'auto';
   @Input() multiple = false;
 
-  @Input() fetchMoreThreshold: string = "15%";
+  @Input() itemSize = '48px';
+  @Input() fetchMoreThreshold: string = '15%';
 
   @HostBinding('@.disabled')
   animationsDisabled = true;
@@ -591,42 +593,41 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     event.stopPropagation();
   }
 
-  _listenAutocompleteScroll(threshold?: string) {
+  _initInfiniteScroll(threshold?: string) {
 
     // DEBUG
     //console.debug(this.logPrefix + ' Init autocomplete scroll listener');
 
-    if (!this.matAutoComplete) return;
-    if (this._openedSubscription) {
-      this._subscription.remove(this._openedSubscription);
-      this._openedSubscription.unsubscribe();
-    }
-    this._openedSubscription = merge(
-      this.matAutoComplete.opened,
-      timer(0) // Force first call, because sometime first opened event is skipped
-    )
-      .pipe(
-        // Wait 200ms, then to get the panel element
-        debounceTime(200),
-        mergeMap(() => this.getAutocompletePanel()),
-        filter(isNotNil),
-        // DEBUG
-        //tap(() => console.debug(this.logPrefix + ' Found autocomplete panel [OK]')),
+    if (!this.matAutoComplete) return of();
 
-        // Listen end scroll event, on panel
-        switchMap(ele => fromScrollEndEvent(ele, threshold)
+    if (this._openedSubscription) {
+      this._openedSubscription.unsubscribe();
+      this._subscription.remove(this._openedSubscription);
+    }
+
+    const opened$: Observable<any> = this.matAutoComplete._isOpen
+      ? timer(0)
+      : this.matAutoComplete.opened.pipe(debounceTime(200));
+    const scrollEnd$ = opened$
+      .pipe(
+        map((_) => this.getAutocompletePanel()),
+        filter(isNotNil),
+        switchMap((panel) => fromScrollEndEvent(panel, threshold)
           .pipe(
-            // Stop watch scroll, when panel closed
             takeUntil(this.matAutoComplete.closed)
           )
-        ),
-      )
-      // Trigger fetch more event
+        )
+      );
+
+    // Trigger fetch more, end end scroll reached
+    this._openedSubscription = scrollEnd$
       .subscribe(() => this._fetchMore$.emit())
 
     // Register subscription
     this._subscription.add(this._openedSubscription);
   }
+
+
 
   _fetchMoreClick(event?: Event) {
 
@@ -651,8 +652,10 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     }
     else {
       const {data, total, fetchMore} = res as LoadResult<any>;
-      this._itemCount = toNumber(total, data && data.length || 0) ;
-      this._onFetchMoreCallback = data && data.length < total && fetchMore;
+      this._itemCount = toNumber(total, data && data.length || 0);
+      this._onFetchMoreCallback = fetchMore;
+      this._moreItemsCount = fetchMore && (this._itemCount - data.length) || 0;
+      this._moreItemsHeight = `calc(${this.itemSize} * ${this._moreItemsCount})`;
       res = data;
     }
     return res as any[];
@@ -666,7 +669,9 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     this._onFetchMoreCallback = undefined;
 
     const {data, total, fetchMore} = await fetchMoreFn();
-    this._onFetchMoreCallback = data && data.length < total && fetchMore;
+    this._itemCount = total || this._itemCount;
+    this._onFetchMoreCallback = fetchMore;
+    this._moreItemsCount = Math.max(0, this._moreItemsCount - data.length); // Borne min = 0
     return data;
   }
 
@@ -689,15 +694,11 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     }
   }
 
-  private async getAutocompletePanel(): Promise<HTMLElement> {
-    let ele;
-    while (!ele) {
-      ele = this.matAutoComplete?.options.last?._getHostElement().parentElement;
-      if (!ele) {
-        // DEBUG
-        console.warn(this.logPrefix + ' Waiting autocomplete div...');
-        await sleep(250);
-      }
+  private getAutocompletePanel(): HTMLElement {
+    const ele = this.matAutoComplete?.options.last?._getHostElement().parentElement;
+    if (!ele) {
+      // DEBUG
+      console.warn(this.logPrefix + ' Unable to find the autocomplete div...');
     }
     return ele;
   }

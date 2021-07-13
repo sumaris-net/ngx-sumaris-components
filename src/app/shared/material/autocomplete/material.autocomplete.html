@@ -136,9 +136,9 @@
               </mat-option>
 
               <!-- More item -->
-              <mat-option class="ion-padding" disabled
-                          *ngIf="canFetchMore"
-                          (ngInit)="_listenAutocompleteScroll(fetchMoreThreshold)" >
+              <mat-option *ngIf="_moreItemsCount" (ngInit)="_initInfiniteScroll()"
+                          class="ion-padding"
+                          disabled>
                 <ion-skeleton-text [animated]="true" style="width: 100%"></ion-skeleton-text>
               </mat-option>
             </ng-container>
