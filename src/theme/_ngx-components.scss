@@ -506,7 +506,7 @@ ion-list {
     max-height: var(--mat-row-max-height);
 
     // Reserve space for row dirty border
-    border-left: 2px solid transparent;
+    border-left: 3px solid transparent;
 
     .mat-header-cell,
     .mat-cell {
@@ -564,6 +564,7 @@ ion-list {
       width: 40px;
       max-width: 40px;
       padding-inline-start: 0 !important; // No start padding
+      padding-right: unset !important;
 
       &.mat-column-sticky {
         border-left: 1px solid #{$app-table-border-color};
@@ -783,7 +784,8 @@ ion-list {
 
     // Error row
     &.mat-row-error {
-      border-left: 2px solid var(--ion-color-danger-tint) !important;
+      border-left: 3px solid var(--ion-color-danger-tint) !important;
+      background-color: var(--ion-color-warning-tint);
 
       &.mat-row-disabled:hover {
         background-color: var(--ion-color-warning-shade) !important;

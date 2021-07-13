@@ -182,8 +182,11 @@
         </th>
         <td mat-cell *matCellDef="let row">
           <mat-form-field floatLabel="never">
-            <input matInput [formControl]="row.validator.controls['label']" [placeholder]="'TABLE.TESTING.LABEL'|translate"
-                   [appAutofocus]="row.id == -1 && row.editing" [readonly]="!row.editing">
+            <input matInput
+                   [formControl]="row.validator.controls['label']"
+                   [placeholder]="'TABLE.TESTING.LABEL'|translate"
+                   [appAutofocus]="row.editing && focusColumn === 'label'"
+                   [readonly]="!row.editing">
             <mat-error *ngIf="row.validator.controls['label'].hasError('required')" translate>ERROR.FIELD_REQUIRED</mat-error>
           </mat-form-field>
         </td>
@@ -257,7 +260,8 @@
 
             <input type="text" matInput [formControl]="row.validator?.controls.comments"
                       [placeholder]="'TABLE.TESTING.COMMENTS'|translate"
-                      [readonly]="!row.editing">
+                      [readonly]="!row.editing"
+                   [appAutofocus]="row.editing && focusColumn === 'comments'">
           </mat-form-field>
 
           <ng-template #iconComment>
@@ -269,9 +273,12 @@
       </ng-container>
 
       <!-- Actions buttons column -->
-      <app-actions-column (optionsClick)="openSelectColumnsModal($event)"
+      <app-actions-column [stickyEnd]="true" [canCancel]="false"
+                          (optionsClick)="openSelectColumnsModal($event)"
                           (cancelOrDeleteClick)="cancelOrDelete($event.event, $event.row)"
-                          (confirmAndAddClick)="confirmAndAdd($event.event, $event.row)">
+                          (confirmAndAddClick)="confirmAndAdd($event.event, $event.row)"
+                          (backward)="confirmAndBackward($event.event, $event.row)"
+                          (forward)="confirmAndForward($event.event, $event.row)">
       </app-actions-column>
 
       <tr mat-header-row *matHeaderRowDef="groupColumns;"></tr>

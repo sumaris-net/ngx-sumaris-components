@@ -6,37 +6,70 @@
             (click)="optionsClick.emit($event)">
       <mat-icon>more_vert</mat-icon>
     </button>
+    <ng-content select="[matHeader]"></ng-content>
   </th>
   <td mat-cell *matCellDef="let row" [class]="classList">
     <ng-container *ngIf="row.editing; else view">
 
       <!-- pending -->
-      <ion-spinner *ngIf="row.validator.pending" name="dots" class="center"></ion-spinner>
+      <ion-spinner *ngIf="row.validator?.pending" name="dots" class="center"></ion-spinner>
 
-      <!-- cancel or delete button -->
-      <button mat-icon-button color="light"
-              [class.cdk-visually-hidden]="cancelOrDeleteClick.observers|isEmptyArray"
-              *ngIf="row.validator.invalid || (row.validator.dirty && row.id !== -1)"
-              [title]="row.id !== -1 ? 'COMMON.BTN_UNDO' : 'COMMON.BTN_DELETE' | translate"
-              (click)="cancelOrDeleteClick.emit({event: $event, row: row})">
-        <mat-icon *ngIf="row.id !== -1">undo</mat-icon>
-        <mat-icon *ngIf="row.id === -1">delete_outline</mat-icon>
-      </button>
+      <!-- new row -->
+      <ng-container *ngIf="row.id === -1; else existingRow">
 
-      <!-- add button -->
-      <button mat-icon-button color="light"
-              [class.cdk-visually-hidden]="confirmAndAddClick.observers|isEmptyArray"
-              *ngIf="row.validator.valid && row.id === -1"
-              [title]="'COMMON.BTN_ADD'|translate"
-              (click)="confirmAndAddClick.emit({event: $event, row: row})">
-        <mat-icon>add</mat-icon>
-      </button>
+        <!-- delete button -->
+        <button mat-icon-button color="light"
+                *ngIf="canDelete && row.validator.invalid"
+                [title]="'COMMON.BTN_DELETE' | translate"
+                (click)="cancelOrDeleteClick.emit({event: $event, row: row})">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+
+        <!-- add button -->
+        <button mat-icon-button color="light"
+                *ngIf="row.validator.valid"
+                [title]="'COMMON.BTN_ADD'|translate"
+                (click)="confirmAndAddClick.emit({event: $event, row: row})">
+          <mat-icon>add</mat-icon>
+        </button>
+      </ng-container>
+
+      <!-- existing row -->
+      <ng-template #existingRow>
+        <!-- cancel button -->
+        <button mat-icon-button color="light"
+                *ngIf="canCancel && row.validator.dirty"
+                [title]="'COMMON.BTN_UNDO' | translate"
+                (click)="cancelOrDeleteClick.emit({event: $event, row: row})">
+          <mat-icon>undo</mat-icon>
+        </button>
+
+        <!-- next button -->
+        <button style="color: transparent; width: 0; padding: 0; margin: 0;"
+                *ngIf="canPrevious && row.validator.valid"
+                (focus)="this.forward.emit({event: $event, row: row})">
+        </button>
+      </ng-template>
+
     </ng-container>
 
     <ng-template #view>
       <!-- dirty icon -->
       <ion-icon *ngIf="row.validator?.dirty" name="star" color="accent" class="dirty-icon"></ion-icon>
+
+      <!-- next button -->
+      <button mat-icon-button style="color: transparent; width: 0; padding: 0; margin: 0;"
+              *ngIf="canNext"
+              (focus)="this.forward.emit({event: $event, row: row})">
+      </button>
+
+      <!-- previous button -->
+      <button mat-icon-button style="color: transparent; width: 0; padding: 0; margin: 0;"
+              *ngIf="canPrevious"
+              (focus)="this.backward.emit({event: $event, row: row})">
+      </button>
     </ng-template>
 
+    <ng-content select="[matCell]"></ng-content>
   </td>
 </ng-container>

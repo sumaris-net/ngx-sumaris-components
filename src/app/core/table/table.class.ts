@@ -81,6 +81,7 @@ export abstract class AppTable<
   protected translate: TranslateService;
   protected alertCtrl: AlertController;
   protected toastController: ToastController;
+  protected _focusColumn: string;
 
   excludesColumns: string[] = [];
   displayedColumns: string[];
@@ -144,6 +145,23 @@ export abstract class AppTable<
   @Input() defaultSortDirection: SortDirection;
   @Input() defaultPageSize = DEFAULT_PAGE_SIZE;
   @Input() defaultPageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS;
+
+  // Focus manager
+  @Input() set focusColumn(name) {
+    this._focusColumn = name;
+  }
+
+  get focusColumn(): string {
+    return this._focusColumn || this.firstUserColumn;
+  }
+
+  get firstUserColumn(): string {
+    return this.displayedColumns[RESERVED_START_COLUMNS.length];
+  }
+
+  get lastUserColumn(): string {
+    return this.displayedColumns[this.displayedColumns.length - RESERVED_END_COLUMNS.length - 1];
+  }
 
   @Input() set dataSource(value: EntitiesTableDataSource<T, F, ID>) {
     this.setDatasource(value);
@@ -609,12 +627,40 @@ export abstract class AppTable<
     }
   }
 
-  confirmAndAdd(event?: Event, row?: TableElement<T>): boolean {
+  confirmAndAdd(event?: UIEvent, row?: TableElement<T>): boolean {
     if (!this.confirmEditCreate(event, row)) {
       return false;
     }
     // Add row
     return this.addRow(event);
+  }
+
+  confirmAndBackward(event?: UIEvent, row?: TableElement<T>): boolean {
+    // Edit next row
+    this.editRow(event, row, {focusColumn: this.lastUserColumn});
+    return true;
+  }
+
+  confirmAndForward(event?: UIEvent, row?: TableElement<T>): boolean {
+    row = row || this.editedRow;
+    if (!this.confirmEditCreate(event, row)) {
+      return false;
+    }
+    // Edit next row
+    this.editRowById(event, row.id + 1, {focusColumn: this.firstUserColumn});
+    return true;
+  }
+
+  async editRowById(event: UIEvent|undefined, id: number, opts?: {focusColumn?: string; }) {
+    if (id < 0) return;
+    if (id >= this.visibleRowCount) {
+      this.focusColumn = opts && opts.focusColumn || this.firstUserColumn;
+      this.addRow(event);
+    }
+    else {
+      const row = await this.dataSource.getRow(id);
+      this.editRow(event, row, opts);
+    }
   }
 
   /**
@@ -889,7 +935,7 @@ export abstract class AppTable<
     }
   }
 
-  protected editRow(event: MouseEvent|undefined, row: TableElement<T>): boolean {
+  protected editRow(event: UIEvent|undefined, row: TableElement<T>, opts?: {focusColumn?: string}): boolean {
 
     if (!this._enabled) return false;
     if (this.editedRow === row) return true; // Already the edited row
@@ -900,6 +946,7 @@ export abstract class AppTable<
     }
 
     if (!row.editing && !this.loading) {
+      this.focusColumn = opts && opts.focusColumn || this.firstUserColumn;
       this._dataSource.startEdit(row);
     }
     this.editedRow = row;
@@ -907,7 +954,7 @@ export abstract class AppTable<
     return true;
   }
 
-  clickRow(event: MouseEvent|undefined, row: TableElement<T>): boolean {
+  clickRow(event: UIEvent|undefined, row: TableElement<T>): boolean {
     if (this.loading) {
       // Wait while loading, and loop
       if (this.debug) console.debug("[table] Waiting before apply clickRow() (datasource is busy)...");
@@ -1391,6 +1438,7 @@ export abstract class AppTable<
     this.editedRow = undefined; // unselect row
     this._dataSource.cancelOrDelete(row);
     this.onCancelOrDeleteRow.next(row);
+    this.resetError();
     this.totalRowCount--;
     this.visibleRowCount--;
   }
