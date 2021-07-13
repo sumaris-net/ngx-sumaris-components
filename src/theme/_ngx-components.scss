@@ -503,17 +503,21 @@ ion-list {
   .mat-row {
     --mat-cell-vertical-padding: #{$app-table-cell-vertical-padding};
     --mat-row-max-height: #{$app-table-row-max-height};
-
     max-height: var(--mat-row-max-height);
+
+    // Reserve space for row dirty border
+    border-left: 2px solid transparent;
 
     .mat-header-cell,
     .mat-cell {
-      padding-inline-start: var(--mat-cell-vertical-padding);
+      //padding-inline-start: var(--mat-cell-vertical-padding);
     }
 
     .mat-column-select {
       overflow: initial;
+      min-width: 50px;
       max-width: 50px;
+      padding-left: 14px;
     }
 
     .mat-column-id {
@@ -573,12 +577,16 @@ ion-list {
       font-style: italic;
     }
 
-    /* Special case if cell need left padding (e.g. BatchGroupsTable) */
-    .mat-header-cell.content-padding-left > ion-label,
-    .mat-header-cell.content-padding-left > mat-label {
-      padding: 0 var(--mat-cell-vertical-padding, 8px);
-    }
+    /* Special case if cell need left padding (e.g. tables with odd/event style - like BatchGroupsTable) */
+    .mat-header-cell.content-padding-left,
     .mat-cell.content-padding-left {
+      // Add left padding in labels
+      & > ion-label,
+      & > mat-label {
+        padding: 0 var(--mat-cell-vertical-padding, 8px);
+      }
+
+      // Add left padding in form fields
       .mat-form-field-label {
         width: 100%;
         padding-left: var(--mat-cell-vertical-padding, 8px);
@@ -751,13 +759,11 @@ ion-list {
     }
   }
 
-  // Dirty row
   .mat-row {
-    // Reserve space for row dirty border
-    border-left: 4px solid transparent;
 
+    // Dirty row
     &.mat-row-dirty {
-      border-left: 4px solid var(--ion-color-warning);
+      border-left: 2px solid var(--ion-color-primary-tint);
 
       // Resize the dirty icon (in the 'actions' column)
       .mat-column-actions mat-icon.dirty-icon,
@@ -765,15 +771,17 @@ ion-list {
         width: 40px;
       }
     }
-  }
 
-  .mat-row.mat-row-error {
-    background-color: var(--ion-color-warning-tint);
+    // Error row
+    &.mat-row-error {
+      border-left: 2px solid var(--ion-color-danger-tint) !important;
 
-    &.mat-row-disabled:hover {
-      background-color: var(--ion-color-warning-shade) !important;
+      &.mat-row-disabled:hover {
+        background-color: var(--ion-color-warning-shade) !important;
+      }
     }
   }
+
 
   .mat-row-height-auto {
     max-height: unset !important;
