@@ -54,3 +54,7 @@
 
 - [enh] Rename `<form-buttons-bar>` into `<app-form-buttons-bar>`
 - [enh] Export more CSS variables: `--app-paginator-height`, `app-form-buttons-bar-height`
+
+## 0.5.0
+
+- [enh] Table: allow keyboard navigation, using `<app-actions-column>` and function `table.confirmAndBackward()` and `table.confirmAndForward()`
