@@ -249,10 +249,19 @@ export abstract class BaseEntityService<
       (data || []).map(json => this.fromObject(json)) :
       (data || []) as T[];
     if (debug) console.debug(this._logPrefix + `${this._logTypeName} items loaded in ${Date.now() - now}ms`);
-    return {
+
+    const end = offset + entities.length;
+    const res: any = {
       data: entities,
       total
     };
+
+    if (end < total) {
+      offset = end;
+      res.fetchMore = () => this.loadAll(offset, size, sortBy, sortDirection, filter, opts);
+    }
+
+    return res;
   }
 
 
