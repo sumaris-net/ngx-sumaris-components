@@ -627,13 +627,6 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     this._subscription.add(this._openedSubscription);
   }
 
-
-
-  _fetchMoreClick(event?: Event) {
-
-    this._fetchMore$.emit(event);
-  }
-
   /* -- private method -- */
 
   private async suggest(value: any, filter?: any): Promise<any[]> {
