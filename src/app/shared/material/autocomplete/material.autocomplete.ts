@@ -124,16 +124,15 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
   private _reload$ = new Subject<any>();
 
   _tabindex: number;
-  _moreItemsCount: number;
-  _moreItemsHeight: string;
   matSelectItems$: Observable<any[]>;
   inputItems$ = new BehaviorSubject<any[]>(undefined);
   filteredItems$ = new BehaviorSubject<any[]>(undefined);
   searchable: boolean;
   displayValue = '';
 
+  _moreItemsCount: number;
   _fetchMore$ = new EventEmitter<Event>();
-  onDropButtonClick = new EventEmitter<UIEvent>(true);
+
 
   get itemCount(): number {
     return this._itemCount;
@@ -227,6 +226,8 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
   @Output('click') onClick = new EventEmitter<MouseEvent>();
   @Output('blur') onBlur = new EventEmitter<FocusEvent>();
   @Output('focus') onFocus = new EventEmitter<FocusEvent>();
+
+  @Output('dropButtonClick') onDropButtonClick = new EventEmitter<UIEvent>(true);
 
   @ViewChild('matSelect') matSelect: MatSelect;
   @ViewChild('matInputText') matInputText: ElementRef;
@@ -638,17 +639,18 @@ export class MatAutocompleteField implements OnInit, InputElement, OnDestroy, Co
     if (!res) {
       this._itemCount = 0;
       this._onFetchMoreCallback = undefined;
+      this._moreItemsCount = 0;
     }
     else if (Array.isArray(res)) {
       this._itemCount = (res as any[]).length || 0;
       this._onFetchMoreCallback = undefined;
+      this._moreItemsCount = 0;
     }
     else {
       const {data, total, fetchMore} = res as LoadResult<any>;
       this._itemCount = toNumber(total, data && data.length || 0);
       this._onFetchMoreCallback = fetchMore;
       this._moreItemsCount = fetchMore && (this._itemCount - data.length) || 0;
-      this._moreItemsHeight = `calc(${this.itemSize} * ${this._moreItemsCount})`;
       res = data;
     }
     return res as any[];
