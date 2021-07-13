@@ -68,7 +68,7 @@ export abstract class AppTable<
 
   private _initialized = false;
   private _subscription = new Subscription();
-  private _dataSourceSubscription: Subscription;
+  private _dataSourceloadingSubscription: Subscription;
 
   private _cellValueChangesDefs: {
     [key: string]: CellValueChangeListener;
@@ -497,7 +497,7 @@ export abstract class AppTable<
         }));
 
     // Listen dataSource events
-    if (this._dataSource) this.listenDatasource(this._dataSource);
+    if (this._dataSource) this.listenDatasourceLoading(this._dataSource);
   }
 
   ngAfterViewInit() {
@@ -587,8 +587,17 @@ export abstract class AppTable<
     if (this._dataSource) throw new Error('[table] dataSource already set !');
     if (datasource && this._dataSource !== datasource) {
       this._dataSource = datasource;
-      if (this._initialized) this.listenDatasource(datasource);
+      if (this._initialized) this.listenDatasourceLoading(datasource);
     }
+  }
+
+  resetDataSource() {
+    if (this._dataSourceloadingSubscription) {
+      this._dataSourceloadingSubscription.unsubscribe();
+      this._subscription.remove(this._dataSourceloadingSubscription);
+    }
+    this._dataSource?.ngOnDestroy();
+    this._dataSource = null;
   }
 
   addColumnDef(column: CdkColumnDef) {
@@ -1507,16 +1516,16 @@ export abstract class AppTable<
     }
   }
 
-  private listenDatasource(dataSource: EntitiesTableDataSource<T, F, ID>) {
+  private listenDatasourceLoading(dataSource: EntitiesTableDataSource<T, F, ID>) {
     if (!dataSource) throw new Error('[table] dataSource not set !');
 
     // Cleaning previous subscription on datasource
-    if (isNotNil(this._dataSourceSubscription)) {
+    if (isNotNil(this._dataSourceloadingSubscription)) {
       if (this.debug) console.debug('[table] Many call to listenDatasource(): Cleaning previous subscriptions...');
-      this._dataSourceSubscription.unsubscribe();
-      this._subscription.remove(this._dataSourceSubscription);
+      this._dataSourceloadingSubscription.unsubscribe();
+      this._subscription.remove(this._dataSourceloadingSubscription);
     }
-    this._dataSourceSubscription = this._dataSource.$busy
+    this._dataSourceloadingSubscription = this._dataSource.$busy
         .pipe(
             distinctUntilChanged(),
 
@@ -1529,7 +1538,7 @@ export abstract class AppTable<
         )
         .subscribe();
 
-    this._subscription.add(this._dataSourceSubscription);
+    this._subscription.add(this._dataSourceloadingSubscription);
   }
 
 

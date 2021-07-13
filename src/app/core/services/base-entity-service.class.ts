@@ -288,7 +288,7 @@ export abstract class BaseEntityService<
     await this.graphql.mutate<LoadResult<any>>({
       mutation: this.mutations.saveAll,
       refetchQueries: this.getRefetchQueriesForMutation(opts),
-      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
+      awaitRefetchQueries: opts && opts.awaitRefetchQueries,
       variables: {
         data: json
       },
@@ -350,29 +350,29 @@ export abstract class BaseEntityService<
     await this.graphql.mutate<{data: any}>({
       mutation: this.mutations.save,
       refetchQueries: this.getRefetchQueriesForMutation(opts),
-      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
+      awaitRefetchQueries: opts && opts.awaitRefetchQueries,
       variables: {
         data: json
       },
       error: {code: ErrorCodes.SAVE_DATA_ERROR, message: 'ERROR.SAVE_DATA_ERROR'},
-      update: (proxy, {data}) => {
+      update: (cache, {data}) => {
         // Update entity
         const savedEntity = data && data.data;
         this.copyIdAndUpdateDate(savedEntity, entity);
 
-        if (this._debug) console.debug(this._logPrefix + `${entity.__typename} saved in ${Date.now() - now}ms`, entity);
-
         // Insert into the cache
         if (isNew && this.watchQueriesUpdatePolicy === 'update-cache') {
-          this.insertIntoMutableCachedQueries(proxy, {
+          this.insertIntoMutableCachedQueries(cache, {
             queries: this.getLoadQueries(),
             data: savedEntity
           });
         }
 
         if (opts && opts.update) {
-          opts.update(proxy, {data});
+          opts.update(cache, {data});
         }
+
+        if (this._debug) console.debug(this._logPrefix + `${entity.__typename} saved in ${Date.now() - now}ms`, entity);
       }
     });
 
@@ -399,30 +399,30 @@ export abstract class BaseEntityService<
     if (isEmptyArray(entities)) return;
 
     const ids = entities.map(t => t.id);
-    const now = new Date();
+    const now = Date.now();
     if (this._debug) console.debug(this._logPrefix + `Deleting ${this._logTypeName}...`, ids);
 
     await this.graphql.mutate<any>({
       mutation: this.mutations.deleteAll,
       refetchQueries: this.getRefetchQueriesForMutation(opts),
-      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
+      awaitRefetchQueries: opts && opts.awaitRefetchQueries,
       variables: { ids },
       error: {code: ErrorCodes.DELETE_DATA_ERROR, message: 'ERROR.DELETE_DATA_ERROR'},
-      update: (proxy, res) => {
+      update: (cache, res) => {
 
         // Remove from cache
         if (this.watchQueriesUpdatePolicy === 'update-cache') {
-          this.removeFromMutableCachedQueriesByIds(proxy, {
+          this.removeFromMutableCachedQueriesByIds(cache, {
             queries: this.getLoadQueries(),
             ids
           });
         }
 
         if (opts && opts.update) {
-          opts.update(proxy, res);
+          opts.update(cache, res);
         }
 
-        if (this._debug) console.debug(this._logPrefix + `${this._logTypeName} deleted in ${new Date().getTime() - now.getTime()}ms`);
+        if (this._debug) console.debug(this._logPrefix + `${this._logTypeName} deleted in ${Date.now() - now}ms`);
       }
     });
   }
@@ -447,7 +447,7 @@ export abstract class BaseEntityService<
     await this.graphql.mutate<any>({
       mutation: this.mutations.delete,
       refetchQueries: this.getRefetchQueriesForMutation(opts),
-      awaitRefetchQueries: toBoolean(opts && opts.awaitRefetchQueries, false),
+      awaitRefetchQueries: opts && opts.awaitRefetchQueries,
       variables: { id },
       error: {code: ErrorCodes.DELETE_DATA_ERROR, message: 'ERROR.DELETE_DATA_ERROR'},
       update: (proxy, res) => {
