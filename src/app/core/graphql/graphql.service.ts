@@ -39,7 +39,7 @@ import {EmptyObject} from 'apollo-angular/types';
 import {HttpLink, Options} from 'apollo-angular/http';
 import {IonicStorageWrapper, persistCache} from 'apollo3-cache-persist';
 import {PersistentStorage} from 'apollo3-cache-persist/lib/types';
-import {MutationBaseOptions} from '@apollo/client/core/watchQueryOptions';
+import {ErrorPolicy, MutationBaseOptions} from '@apollo/client/core/watchQueryOptions';
 import {Cache} from '@apollo/client/cache/core/types/Cache';
 import {ENVIRONMENT} from '../../../environments/environment.class';
 import {CryptoService} from '../services/crypto.service';
@@ -310,11 +310,15 @@ export class GraphqlService {
   subscribe<T, V = EmptyObject>(opts: {
     query: any;
     variables: V;
+    fetchPolicy?: FetchPolicy;
+    errorPolicy?: ErrorPolicy;
     error?: ServiceError;
   }): Observable<T> {
 
     return this.apollo.subscribe<T>({
       query: opts.query,
+      fetchPolicy: opts && opts.fetchPolicy || 'network-only',
+      errorPolicy: opts && opts.errorPolicy || undefined,
       variables: opts.variables
     }, {
       useZone: true
