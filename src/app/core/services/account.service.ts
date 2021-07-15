@@ -21,6 +21,7 @@ import {StatusIds} from './model/model.enum';
 import {Base58} from './base58';
 import {ENVIRONMENT} from '../../../environments/environment.class';
 import {toDateISOString} from '../../shared/dates';
+import {firstNotNilPromise} from '../../shared/observables';
 
 
 export declare interface AccountHolder {
@@ -187,7 +188,7 @@ export class AccountService extends BaseGraphqlService {
   private _startPromise: Promise<any>;
   private _started = false;
   private _$additionalFields = new BehaviorSubject<FormFieldDefinition[]>([]);
-  private _tokenType: AuthTokenType = 'token';
+  private _tokenType$ = new BehaviorSubject<AuthTokenType>(undefined);
 
   onLogin = new Subject<Account>();
   onLogout = new Subject<any>();
@@ -213,13 +214,13 @@ export class AccountService extends BaseGraphqlService {
   }
 
   get tokenType(): AuthTokenType {
-    return this._tokenType;
+    return this._tokenType$.value;
   }
 
   set tokenType(value: AuthTokenType) {
-    if (this._tokenType !== value) {
+    if (this._tokenType$.value !== value) {
       console.info('[account] Using authentication token type: ' + value);
-      this._tokenType = value;
+      this._tokenType$.next(value);
       // Reset values
       this.data.authToken = undefined;
       this.onAuthTokenChange.next(undefined);
@@ -456,13 +457,15 @@ export class AccountService extends BaseGraphqlService {
   }
 
   async authenticate(data?: AuthData) {
+    const authToken = await firstNotNilPromise(this._tokenType$);
+
     // Basic auth
-    if (this._tokenType === 'basic' || this._tokenType === 'basic-and-token') {
+    if (authToken === 'basic' || authToken === 'basic-and-token') {
 
       // Generate the authBasic, if used
       if (!this.data.authBasic) {
         // Skip if token already provided
-        if (!(this.data.authToken && this._tokenType === 'basic-and-token')) {
+        if (!(this.data.authToken && authToken === 'basic-and-token')) {
           if (!data || !data.username || !data.password) throw new Error('Missing username and password');
           this.data.authBasic = this.cryptoService.encodeBase64(`${data.username}:${data.password}`);
         }
@@ -471,7 +474,7 @@ export class AccountService extends BaseGraphqlService {
     }
 
     // Generate the authToken, if used
-    if (this._tokenType === 'token' || this._tokenType === 'basic-and-token') {
+    if (authToken === 'token' || authToken === 'basic-and-token') {
       try {
         this.data.authToken = await this.authenticateAndGetToken(this.data.authToken);
       } catch (error) {
@@ -483,7 +486,7 @@ export class AccountService extends BaseGraphqlService {
     }
 
     // Forget authBasic, to switch to authToken
-    if (this._tokenType === 'basic-and-token') {
+    if (authToken === 'basic-and-token') {
       this.data.authBasic = undefined; // TODO: store it ?
       this.onAuthBasicChange.next(undefined);
     }

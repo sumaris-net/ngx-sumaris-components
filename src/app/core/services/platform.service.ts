@@ -97,6 +97,7 @@ export class PlatformService {
 
     this._started = false;
     const now = Date.now();
+    this.accountService.tokenType = undefined;
     console.info('[platform] Starting platform...');
 
     this._startPromise = this.platform.ready()

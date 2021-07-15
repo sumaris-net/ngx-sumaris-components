@@ -59,7 +59,7 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
           value: 'CONFIGURATION.OPTIONS.AUTH_TOKEN_TYPE.BASIC_AND_TOKEN'
         }
       ],
-      defaultValue: <AuthTokenType>'basic'
+      defaultValue: <AuthTokenType>'token'
     },
     GRAVATAR_ENABLE: <FormFieldDefinition>{
       key: 'sumaris.gravatar.enable',
