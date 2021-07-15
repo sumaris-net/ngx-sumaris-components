@@ -457,15 +457,15 @@ export class AccountService extends BaseGraphqlService {
   }
 
   async authenticate(data?: AuthData) {
-    const authToken = await firstNotNilPromise(this._tokenType$);
+    const tokenType = await firstNotNilPromise(this._tokenType$);
 
     // Basic auth
-    if (authToken === 'basic' || authToken === 'basic-and-token') {
+    if (tokenType === 'basic' || tokenType === 'basic-and-token') {
 
       // Generate the authBasic, if used
       if (!this.data.authBasic) {
         // Skip if token already provided
-        if (!(this.data.authToken && authToken === 'basic-and-token')) {
+        if (!(this.data.authToken && tokenType === 'basic-and-token')) {
           if (!data || !data.username || !data.password) throw new Error('Missing username and password');
           this.data.authBasic = this.cryptoService.encodeBase64(`${data.username}:${data.password}`);
         }
@@ -474,7 +474,7 @@ export class AccountService extends BaseGraphqlService {
     }
 
     // Generate the authToken, if used
-    if (authToken === 'token' || authToken === 'basic-and-token') {
+    if (tokenType === 'token' || tokenType === 'basic-and-token') {
       try {
         this.data.authToken = await this.authenticateAndGetToken(this.data.authToken);
       } catch (error) {
@@ -486,7 +486,7 @@ export class AccountService extends BaseGraphqlService {
     }
 
     // Forget authBasic, to switch to authToken
-    if (authToken === 'basic-and-token') {
+    if (tokenType === 'basic-and-token') {
       this.data.authBasic = undefined; // TODO: store it ?
       this.onAuthBasicChange.next(undefined);
     }
@@ -748,17 +748,22 @@ export class AccountService extends BaseGraphqlService {
         });
     }
 
-    await Promise.all([
-      this.storage.set(PUBKEY_STORAGE_KEY, this.data.pubkey),
-      this.storage.set(TOKEN_STORAGE_KEY, this.data.authToken),
-      this.storage.set(`${ACCOUNT_STORAGE_KEY}#${this.data.pubkey}`, jsonAccount),
-      // Secret key (optional)
-      seckey && this.storage.set(SECKEY_STORAGE_KEY, seckey) || this.storage.remove(SECKEY_STORAGE_KEY),
-      // Remove old storage key
-      this.storage.remove(ACCOUNT_STORAGE_KEY)
-    ]);
+    try {
+      await Promise.all([
+        this.storage.set(PUBKEY_STORAGE_KEY, this.data.pubkey),
+        this.storage.set(TOKEN_STORAGE_KEY, this.data.authToken),
+        this.storage.set(`${ACCOUNT_STORAGE_KEY}#${this.data.pubkey}`, jsonAccount),
+        // Secret key (optional)
+        seckey && this.storage.set(SECKEY_STORAGE_KEY, seckey) || this.storage.remove(SECKEY_STORAGE_KEY),
+        // Remove old storage key
+        this.storage.remove(ACCOUNT_STORAGE_KEY)
+      ]);
 
-    if (this._debug) console.debug('[account] Account saved in local storage');
+      if (this._debug) console.debug('[account] Account saved in local storage');
+    }
+    catch(err) {
+      console.error('[account] Error while saving account locally: ' + (err && err.message || err), err);
+    }
   }
 
   /**

@@ -1,6 +1,6 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import {Platform, ToastController} from '@ionic/angular';
-import {NetworkService} from './network.service';
+import {AuthTokenType, NetworkService} from './network.service';
 import {Platforms} from '@ionic/core';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
@@ -10,7 +10,7 @@ import {CacheService} from 'ionic-cache';
 import {AudioProvider} from '../../shared/audio/audio';
 
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
-import {isEmptyArray, isNil, isNotNil} from '../../shared/functions';
+import {isEmptyArray, isNil, isNotNil, isNotNilOrBlank} from '../../shared/functions';
 import {Storage} from '@ionic/storage';
 import {EntitiesStorage} from './storage/entities-storage.service';
 import {StorageUtils} from '../../shared/services/storage.utils';
@@ -19,7 +19,7 @@ import {TranslateService} from '@ngx-translate/core';
 import * as momentImported from 'moment';
 import {AccountService} from './account.service';
 import {timer} from 'rxjs';
-import {filter, first} from 'rxjs/operators';
+import {distinctUntilChanged, filter, first, map} from 'rxjs/operators';
 import {ENVIRONMENT} from '../../../environments/environment.class';
 import {ConfigService} from './config.service';
 import {CORE_CONFIG_OPTIONS} from './config/core.config';
@@ -134,9 +134,16 @@ export class PlatformService {
       this.networkService.onNetworkStatusChanges.subscribe((type) => this.configureCache(type !== 'none'));
 
       // Update authentication type
-      this.configService.config.subscribe(config => {
-        this.accountService.tokenType = config.getProperty(CORE_CONFIG_OPTIONS.AUTH_TOKEN_TYPE);
-      });
+      this.configService.config
+        .pipe(
+          map(config => config?.getProperty(CORE_CONFIG_OPTIONS.AUTH_TOKEN_TYPE) as AuthTokenType),
+          filter(isNotNilOrBlank),
+          distinctUntilChanged()
+        )
+        .subscribe(tokenType => {
+          console.info(`[platform] Using auth token type {${tokenType}}`);
+          this.accountService.tokenType = tokenType;
+        });
 
       // Wait 1 more seconds, before hiding the splash screen
       setTimeout(() => {
