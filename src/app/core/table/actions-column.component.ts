@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MatColumnDef, MatTable} from '@angular/material/table';
 import {TableElement} from '@e-is/ngx-material-table';
 import {MatMenuTrigger} from '@angular/material/menu';
@@ -22,6 +22,7 @@ export class ActionsColumnComponent implements OnInit, OnDestroy {
   @Input() canConfirmAndAdd: boolean;
   @Input() optionsTitle = 'COMMON.BTN_OPTIONS';
   @Input('class') classList: string;
+  @Input() cellTemplate: TemplateRef<any>;
 
   @Output() optionsClick = new EventEmitter<UIEvent>();
   @Output() cancelOrDeleteClick = new EventEmitter<{ event: Event; row: TableElement<any> }>();

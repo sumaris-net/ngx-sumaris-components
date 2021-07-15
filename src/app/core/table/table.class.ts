@@ -1,4 +1,4 @@
-import {AfterViewInit, Directive, EventEmitter, Injector, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Directive, EventEmitter, Injector, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort, MatSortable, SortDirection} from '@angular/material/sort';
 import {MatTable} from '@angular/material/table';

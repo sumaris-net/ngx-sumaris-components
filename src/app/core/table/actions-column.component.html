@@ -70,6 +70,6 @@
       </button>
     </ng-template>
 
-    <ng-content select="[matCell]"></ng-content>
+    <ng-container *ngTemplateOutlet="cellTemplate; context: { $implicit: row  }"></ng-container>
   </td>
 </ng-container>

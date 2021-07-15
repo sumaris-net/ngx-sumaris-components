@@ -278,7 +278,14 @@
                           (cancelOrDeleteClick)="cancelOrDelete($event.event, $event.row)"
                           (confirmAndAddClick)="confirmAndAdd($event.event, $event.row)"
                           (backward)="confirmAndBackward($event.event, $event.row)"
-                          (forward)="confirmAndForward($event.event, $event.row)">
+                          (forward)="confirmAndForward($event.event, $event.row)"
+                          [cellTemplate]="cellInjection">
+
+        <!-- cell injection-->
+        <ng-template #cellInjection let-row>
+          <span *ngIf="row.editing && !row.validator.dirty">-</span>
+        </ng-template>
+
       </app-actions-column>
 
       <tr mat-header-row *matHeaderRowDef="groupColumns;"></tr>
