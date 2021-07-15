@@ -332,9 +332,12 @@
       </ng-container>
 
       <!-- Actions buttons column -->
-      <app-actions-column (optionsClick)="openSelectColumnsModal($event)"
+      <app-actions-column [stickyEnd]="true"
+                          (optionsClick)="openSelectColumnsModal($event)"
                           (cancelOrDeleteClick)="cancelOrDelete($event.event, $event.row)"
-                          (confirmAndAddClick)="confirmAndAdd($event.event, $event.row)">
+                          (confirmAndAddClick)="confirmAndAdd($event.event, $event.row)"
+                          (backward)="confirmAndBackward($event.event, $event.row)"
+                          (forward)="confirmAndForward($event.event, $event.row)">
       </app-actions-column>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky"></tr>

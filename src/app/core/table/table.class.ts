@@ -636,7 +636,7 @@ export abstract class AppTable<
     }
   }
 
-  confirmAndAdd(event?: UIEvent, row?: TableElement<T>): boolean {
+  confirmAndAdd(event?: Event, row?: TableElement<T>): boolean {
     if (!this.confirmEditCreate(event, row)) {
       return false;
     }
@@ -644,7 +644,7 @@ export abstract class AppTable<
     return this.addRow(event);
   }
 
-  confirmAndBackward(event?: UIEvent, row?: TableElement<T>): boolean {
+  confirmAndBackward(event?: Event, row?: TableElement<T>): boolean {
 
     // Deleting edited row, if empty and not dirty
     const previousRow = this.editedRow;
@@ -662,7 +662,7 @@ export abstract class AppTable<
     return true;
   }
 
-  confirmAndForward(event?: UIEvent, row?: TableElement<T>): boolean {
+  confirmAndForward(event?: Event, row?: TableElement<T>): boolean {
     row = row || this.editedRow;
     if (!this.confirmEditCreate(event, row)) {
       return false;
@@ -672,7 +672,7 @@ export abstract class AppTable<
     return true;
   }
 
-  async editRowById(event: UIEvent|undefined, id: number, opts?: {focusColumn?: string; }) {
+  async editRowById(event: Event|undefined, id: number, opts?: {focusColumn?: string; }) {
     if (id < 0) return;
     if (id >= this.visibleRowCount) {
       this.focusColumn = opts && opts.focusColumn || this.firstUserColumn;
@@ -956,7 +956,7 @@ export abstract class AppTable<
     }
   }
 
-  protected editRow(event: UIEvent|undefined, row: TableElement<T>, opts?: {focusColumn?: string}): boolean {
+  protected editRow(event: Event|undefined, row: TableElement<T>, opts?: {focusColumn?: string}): boolean {
 
     if (!this._enabled) return false;
     if (this.editedRow === row) return true; // Already the edited row
@@ -1022,7 +1022,7 @@ export abstract class AppTable<
     this.dataSource.move(id, direction);
   }
 
-  async openSelectColumnsModal(event?: UIEvent): Promise<any> {
+  async openSelectColumnsModal(event?: Event): Promise<any> {
 
     // Copy current columns (deep copy)
     const columns = this.getCurrentColumns();
