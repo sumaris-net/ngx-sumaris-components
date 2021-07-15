@@ -72,4 +72,8 @@
 
     <ng-container *ngTemplateOutlet="cellTemplate; context: { $implicit: row  }"></ng-container>
   </td>
+
+  <td mat-footer-cell *matFooterCellDef>
+    <ng-content select="[matFooter]"></ng-content>
+  </td>
 </ng-container>
