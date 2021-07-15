@@ -1,6 +1,4 @@
-import {Pipe, Injectable, PipeTransform} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {toDuration} from '../dates';
+import {Injectable, Pipe, PipeTransform} from '@angular/core';
 import {isNilOrBlank, isNotNilOrBlank} from '../functions';
 
 @Pipe({
@@ -20,5 +18,15 @@ export class IsNotNilOrBlankPipe implements PipeTransform {
 export class IsNilOrBlankPipe implements PipeTransform {
   transform(value: string): boolean {
     return isNilOrBlank(value);
+  }
+}
+
+@Pipe({
+  name: 'toString'
+})
+@Injectable({providedIn: 'root'})
+export class ToStringPipe implements PipeTransform {
+  transform(value: number): string {
+    return value ? value?.toString() : '';
   }
 }

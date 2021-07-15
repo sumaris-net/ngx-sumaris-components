@@ -13,7 +13,7 @@ import {DurationPipe} from './duration.pipe';
 import {EvenPipe, MathAbsPipe, OddPipe} from './math.pipes';
 import {ArrayFilterPipe, ArrayFirstPipe, ArrayIncludesPipe, ArrayLengthPipe, ArrayPluckPipe, EmptyArrayPipe, NotEmptyArrayPipe} from './arrays.pipe';
 import {MapGetPipe, MapKeysPipe, MapValuesPipe} from './maps.pipe';
-import {IsNilOrBlankPipe, IsNotNilOrBlankPipe} from './string.pipes';
+import {IsNilOrBlankPipe, IsNotNilOrBlankPipe, ToStringPipe} from './string.pipes';
 import {TranslatablePipe, TranslateContextPipe} from './translate-context.pipe';
 import {PropertyGetPipe} from './properties.pipe';
 import {NgInitDirective} from './ng-init.pipe';
@@ -51,6 +51,7 @@ import {NgInitDirective} from './ng-init.pipe';
     MapValuesPipe,
     IsNilOrBlankPipe,
     IsNotNilOrBlankPipe,
+    ToStringPipe,
     TranslateContextPipe,
     TranslatablePipe,
     NgInitDirective
@@ -80,6 +81,7 @@ import {NgInitDirective} from './ng-init.pipe';
     MapValuesPipe,
     IsNilOrBlankPipe,
     IsNotNilOrBlankPipe,
+    ToStringPipe,
     ArrayIncludesPipe,
     ArrayFilterPipe,
     TranslateContextPipe,
