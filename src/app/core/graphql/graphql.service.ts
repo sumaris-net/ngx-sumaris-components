@@ -1,5 +1,5 @@
 import {Observable, of, Subject, Subscription} from 'rxjs';
-import {Apollo, QueryRef} from 'apollo-angular';
+import {Apollo, ExtraSubscriptionOptions, QueryRef} from 'apollo-angular';
 import {
   ApolloCache,
   ApolloClient,
@@ -313,7 +313,7 @@ export class GraphqlService {
     fetchPolicy?: FetchPolicy;
     errorPolicy?: ErrorPolicy;
     error?: ServiceError;
-  }): Observable<T> {
+  }, extra?: ExtraSubscriptionOptions): Observable<T> {
 
     return this.apollo.subscribe<T>({
       query: opts.query,
@@ -321,7 +321,8 @@ export class GraphqlService {
       errorPolicy: opts && opts.errorPolicy || undefined,
       variables: opts.variables
     }, {
-      useZone: true
+      useZone: true,
+      ...extra
     })
       .pipe(
         catchError(error => this.onApolloError<T>(error, opts.error)),
