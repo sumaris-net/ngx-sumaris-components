@@ -487,7 +487,7 @@ export class AccountService extends BaseGraphqlService {
 
     // Forget authBasic, to switch to authToken
     if (tokenType === 'basic-and-token') {
-      this.data.authBasic = undefined; // TODO: store it ?
+      this.data.authBasic = undefined;
       this.onAuthBasicChange.next(undefined);
     }
   }
@@ -796,6 +796,7 @@ export class AccountService extends BaseGraphqlService {
   public async logout(): Promise<void> {
 
     const hadAuthToken = this.data.authToken && true;
+    const hadAuthBasic = this.data.authBasic && true;
     const pubkey = this.data && this.data.pubkey;
 
     this.resetData();
@@ -831,6 +832,7 @@ export class AccountService extends BaseGraphqlService {
     // Notify observers
     this.onLogout.next();
     if (hadAuthToken) this.onAuthTokenChange.next(undefined);
+    if (hadAuthBasic) this.onAuthBasicChange.next(undefined);
   }
 
   /**
