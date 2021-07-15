@@ -33,6 +33,9 @@ import {StatusIds} from '../../services/model/model.enum';
     {
       provide: AppValidatorService,
       useClass: ReferentialValidatorService
+    },
+    {
+      provide: AppTable, useExisting: forwardRef(() => TableTestingPage),
     }
   ],
   changeDetection: ChangeDetectionStrategy.OnPush

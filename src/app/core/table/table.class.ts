@@ -152,7 +152,7 @@ export abstract class AppTable<
   }
 
   get focusColumn(): string {
-    return this._focusColumn || this.firstUserColumn;
+    return this._focusColumn ;
   }
 
   get firstUserColumn(): string {
@@ -645,6 +645,18 @@ export abstract class AppTable<
   }
 
   confirmAndBackward(event?: UIEvent, row?: TableElement<T>): boolean {
+
+    // Deleting edited row, if empty and not dirty
+    const previousRow = this.editedRow;
+    if (previousRow && (previousRow.id === -1) && previousRow.validator?.invalid && !(previousRow.validator?.dirty)) {
+      this.deleteNewRow(event, previousRow);
+
+      // Wait deletion is done, then edit previous row (by id, because of reloading)
+      firstFalsePromise(this.loadingSubject)
+        .then(() => this.editRowById(event, row.id, {focusColumn: this.lastUserColumn}));
+      return true;
+    }
+
     // Edit next row
     this.editRow(event, row, {focusColumn: this.lastUserColumn});
     return true;
@@ -955,7 +967,7 @@ export abstract class AppTable<
     }
 
     if (!row.editing && !this.loading) {
-      this.focusColumn = opts && opts.focusColumn || this.firstUserColumn;
+      this._focusColumn = opts && opts.focusColumn || this._focusColumn;
       this._dataSource.startEdit(row);
     }
     this.editedRow = row;
@@ -972,7 +984,7 @@ export abstract class AppTable<
     }
 
     // DEBUG
-    //console.debug("[table] Detect click on row");
+    console.debug("[table] Detect click on row");
 
     if (row.id === -1 || row.editing) return true; // Already in edition
     if (event?.defaultPrevented) return false; // Cancelled by event
@@ -1003,7 +1015,7 @@ export abstract class AppTable<
     }
 
     // Start editing row
-    return this.editRow(event, row);
+    return this.editRow(event, row, {focusColumn: undefined /*force to use the click target*/});
   }
 
   moveRow(id: number, direction: number) {
@@ -1440,8 +1452,8 @@ export abstract class AppTable<
     }
   }
 
-  private deleteNewRow(event: any, row: TableElement<T>) {
-    event.stopPropagation();
+  private deleteNewRow(event: Event|undefined, row: TableElement<T>) {
+    event?.stopPropagation();
 
     this.selection.clear();
     this.editedRow = undefined; // unselect row
@@ -1452,14 +1464,14 @@ export abstract class AppTable<
     this.visibleRowCount--;
   }
 
-  private cancelOrDeleteExistingRow(event: Event, row: TableElement<T>, opts?: { interactive?: boolean; }) {
+  private cancelOrDeleteExistingRow(event: Event|undefined, row: TableElement<T>, opts?: { interactive?: boolean; }) {
 
     const deletion = row.id === -1;
     const confirmed = (!opts || opts.interactive !== false);
 
     // Ask user confirmation, when delete
     if (deletion && !confirmed && (this.confirmBeforeDelete || this.onBeforeDeleteRows.observers.length > 0)) {
-      event.stopPropagation();
+      event?.stopPropagation();
       this.canDeleteRows([row], opts)
         .then(confirm => {
           // If confirmed, loop

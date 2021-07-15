@@ -27,10 +27,16 @@
 
         <!-- add button -->
         <button mat-icon-button color="light"
-                *ngIf="row.validator.valid"
+                *ngIf="!canForward && row.validator.valid"
                 [title]="'COMMON.BTN_ADD'|translate"
                 (click)="confirmAndAddClick.emit({event: $event, row: row})">
           <mat-icon>add</mat-icon>
+        </button>
+
+        <!-- next button (invisible - focusable only) -->
+        <button style="color: transparent; width: 0; padding: 0; margin: 0;"
+                *ngIf="canForward && row.validator.valid"
+                (focus)="this.forward.emit({event: $event, row: row})">
         </button>
       </ng-container>
 
@@ -44,9 +50,9 @@
           <mat-icon>undo</mat-icon>
         </button>
 
-        <!-- next button -->
+        <!-- next button (invisible - focusable only) -->
         <button style="color: transparent; width: 0; padding: 0; margin: 0;"
-                *ngIf="canBackward && row.validator.valid"
+                *ngIf="canForward && row.validator.valid"
                 (focus)="this.forward.emit({event: $event, row: row})">
         </button>
       </ng-template>
@@ -57,7 +63,7 @@
       <!-- dirty icon -->
       <ion-icon *ngIf="row.validator?.dirty" name="star" color="accent" class="dirty-icon"></ion-icon>
 
-      <!-- backward button -->
+      <!-- backward button (invisible - focusable only) -->
       <button mat-icon-button style="color: transparent; width: 0; padding: 0; margin: 0;"
               *ngIf="canBackward"
               (focus)="this.backward.emit({event: $event, row: row})">

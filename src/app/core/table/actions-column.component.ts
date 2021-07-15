@@ -1,8 +1,9 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output, ViewChild} from '@angular/core';
 import {MatColumnDef, MatTable} from '@angular/material/table';
 import {TableElement} from '@e-is/ngx-material-table';
 import {MatMenuTrigger} from '@angular/material/menu';
 import {toBoolean} from '../../shared/functions';
+import {AppTable} from './table.class';
 
 @Component({
   selector: 'app-actions-column',
@@ -29,7 +30,10 @@ export class ActionsColumnComponent implements OnInit, OnDestroy {
   @Output() forward = new EventEmitter<{ event: Event; row: TableElement<any> }>();
 
   constructor(private table: MatTable<any>,
-              private cd: ChangeDetectorRef) {
+              private cd: ChangeDetectorRef,
+              // TODO auto configure using AppTable ? (need a forwardRef() in the table component
+              //@Optional() private appTable: AppTable<any>
+  ) {
     if (!table) throw new Error(`[actions-column] this column component must be inside a MatTable component`);
   }
 
@@ -56,5 +60,4 @@ export class ActionsColumnComponent implements OnInit, OnDestroy {
     this.forward.complete();
     this.forward.unsubscribe();
   }
-
 }
