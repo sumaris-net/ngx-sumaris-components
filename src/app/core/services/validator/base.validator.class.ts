@@ -39,7 +39,7 @@ export abstract class AppValidatorService<T = any>
     return Object.keys(errors || {}).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
   }
 
-  protected getI18nError(errorKey: string, errorContent?: any) {
+  protected getI18nError(errorKey: string, errorContent?: any): string {
     const i18nKey = 'ERROR.FIELD_' + changeCaseToUnderscore(errorKey).toUpperCase();
     const i18nMessage = this.translate.instant(i18nKey, errorContent);
     if (i18nKey !== i18nMessage) return i18nMessage;

@@ -1436,13 +1436,29 @@ export abstract class AppTable<
 
     separator = separator || ', ';
     const errors = AppFormUtils.getFormErrors(row.validator);
-    const i18nErrors = errors && Object.keys(errors).reduce((res, fieldName) => {
-      const i18nFieldName = this.translate.instant(this.getI18nFieldName(fieldName));
-      const columnErrors = Object.keys(errors[fieldName]).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
-      if (isEmptyArray(columnErrors)) return res;
-      // Add separator
-      if (res.length) res += separator;
-      return res + i18nFieldName + ": " + columnErrors.join(separator);
+    const controlNames = Object.keys(row.validator.controls);
+    const i18nErrors = errors && Object.keys(errors).reduce((res, key) => {
+
+      // Should be a control map of errors
+      if (controlNames.includes(key)) {
+        // Try to convert from a map, for one column control
+        const i18nFieldNameKey = this.getI18nFieldName(key);
+        const i18nFieldName = this.translate.instant(i18nFieldNameKey);
+
+        // OK, we have a field name: use it
+        if (i18nFieldName !== i18nFieldNameKey) {
+          const columnErrors = Object.keys(errors[key]).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
+          if (isEmptyArray(columnErrors)) return res;
+          // Add separator
+          if (res.length) res += separator;
+          return res + i18nFieldName + ": " + columnErrors.join(separator);
+        }
+      }
+
+      // Or try as global form error
+      const formError = this.getI18nError(key, errors[key]);
+      if (isNil(formError)) return res;
+      return res + (res.length ? separator : '') + formError;
     }, "");
     return i18nErrors;
   }
@@ -1456,7 +1472,6 @@ export abstract class AppTable<
   protected getI18nError(errorKey: string, errorContent?: any): string {
     return SharedValidators.translateError((a,b) => this.translate.instant(a,b), errorKey, errorContent);
   }
-
 
   /* -- private method -- */
 
