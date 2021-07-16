@@ -837,7 +837,9 @@ export abstract class AppTable<
     this.onRefresh.emit();
   }
 
-  async duplicateRow(event?: Event, row?: TableElement<T>) {
+  async duplicateRow(event?: Event, row?: TableElement<T>, opts?: {
+    skipProperties?: string[];
+  }) {
     event?.stopPropagation();
 
     row = row || this.singleSelectedRow;
@@ -847,6 +849,12 @@ export abstract class AppTable<
 
     const newRow = await this.addRowToTable(row.id + 1);
     const json = {...row.currentData, id: null};
+
+    // Reset some properties (e.g. rankOrder, etc)
+    if (opts && opts.skipProperties) {
+      const newData = newRow.currentData;
+      opts.skipProperties.forEach(key => json[key] = newData[key]);
+    }
 
     if (newRow.validator) {
       newRow.validator.patchValue(json);
@@ -1431,11 +1439,12 @@ export abstract class AppTable<
     this.setError(undefined, opts);
   }
 
-  protected getRowError(row: TableElement<T>, opts?: {
+  protected getRowError(row?: TableElement<T>, opts?: {
     separator?: string;
     recursive?: boolean;
   }): string {
-    if (!this.translate) return undefined;
+    row = row || this.editedRow;
+    if (!row || !this.translate) return undefined;
 
     const separator = opts && opts.separator || ', ';
     const recursive = !opts || opts.recursive !== false
