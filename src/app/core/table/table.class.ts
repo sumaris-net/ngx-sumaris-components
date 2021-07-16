@@ -1436,23 +1436,21 @@ export abstract class AppTable<
 
     separator = separator || ', ';
     const errors = AppFormUtils.getFormErrors(row.validator);
-    const controlNames = Object.keys(row.validator.controls);
     const i18nErrors = errors && Object.keys(errors).reduce((res, key) => {
 
+      const control = row.validator.get(key);
       // Should be a control map of errors
-      if (controlNames.includes(key)) {
+      if (control) {
         // Try to convert from a map, for one column control
         const i18nFieldNameKey = this.getI18nFieldName(key);
         const i18nFieldName = this.translate.instant(i18nFieldNameKey);
 
         // OK, we have a field name: use it
-        if (i18nFieldName !== i18nFieldNameKey) {
-          const columnErrors = Object.keys(errors[key]).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
-          if (isEmptyArray(columnErrors)) return res;
-          // Add separator
-          if (res.length) res += separator;
-          return res + i18nFieldName + ": " + columnErrors.join(separator);
-        }
+        const columnErrors = Object.keys(errors[key]).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
+        if (isEmptyArray(columnErrors)) return res;
+        // Add separator
+        if (res.length) res += separator;
+        return res + i18nFieldName + ": " + columnErrors.join(separator);
       }
 
       // Or try as global form error
