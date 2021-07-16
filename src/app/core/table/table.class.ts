@@ -1431,11 +1431,15 @@ export abstract class AppTable<
     this.setError(undefined, opts);
   }
 
-  protected getRowError(row: TableElement<T>, separator?: string): string {
+  protected getRowError(row: TableElement<T>, opts?: {
+    separator?: string;
+    recursive?: boolean;
+  }): string {
     if (!this.translate) return undefined;
 
-    separator = separator || ', ';
-    const errors = AppFormUtils.getFormErrors(row.validator);
+    const separator = opts && opts.separator || ', ';
+    const recursive = !opts || opts.recursive !== false
+    const errors = AppFormUtils.getFormErrors(row.validator, { recursive });
     const i18nErrors = errors && Object.keys(errors).reduce((res, key) => {
 
       const control = row.validator.get(key);
