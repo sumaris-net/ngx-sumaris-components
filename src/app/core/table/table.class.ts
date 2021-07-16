@@ -750,7 +750,7 @@ export abstract class AppTable<
     if (row.id === -1) {
       this.deleteNewRow(event, row);
     } else {
-      this.cancelOrDeleteExistingRow(event, row, opts);
+      this.cancelExistingRow(event, row, opts);
     }
   }
 
@@ -822,7 +822,7 @@ export abstract class AppTable<
     }
   }
 
-  cancel(event?: UIEvent, opts?: { interactive?: boolean; }) {
+  cancel(event?: Event, opts?: { interactive?: boolean; }) {
 
     // Check confirmation
     if ((!opts || opts.interactive !== false) && this.dirty && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
@@ -1077,6 +1077,33 @@ export abstract class AppTable<
           visible: this.displayedColumns.indexOf(name) !== -1,
           canHide: this.getRequiredColumns().indexOf(name) === -1
         }));
+  }
+
+  escapeEditingRow(event?: Event, row?: TableElement<T>) {
+    row = row || this.editedRow;
+    if (!row || !row.editing) return;
+
+    if (event) {
+      // Avoid to cancel the editor
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // If new row: delete silently
+    if (row.id === -1) {
+      this.deleteNewRow(event, row);
+    }
+    // If exists
+    else {
+      // cancel (if confirmation)
+      if (this.confirmBeforeCancel) {
+        this.cancelExistingRow(event, row);
+      }
+      // Or validate, if no confirmation
+      else {
+        this.confirmEditCreate(event, row);
+      }
+    }
   }
 
   /* -- protected method -- */
@@ -1464,39 +1491,28 @@ export abstract class AppTable<
     this.visibleRowCount--;
   }
 
-  private cancelOrDeleteExistingRow(event: Event|undefined, row: TableElement<T>, opts?: { interactive?: boolean; }) {
+  private cancelExistingRow(event: Event|undefined, row: TableElement<T>, opts?: { interactive?: boolean; }) {
 
-    const deletion = row.id === -1;
     const confirmed = (!opts || opts.interactive !== false);
 
-    // Ask user confirmation, when delete
-    if (deletion && !confirmed && (this.confirmBeforeDelete || this.onBeforeDeleteRows.observers.length > 0)) {
-      event?.stopPropagation();
-      this.canDeleteRows([row], opts)
-        .then(confirm => {
-          // If confirmed, loop
-          if (confirm) this.cancelOrDeleteExistingRow(event, row, {interactive: false});
-        });
-      return;
-    }
     // Ask user confirmation, if cancel
-    else if (!deletion && !confirmed && row.validator?.dirty && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
+    if (!confirmed && row.validator?.dirty && (this.confirmBeforeCancel || this.onBeforeCancelRows.observers.length > 0)) {
       event.stopPropagation();
       this.canCancelRows([row], opts)
         .then(confirm => {
           // If confirmed, loop
-          if (confirm) this.cancelOrDeleteExistingRow(event, row, {interactive: false});
+          if (confirm) this.cancelExistingRow(event, row, {interactive: false});
         });
       return;
     }
 
-    const keepEditing = !deletion && row.editing;
+    const keepEditing = row.editing;
     this.editedRow = undefined; // unselect row
     this._dataSource.cancelOrDelete(row);
     this.onCancelOrDeleteRow.next(row);
 
     // Mark row as pristine
-    const markRowAsPristine = !deletion && this.dataSource?.options.keepOriginalDataAfterConfirm === true;
+    const markRowAsPristine = this.dataSource?.options.keepOriginalDataAfterConfirm === true;
     if (markRowAsPristine) {
       row.validator?.markAsPristine();
       // Check if table is now pristine
