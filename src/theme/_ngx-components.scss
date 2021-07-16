@@ -516,6 +516,9 @@ ion-list {
         padding-inline-start: var(--mat-cell-vertical-padding);
       }
 
+      &.mat-table-sticky-border-elem-left {
+        border-right: 1px solid #{$app-table-border-color};
+      }
       &.mat-table-sticky-border-elem-right {
         border-left: 1px solid #{$app-table-border-color};
       }

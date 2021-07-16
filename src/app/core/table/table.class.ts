@@ -1446,7 +1446,7 @@ export abstract class AppTable<
         const i18nFieldName = this.translate.instant(i18nFieldNameKey);
 
         // OK, we have a field name: use it
-        const columnErrors = Object.keys(errors[key]).map(errorKey => this.getI18nError(errorKey, errors[errorKey]));
+        const columnErrors = Object.keys(control.errors).map(errorKey => this.getI18nError(errorKey, control.errors[errorKey]));
         if (isEmptyArray(columnErrors)) return res;
         // Add separator
         if (res.length) res += separator;
