@@ -513,6 +513,10 @@ ion-list {
       &.ion-padding-start {
         padding-inline-start: var(--mat-cell-vertical-padding);
       }
+
+      &.mat-table-sticky-border-elem-right {
+        border-left: 1px solid #{$app-table-border-color};
+      }
     }
 
     .mat-column-select {
@@ -566,9 +570,7 @@ ion-list {
       padding-inline-start: 0 !important; // No start padding
       padding-right: unset !important;
 
-      &.mat-column-sticky {
-        border-left: 1px solid #{$app-table-border-color};
-      }
+
     }
 
     .mat-cell.computed mat-form-field,

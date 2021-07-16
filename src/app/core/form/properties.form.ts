@@ -138,7 +138,7 @@ export class AppPropertiesForm<T = Property> extends AppForm<T[]> implements OnI
   protected getPropertyFormGroup(data?: {key: string; value?: string}): FormGroup {
     return this.formBuilder.group({
       key: [data && data.key || null, Validators.compose([Validators.required, Validators.max(50)])],
-      value: [data && data.value || null, Validators.compose([Validators.required, Validators.max(100)])]
+      value: [data && data.value || null, Validators.required]
     });
   }
 
