@@ -500,7 +500,8 @@ ion-list {
   }
 
   .mat-header-row,
-  .mat-row {
+  .mat-row,
+  .mat-footer-row {
     --mat-cell-vertical-padding: #{$app-table-cell-vertical-padding};
     --mat-row-max-height: #{$app-table-row-max-height};
     max-height: var(--mat-row-max-height);
@@ -509,13 +510,41 @@ ion-list {
     border-left: 3px solid transparent;
 
     .mat-header-cell,
-    .mat-cell {
+    .mat-cell,
+    .mat-footer-cell {
       &.ion-padding-start {
         padding-inline-start: var(--mat-cell-vertical-padding);
       }
 
       &.mat-table-sticky-border-elem-right {
         border-left: 1px solid #{$app-table-border-color};
+      }
+
+      /* Add a start padding to content (but not the cell itself) (e.g. tables with odd/event style - like BatchGroupsTable) */
+      &.mat-cell-content-start-padding {
+
+        // Reset start padding here (only apply cell's content)
+        padding-inline-start: 0;
+
+        // Add left padding in labels, div, etc
+        & > ion-label,
+        & > mat-label,
+        & > ion-text,
+        & > div,
+        & > span,
+        & > .ion-padding-start {
+          padding: 0 var(--mat-cell-vertical-padding, 8px);
+        }
+
+        // Add left padding in form fields
+        .mat-form-field-label {
+          width: 100%;
+          padding-left: var(--mat-cell-vertical-padding, 8px);
+        }
+
+        .mat-form-field-infix {
+          padding-left: var(--mat-cell-vertical-padding, 8px);
+        }
       }
     }
 
@@ -538,7 +567,6 @@ ion-list {
         border-right: 1px solid #{$app-table-border-color};
       }
     }
-
 
     .mat-cell-date {
       min-width: 128px;
@@ -569,8 +597,6 @@ ion-list {
       max-width: 40px;
       padding-inline-start: 0 !important; // No start padding
       padding-right: unset !important;
-
-
     }
 
     .mat-cell.computed mat-form-field,
@@ -580,32 +606,6 @@ ion-list {
     .mat-cell-calculated {
       color: var(--ion-color-primary-tint);
       font-style: italic;
-    }
-
-    /* Add a start padding to content (but not the cell itself) (e.g. tables with odd/event style - like BatchGroupsTable) */
-    .mat-header-cell.mat-cell-content-start-padding,
-    .mat-cell.mat-cell-content-start-padding {
-      // Reset start padding here (only apply cell's content)
-      padding-inline-start: 0;
-
-      // Add left padding in labels, div, etc
-      & > ion-label,
-      & > mat-label,
-      & > ion-text,
-      & > div,
-      & > span,
-      & > .ion-padding-start {
-        padding: 0 var(--mat-cell-vertical-padding, 8px);
-      }
-
-      // Add left padding in form fields
-      .mat-form-field-label {
-        width: 100%;
-        padding-left: var(--mat-cell-vertical-padding, 8px);
-      }
-      .mat-form-field-infix {
-        padding-left: var(--mat-cell-vertical-padding, 8px);
-      }
     }
   }
 
