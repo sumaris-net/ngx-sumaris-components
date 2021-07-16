@@ -163,14 +163,21 @@ export class SharedValidators {
   }
 
   static translateError(translateFn: (key: string, obj?: any) => string, errorKey: string, errorContent?: any) {
+
+    // Try to generate a standard error key, like 'ERROR.FIELD_xxx_xxx'
     const underscoreUppercaseKey = changeCaseToUnderscore(errorKey).toUpperCase();
     const i18nKey = 'ERROR.FIELD_' + underscoreUppercaseKey;
-    const i18nMessage = translateFn(i18nKey, errorContent);
+    let i18nMessage = translateFn(i18nKey, errorContent);
     if (i18nKey !== i18nMessage) return i18nMessage;
-    if (typeof errorContent === 'string') return errorContent;
+
+    // Try to use the error content, as an i18n key
+    if (typeof errorContent === 'string') {
+      i18nMessage = translateFn(errorContent);
+      if (errorContent !== i18nMessage) return i18nMessage;
+    }
 
     // Not translated: show error
-    console.error(`[validator] Cannot translate error key '${errorKey}'. Please override translateError() in your validator`);
+    console.error(`[validator] Cannot translate error key '${errorKey}'. Please override getI18nError() in your validator`);
 
     return underscoreUppercaseKey;
   }
