@@ -9,6 +9,27 @@ import {fromDateISOString} from '../dates';
 // @dynamic
 export class SharedValidators {
 
+  static I18N_ERROR_KEYS = {
+    required: 'ERROR.FIELD_MIN_LENGTH',
+    min: 'ERROR.FIELD_MIN',
+    max: 'ERROR.FIELD_MAX',
+    minlength:'ERROR.FIELD_MIN_LENGTH',
+    maxlength:'ERROR.FIELD_MAX_LENGTH',
+    pubkey: 'ERROR.FIELD_NOT_VALID_PUBKEY',
+    validDate: 'ERROR.FIELD_NOT_VALID_DATE',
+    dateIsAfter: 'ERROR.FIELD_NOT_VALID_DATE_AFTER',
+    dateRange: 'ERROR.FIELD_NOT_VALID_DATE_RANGE',
+    dateMinDuration: 'ERROR.FIELD_NOT_VALID_DATE_MIN_DURATION',
+    dateMaxDuration: 'ERROR.FIELD_NOT_VALID_DATE_MAX_DURATION',
+    maxDecimals: 'ERROR.FIELD_MAXIMUM_DECIMALS',
+    integer: 'ERROR.FIELD_NOT_VALID_INTEGER',
+    email: 'ERROR.FIELD_NOT_VALID_EMAIL',
+    latitude: 'ERROR.FIELD_NOT_VALID_LATITUDE',
+    longitude: 'ERROR.FIELD_NOT_VALID_LONGITUDE',
+    pattern: 'ERROR.FIELD_NOT_VALID_PATTERN',
+    unique: 'ERROR.FIELD_NOT_UNIQUE'
+  }
+
   static validDate(control: FormControl): ValidationErrors | null {
     const value = control.value;
     const date = !value || moment.isMoment(value) ? value : moment(control.value, DATE_ISO_PATTERN);
@@ -164,9 +185,10 @@ export class SharedValidators {
 
   static translateError(translateFn: (key: string, obj?: any) => string, errorKey: string, errorContent?: any) {
 
-    // Try to generate a standard error key, like 'ERROR.FIELD_xxx_xxx'
-    const underscoreUppercaseKey = changeCaseToUnderscore(errorKey).toUpperCase();
-    const i18nKey = 'ERROR.FIELD_' + underscoreUppercaseKey;
+    const i18nKey = SharedValidators.I18N_ERROR_KEYS[errorKey]
+      // Try to generate a standard error key, like 'ERROR.FIELD_xxx_xxx'
+      || ('ERROR.FIELD_' + changeCaseToUnderscore(errorKey).toUpperCase());
+
     let i18nMessage = translateFn(i18nKey, errorContent);
     if (i18nKey !== i18nMessage) return i18nMessage;
 
@@ -179,7 +201,11 @@ export class SharedValidators {
     // Not translated: show error
     console.error(`[validator] Cannot translate error key '${errorKey}'. Please override getI18nError() in your validator`);
 
-    return underscoreUppercaseKey;
+    return errorKey;
+  }
+
+  static translateErrorKey() {
+
   }
 }
 
