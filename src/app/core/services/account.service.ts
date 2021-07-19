@@ -290,7 +290,11 @@ export class AccountService extends BaseGraphqlService {
     if (this._started) return Promise.resolve();
 
     // Restoring local settings
-    this._startPromise = this.settings.ready()
+    this._startPromise = Promise.all([
+      this.settings.ready(),
+      // Wait token type to be set
+      firstNotNilPromise(this._tokenType$)
+    ])
       .then(() => this.restoreLocally())
       .then(() => {
         this._started = true;
@@ -457,6 +461,7 @@ export class AccountService extends BaseGraphqlService {
   }
 
   async authenticate(data?: AuthData) {
+    // Wait the auth token, then continue
     const tokenType = await firstNotNilPromise(this._tokenType$);
 
     // Basic auth
