@@ -145,9 +145,10 @@ export class AutocompleteTestPage implements OnInit {
     // Simulate a size = 30
 
     const total = res.total || res.data.length;
-    const end = filter.offset + res.data.length
-    if (end < total) {
-      filter = {...filter, offset: end};
+
+    const nextOffset = filter.offset + res.data.length
+    if (nextOffset < total) {
+      filter = {...filter, offset: nextOffset};
       return {
         total,
         data: res.data,

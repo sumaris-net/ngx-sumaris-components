@@ -250,15 +250,17 @@ export abstract class BaseEntityService<
       (data || []) as T[];
     if (debug) console.debug(this._logPrefix + `${this._logTypeName} items loaded in ${Date.now() - now}ms`);
 
-    const end = offset + entities.length;
-    const res: any = {
+    const res: LoadResult<T> = {
       data: entities,
       total
     };
 
-    if (end < total) {
-      offset = end;
-      res.fetchMore = () => this.loadAll(offset, size, sortBy, sortDirection, filter, opts);
+    // Add fetch more capability, if total was fetched
+    if (withTotal) {
+      const nextOffset = offset + entities.length;
+      if (nextOffset < res.total) {
+        res.fetchMore = () => this.loadAll(nextOffset, size, sortBy, sortDirection, filter, opts);
+      }
     }
 
     return res;
