@@ -5,7 +5,7 @@ import {EventEmitter} from '@angular/core';
 import {debounceTime, filter, switchMap} from 'rxjs/operators';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {getMainDefinition} from '@apollo/client/utilities';
-import {PersistentStorage} from 'apollo3-cache-persist/lib/types';
+import {PersistentStorage} from 'apollo3-cache-persist';
 
 declare let window: any;
 const _global = typeof global !== 'undefined' ? global : (typeof window !== 'undefined' ? window : {});
@@ -45,7 +45,7 @@ export interface TrackedQuery {
 export const TRACKED_QUERIES_STORAGE_KEY = 'apollo-tracker-persist';
 
 export function createTrackerLink(opts: {
-  storage?: PersistentStorage;
+  storage?: PersistentStorage<string>;
   onNetworkStatusChange: Observable<string>;
   debounce?: number;
   debug?: boolean;
@@ -120,7 +120,7 @@ export function createTrackerLink(opts: {
 
 export async function restoreTrackedQueries(opts: {
   apolloClient: ApolloClient<any>;
-  storage: PersistentStorage;
+  storage: PersistentStorage<any>;
   debug?: boolean;
 }) {
 

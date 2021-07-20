@@ -28,6 +28,7 @@ import {fadeInAnimation, slideUpDownAnimation} from '../../shared/material/mater
 import {isNotNil, isNotNilOrBlank} from '../../shared/functions';
 import {ENVIRONMENT} from '../../../environments/environment.class';
 import {HistoryPageReference} from '../services/model/history.model';
+import {CORE_CONFIG_OPTIONS} from '../services/config/core.config';
 
 export function getRandomImage(files: String[]) {
   const imgIndex = Math.floor(Math.random() * files.length);
@@ -62,6 +63,7 @@ export class HomePage implements OnDestroy {
   description: String;
   appName: string;
   isWeb: boolean;
+  canRegister: boolean;
   contentStyle: any;
   pageHistory: HistoryPageReference[] = [];
   offline: boolean;
@@ -208,6 +210,7 @@ export class HomePage implements OnDestroy {
     this.logo = config.largeLogo || config.smallLogo || undefined;
     this.description = config.name;
     this.isWeb = this.platform.isWebOrDesktop();
+    this.canRegister = config.getPropertyAsBoolean(CORE_CONFIG_OPTIONS.REGISTRATION_ENABLE);
 
     const partners = (config.partners || []).filter(p => p && p.logo);
     this.$partners.next(partners);

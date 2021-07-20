@@ -41,6 +41,12 @@ export const CORE_CONFIG_OPTIONS = Object.freeze({
             }
         ]
     },
+    REGISTRATION_ENABLE: <FormFieldDefinition>{
+      key: 'sumaris.registration.enable',
+      label: 'CONFIGURATION.OPTIONS.HOME.ENABLE_REGISTRATION',
+      type: 'boolean',
+      defaultValue: true
+    },
     AUTH_TOKEN_TYPE: <FormFieldDefinition>{
       key: 'sumaris.auth.token.type',
       label: 'CONFIGURATION.OPTIONS.AUTH_TOKEN_TYPE_PLACEHOLDER',

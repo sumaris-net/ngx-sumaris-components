@@ -99,6 +99,7 @@
     "RECORDER": "Recorder",
     "RESULT_COUNT": "{{count}} results",
     "NO_RESULT": "No result",
+    "LOADING_DOTS": "Loading...",
     "MISSING": "Missing",
 
     "DISPLAYED_COLUMNS": "Displayed columns",
@@ -152,7 +153,8 @@
       "HOME": {
         "LOGO_LARGE": "Home > Logo (max width 400px)",
         "PARTNER_DEPARTMENTS": "Home > Partners logos",
-        "BACKGROUND_IMAGES": "Home > Background images"
+        "BACKGROUND_IMAGES": "Home > Background images",
+        "ENABLE_REGISTRATION": "Home > Enable registration?"
       },
       "COLORS": {
         "PRIMARY": "Theme > Primary color",
@@ -194,6 +196,7 @@
       },
       "TESTING": "Developer mode ?",
       "ENTITY_TRASH": "Enable trash on pod?",
+      "UPDATE_TECHNICAL_TABLES": "Auto update technical tables?",
       "ANALYTIC_REFERENCES_ENABLE": "Strategy > Analytic references: Enable?",
       "AUTH_TOKEN_TYPE_PLACEHOLDER": "Security > Authentication type",
       "AUTH_TOKEN_TYPE": {
@@ -224,14 +227,8 @@
     "ADMINISTRATION_DIVIDER": "Administration",
     "REFERENTIAL_DIVIDER": "Referential",
     "USERS": "Users",
-    "VESSELS": "Vessels",
-    "REFERENTIAL": "Referential",
-    "PROGRAMS": "Programs",
-    "EXTRACTIONS": "Extractions",
-    "MAP": "Maps",
     "FOOTER_VERSION_ABOUT": "v{{version}} | About",
     "LOCAL_SETTINGS": "Settings",
-    "SERVER": "Server settings",
     "LOGOUT": "Logout",
     "ABOUT": "About"
   },
@@ -288,6 +285,14 @@
       "NOT_SAME_EMAIL": "Emails not matched",
       "NOT_SAME_PASSWORD": "Passwords not matched",
       "EMAIL_ALREADY_REGISTERED": "Email already registered"
+    }
+  },
+  "REFERENTIAL": {
+    "STATUS_ENUM": {
+      "ENABLE": "Enable",
+      "DISABLE": "Disable",
+      "TEMPORARY": "Temporary",
+      "DELETED": "Deleted"
     }
   },
   "ACCOUNT": {
@@ -361,6 +366,8 @@
     },
     "STATUS": "Status",
     "PUBKEY": "Public key",
+    "USERNAME": "Login",
+    "USERNAME_EXTRANET": "Login Extranet",
     "PROFILE": "Profile",
     "PROFILE_ENUM": {
       "ADMIN": "Administrator",
@@ -529,5 +536,18 @@
     "UPDATE_APP": "<b>Please upgrade {{name}}</b>",
     "UPDATE_APP_TO_VERSION": "<b>Please upgrade {{name}}</b> in version {{version}} (or more)",
     "UPDATE_APP_HELP": "If you do not do this upgrade, communication with the network node may not work.."
+  },
+  "TABLE": {
+    "TESTING": {
+      "SEARCH_TEXT": "Search: code, name",
+      "LABEL": "Code",
+      "NAME": "Name",
+      "CREATION_DATE": "Creation date",
+      "UPDATE_DATE": "Update date",
+      "COMMENTS": "Comments",
+      "GROUP_1": "Group 1",
+      "GROUP_2": "Group 2",
+      "STATUS_ID": "Status"
+    }
   }
 }

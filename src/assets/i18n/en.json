@@ -153,7 +153,8 @@
       "HOME": {
         "LOGO_LARGE": "Home > Logo (max width 400px)",
         "PARTNER_DEPARTMENTS": "Home > Partners logos",
-        "BACKGROUND_IMAGES": "Home > Background images"
+        "BACKGROUND_IMAGES": "Home > Background images",
+        "ENABLE_REGISTRATION": "Home > Enable registration?"
       },
       "COLORS": {
         "PRIMARY": "Theme > Primary color",

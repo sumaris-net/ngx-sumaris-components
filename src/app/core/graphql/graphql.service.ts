@@ -38,7 +38,7 @@ import {HttpHeaders} from '@angular/common/http';
 import {EmptyObject} from 'apollo-angular/types';
 import {HttpLink, Options} from 'apollo-angular/http';
 import {IonicStorageWrapper, persistCache} from 'apollo3-cache-persist';
-import {PersistentStorage} from 'apollo3-cache-persist/lib/types';
+import {PersistentStorage} from 'apollo3-cache-persist';
 import {ErrorPolicy, MutationBaseOptions} from '@apollo/client/core/watchQueryOptions';
 import {Cache} from '@apollo/client/cache/core/types/Cache';
 import {ENVIRONMENT} from '../../../environments/environment.class';
@@ -700,7 +700,7 @@ export class GraphqlService {
     };
 
     // Create a storage configuration
-    const storage: PersistentStorage = new IonicStorageWrapper(this.storage);
+    const storage: PersistentStorage<string> = new IonicStorageWrapper(this.storage);
 
     let client = this.apollo.client;
     if (!client) {

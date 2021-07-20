@@ -86,13 +86,12 @@
       <!-- If NOT login -->
       <ng-container *ngIf="!isLogin; else loginButtons;">
 
-        <ion-button expand="block" color="tertiary" (click)="register()">
+        <ion-button *ngIf="canRegister" expand="block" color="tertiary" (click)="register()">
           <span translate>HOME.BTN_REGISTER</span>
         </ion-button>
         <ion-button expand="block" color="light" [routerLink]="['/']" (click)="login()">
           <span translate>AUTH.BTN_LOGIN</span>
         </ion-button>
-
 
       </ng-container>
 

@@ -428,6 +428,7 @@ export class AccountService extends BaseGraphqlService {
       data.account.pubkey = Base58.encode(keypair.publicKey);
 
       // Default values
+      data.account.settings = data.account.settings || new UserSettings();
       data.account.settings.locale = this.settings.locale;
       data.account.settings.latLongFormat = this.settings.latLongFormat;
       data.account.department.id = data.account.department.id || this.environment.defaultDepartmentId;
