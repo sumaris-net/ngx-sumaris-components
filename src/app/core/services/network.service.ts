@@ -638,19 +638,8 @@ export class NetworkService {
       uri = peerUrl + path;
     }
 
-    try {
-      // Execute the request
-      return HttpUtils.getResource(this.http, uri, opts);
-    }
-    catch (err) {
-      if (err && err.message) {
-        console.error('[network] ' + err.message, err);
-      }
-      else {
-        console.error(`[network] Error on get request ${uri}: ${err && err.statusText} - ${JSON.stringify(err)}`);
-      }
-      throw {code: err.status, message: 'ERROR.UNKNOWN_NETWORK_ERROR'};
-    }
+    // Execute the request
+    return HttpUtils.getResource(this.http, uri, opts);
   }
 
 
