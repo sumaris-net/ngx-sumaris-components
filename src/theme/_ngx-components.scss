@@ -507,7 +507,7 @@ ion-list {
     max-height: var(--mat-row-max-height);
 
     // Reserve space for row dirty border
-    border-left: 3px solid transparent;
+    //border-left: 3px solid transparent;
 
     .mat-header-cell,
     .mat-cell,
@@ -778,7 +778,7 @@ ion-list {
 
     // Dirty row
     &.mat-row-dirty {
-      border-left: 2px solid var(--ion-color-primary-tint);
+      //border-left: 3px solid var(--ion-color-primary-tint);
 
       // Resize the dirty icon (in the 'actions' column)
       .mat-column-actions mat-icon.dirty-icon,
@@ -789,7 +789,7 @@ ion-list {
 
     // Error row
     &.mat-row-error {
-      border-left: 3px solid var(--ion-color-danger-tint) !important;
+      //border-left: 3px solid var(--ion-color-danger-tint) !important;
       background-color: var(--ion-color-warning-tint);
 
       &.mat-row-disabled:hover {

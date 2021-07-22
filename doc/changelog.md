@@ -58,3 +58,7 @@
 ## 0.5.0
 
 - [enh] Table: allow keyboard navigation, using `<app-actions-column>` and function `table.confirmAndBackward()` and `table.confirmAndForward()`
+
+## 0.7.10
+
+- [enh] Table: no more border-left, on dirty rows (because of sticky columns nightmare !)

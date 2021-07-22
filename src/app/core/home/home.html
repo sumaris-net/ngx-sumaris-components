@@ -75,7 +75,8 @@
       <ion-text color="primary">
         <img class="logo" *ngIf="logo" src="{{ logo }}">
       </ion-text>
-      <ion-text *ngIf="!isLogin">
+      <!-- register help text -->
+      <ion-text *ngIf="!isLogin && canRegister">
         <br/>
         <span translate>HOME.REGISTER_HELP</span>
       </ion-text>
