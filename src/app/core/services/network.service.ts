@@ -500,7 +500,7 @@ export class NetworkService {
     try {
       return await this.getNodeInfo(peer);
     } catch (err) {
-      console.debug('[network] Cannot get /api/node/info from peer');
+      console.debug('[network] Cannot get /api/node/info from peer: ' + (err && err.message || err), err);
       return undefined;
     }
   }
@@ -604,8 +604,7 @@ export class NetworkService {
           this.onResetNetworkCache.emit();
 
           // Wait observers clean their caches, if need
-          return setTimeout(() => {/*empty*/}, 500);
-          return setTimeout(() => {/*empty*/}, 500);
+          return sleep(500);
         }
       })
       .then(() => {
@@ -648,7 +647,7 @@ export class NetworkService {
         console.error('[network] ' + err.message, err);
       }
       else {
-        console.error(`[network] Error on get request ${uri}: ${err && err.statusText}`);
+        console.error(`[network] Error on get request ${uri}: ${err && err.statusText} - ${JSON.stringify(err)}`);
       }
       throw {code: err.status, message: 'ERROR.UNKNOWN_NETWORK_ERROR'};
     }

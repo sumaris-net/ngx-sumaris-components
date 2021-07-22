@@ -44,6 +44,10 @@ export const environment: Environment = Object.freeze({
     {
       host: '192.168.0.29',
       port: 8080
+    },
+    {
+      host: 'sih.sfa.sc',
+      port: 80
     }
   ],
   defaultAppName: 'SUMARiS',

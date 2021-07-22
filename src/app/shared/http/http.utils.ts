@@ -32,7 +32,7 @@ export class HttpUtils {
         console.error(`[network] Error on get request ${uri}: ${err.message}`, err);
       }
       else {
-        console.error(`[network] Error on get request ${uri}: ${err && err.statusText}`);
+        console.error(`[network] Error on get request ${uri}: ${err && err.statusText} - ${JSON.stringify(err)}`);
       }
       throw {code: err.status, message: 'ERROR.UNKNOWN_NETWORK_ERROR'};
     }

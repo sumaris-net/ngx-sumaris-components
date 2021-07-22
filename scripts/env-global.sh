@@ -15,8 +15,8 @@ if [[ ! -f "${PROJECT_DIR}/package.json" ]]; then
   exit 1
 fi;
 
-PROJECT_NAME=sumaris-app
-REPO="sumaris-net/sumaris-app"
+PROJECT_NAME=ngx-components
+REPO="sumaris-net/${PROJECT_NAME}"
 REPO_API_URL="https://api.github.com/repos/${REPO}"
 REPO_PUBLIC_URL="https://github.com/${REPO}"
 
