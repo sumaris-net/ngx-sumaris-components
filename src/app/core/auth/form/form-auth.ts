@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Optional, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {ModalController} from '@ionic/angular';
 import {RegisterModal} from '../../register/modal/modal-register';
@@ -29,14 +29,11 @@ export class AuthForm extends AppForm<AuthData> implements OnInit {
   readonly mobile: boolean;
   canWorkOffline = false;
   showPwd = false;
-
+  canRegister: boolean;
   usernamePlaceholder: string;
 
-  @Output()
-  onCancel = new EventEmitter<any>();
-
-  @Output()
-  onSubmit = new EventEmitter<AuthData>();
+  @Output() onCancel = new EventEmitter<any>();
+  @Output() onSubmit = new EventEmitter<AuthData>();
 
   disable(opts?: { onlySelf?: boolean; emitEvent?: boolean }) {
     super.disable(opts);
@@ -73,17 +70,21 @@ export class AuthForm extends AppForm<AuthData> implements OnInit {
     // Load config, to set username's label and validator
     this.registerSubscription(
       this.configService.config.subscribe(config => {
+        // Set the username placeholder, with email or username
         const tokenType = config.getProperty(CORE_CONFIG_OPTIONS.AUTH_TOKEN_TYPE) as AuthTokenType;
-        // Login using email
         if (tokenType === 'token') {
           this.usernamePlaceholder = 'USER.EMAIL';
           this.form.get('username').setValidators(Validators.compose([Validators.required, Validators.email]));
         }
-        // Login using username
         else {
           this.usernamePlaceholder = 'USER.USERNAME';
           this.form.get('username').setValidators(Validators.required);
         }
+
+        // Enable/disable registration link
+        this.canRegister = config.getProperty(CORE_CONFIG_OPTIONS.REGISTRATION_ENABLE);
+
+        this.markForCheck();
       })
     );
 

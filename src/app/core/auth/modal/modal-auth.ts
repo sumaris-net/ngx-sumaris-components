@@ -1,8 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {AccountService} from '../../services/account.service';
 import {AuthForm} from '../form/form-auth';
 import {firstNotNilPromise} from '../../../shared/observables';
+import {ConfigService} from '../../services/config.service';
+import {CORE_CONFIG_OPTIONS} from '../../services/config/core.config';
+import {Configuration} from '../../services/model/config.model';
 
 @Component({
   templateUrl: 'modal-auth.html',

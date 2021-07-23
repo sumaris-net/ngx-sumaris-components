@@ -68,9 +68,9 @@
   </ng-container>
 
   <!-- Not register yet ? -->
-  <p class="padding" style="text-align: center;">
+  <p *ngIf="canRegister" class="padding" style="text-align: center;">
     <span translate>AUTH.NO_ACCOUNT_QUESTION</span>
-    <br />
+    <br/>
     <a href="#" (click)="register()">
       <span translate>AUTH.BTN_REGISTER</span>
     </a>
